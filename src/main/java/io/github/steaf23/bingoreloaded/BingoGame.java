@@ -16,8 +16,6 @@ import io.github.steaf23.bingoreloaded.util.*;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
-import org.bukkit.event.EventHandler;
-import org.bukkit.util.Vector;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -28,8 +26,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 import java.util.*;
+
+import static io.github.steaf23.bingoreloaded.util.Message.solvePlaceholders;
 
 
 public class BingoGame
@@ -125,6 +126,10 @@ public class BingoGame
             {
                 Player player = p.gamePlayer().get();
 
+                InventoryData.inst().savePlayerData(player, InventoryData.inst().getDefaultIdentifier());
+                if (ConfigData.instance.resetPlayerItems)
+                    p.switchInventory(worldName);
+
                 p.giveKit(settings.kit);
                 returnCardToPlayer(p);
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "advancement revoke " + player.getName() + " everything");
@@ -160,15 +165,24 @@ public class BingoGame
         Set<BingoPlayer> players = getTeamManager().getParticipants();
         players.forEach(p -> {
             p.takeEffects(false);
+
+            if (ConfigData.instance.resetPlayerItems)
+                p.switchInventory(InventoryData.inst().getDefaultIdentifier());
+
             if (p.gamePlayer().isPresent())
             {
                 p.gamePlayer().get().playSound(p.gamePlayer().get(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 0.8f, 1.0f);
                 Message.sendDebug(commandMessage, p.gamePlayer().get());
             }
+
+            String command = ConfigData.instance.sendPlayerCommandQuit;
+            if (!command.equals(""))
+            {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("{player}", p.gamePlayer().get().getName()));
+            }
         });
         timer.getTimeDisplayMessage().sendAll(worldName);
         timer.stop();
-        RecoveryCardData.markCardEnded(true);
         settings = null;
 
         if (!ConfigData.instance.keepScoreboardVisible)
@@ -270,9 +284,7 @@ public class BingoGame
             Message.sendDebug(color + "" + countdown, p.gamePlayer().get());
         }
 
-        BingoReloaded.scheduleTask(task -> {
-            startDeathMatch(countdown - 1);
-        }, BingoReloaded.ONE_SECOND);
+        BingoReloaded.scheduleTask(task -> startDeathMatch(countdown - 1), BingoReloaded.ONE_SECOND);
     }
 
     public void teleportPlayerAfterDeath(Player player)
@@ -347,9 +359,7 @@ public class BingoGame
                         spawnPlatform(platformLocation.clone(), 5);
 
                         BingoReloaded.scheduleTask(task ->
-                        {
-                            BingoGame.removePlatform(platformLocation, 5);
-                        }, (long) (Math.max(0, ConfigData.instance.gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
+                                BingoGame.removePlatform(platformLocation, 5), (long) (Math.max(0, ConfigData.instance.gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
                     }
                 }
             }
@@ -367,9 +377,7 @@ public class BingoGame
                         spawnPlatform(teamLocation, 5);
 
                         BingoReloaded.scheduleTask(task ->
-                        {
-                            BingoGame.removePlatform(teamLocation, 5);
-                        }, (long) (Math.max(0, ConfigData.instance.gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
+                                BingoGame.removePlatform(teamLocation, 5), (long) (Math.max(0, ConfigData.instance.gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
                     }
                 }
             }
@@ -383,9 +391,7 @@ public class BingoGame
                     spawnPlatform(spawnLocation, 5);
 
                     BingoReloaded.scheduleTask(task ->
-                    {
-                        BingoGame.removePlatform(spawnLocation, 5);
-                    }, (long) (Math.max(0, ConfigData.instance.gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
+                            BingoGame.removePlatform(spawnLocation, 5), (long) (Math.max(0, ConfigData.instance.gracePeriod - 5)) * BingoReloaded.ONE_SECOND);
                 }
             }
             default ->
@@ -447,6 +453,16 @@ public class BingoGame
         if (player.offline().isOnline())
         {
             player.takeEffects(true);
+
+            if (ConfigData.instance.resetPlayerItems)
+                player.switchInventory(InventoryData.inst().getDefaultIdentifier());
+
+            String command = ConfigData.instance.sendPlayerCommandQuit;
+            if (!command.equals(""))
+            {
+                command = solvePlaceholders(command, player.gamePlayer().get()).replace("{player}", player.gamePlayer().get().getName());
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+            }
         }
 
         deadPlayers.remove(player.playerId());

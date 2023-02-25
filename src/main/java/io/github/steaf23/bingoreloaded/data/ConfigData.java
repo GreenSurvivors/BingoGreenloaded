@@ -44,10 +44,9 @@ public class ConfigData
     public int wandUp;
     public int wandDown;
     public double wandCooldown;
-    public int platformLifetime;
+    public long platformLifetime;
     public PlayerKit defaultKit;
     public int gracePeriod;
-    //TODO: Implement option
     public boolean resetPlayerItems;
     //TODO: Implement option
     public boolean resetPlayerPositions;
@@ -59,10 +58,9 @@ public class ConfigData
     public int cardSeed;
     public boolean enableTeamChat;
     public String sendCommandAfterGameEnded;
+    public String sendPlayerCommandQuit;
     public boolean keepScoreboardVisible;
     public boolean showPlayerInScoreboard;
-
-    // TODO: make defaultBingoWorld: "world" config option
 
     public static final ConfigData instance = new ConfigData();
 
@@ -88,6 +86,7 @@ public class ConfigData
         this.cardSeed = config.getInt("cardSeed", 0);
         this.enableTeamChat = config.getBoolean("enableTeamChat", true);
         this.sendCommandAfterGameEnded = config.getString("sendCommandAfterGameEnds", "");
+        this.sendPlayerCommandQuit = config.getString("sendPlayerCommandQuit", "");
         this.keepScoreboardVisible = config.getBoolean("keepScoreboardVisible", true);
         this.showPlayerInScoreboard = config.getBoolean("showPlayerInScoreboard", true);
     }

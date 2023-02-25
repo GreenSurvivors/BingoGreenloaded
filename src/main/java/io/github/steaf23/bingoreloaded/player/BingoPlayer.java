@@ -1,9 +1,12 @@
 package io.github.steaf23.bingoreloaded.player;
 
-import io.github.steaf23.bingoreloaded.*;
+import io.github.steaf23.bingoreloaded.BingoGame;
+import io.github.steaf23.bingoreloaded.BingoGameManager;
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.BingoStatsData;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.InventoryData;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.ItemCooldownManager;
 import io.github.steaf23.bingoreloaded.util.Message;
@@ -18,6 +21,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -36,21 +40,21 @@ import java.util.UUID;
  */
 public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, String playerName, String displayName)
 {
-    @Nullable
+    @NotNull
     public Optional<Player> gamePlayer()
     {
         if (!offline().isOnline())
-            return Optional.ofNullable(null);
+            return Optional.empty();
 
         Player player = Bukkit.getPlayer(playerId);
-        if (!BingoGameManager.getWorldName(player.getWorld()).equals(worldName))
+        if (player == null || !BingoGameManager.getWorldName(player.getWorld()).equals(worldName))
         {
-            return Optional.ofNullable(null);
+            return Optional.empty();
         }
-        return Optional.ofNullable(player);
+        return Optional.of(player);
     }
 
-    @Nullable
+    @NotNull
     public Optional<Player> asOnlinePlayer()
     {
         return Optional.ofNullable(Bukkit.getPlayer(playerId));
@@ -141,6 +145,20 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
 
     /**
      *
+     * @param identifier
+     */
+    public void switchInventory (String identifier)
+    {
+        if (offline().isOnline())
+        {
+            Message.log("switching inventory " + asOnlinePlayer().get().getDisplayName(), worldName);
+
+            InventoryData.inst().loadPlayerData(asOnlinePlayer().get(), identifier);
+        }
+    }
+
+    /**
+     *
      * @param force ignore if the player is actually in the world playing the game at this moment.
      */
     public void takeEffects(boolean force)
@@ -214,7 +232,6 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
             else
             {
                 distance = ConfigData.instance.wandUp + 5;
-                fallDistance = 5.0;
             }
 
             Location newLocation = player.getLocation();
@@ -226,7 +243,7 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
 
             BingoReloaded.scheduleTask(laterTask -> {
                 BingoGame.removePlatform(newLocation, 1);
-            }, Math.max(0, ConfigData.instance.platformLifetime) * BingoReloaded.ONE_SECOND);
+            }, Math.max(0L, ConfigData.instance.platformLifetime) * BingoReloaded.ONE_SECOND);
 
             player.playSound(player, Sound.ENTITY_SHULKER_TELEPORT, 0.8f, 1.0f);
             player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, BingoReloaded.ONE_SECOND * 10, 100, false, false));

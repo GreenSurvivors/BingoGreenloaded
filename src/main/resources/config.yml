@@ -69,8 +69,17 @@ enableTeamChat: true # true or false
 # Most users can ignore this setting.
 sendCommandAfterGameEnds: "" #command to send
 
+# If this value is not an empty string it will be sent as a command to the console, just before a player quits.
+# {player} will be replaced with the name of the quitting player, as an alternative placeholderAPI is supported.
+# note: game ending, quitting from the server or leaving the bingo will call this command.
+# Most users can ignore this setting.
+sendPlayerCommandQuit: "" #command to send
+
 # If true, keeps the player scoreboard visible to all participants after the game has ended.
 keepScoreboardVisible: true # true or false
 
 # If true, will display all participants' names on the scoreboard under their team.
 showPlayerInScoreboard: true
+
+# if true the plugin will use a custom inventory system while in bingo game and after it ended / the user left it go back to the default
+resetPlayerItems: true

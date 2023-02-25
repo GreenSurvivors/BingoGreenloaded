@@ -11,8 +11,6 @@ import io.github.steaf23.bingoreloaded.player.TeamManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
@@ -33,7 +31,7 @@ public class BingoScoreboard
         this.teamManager = new TeamManager(teamBoard, worldName);
         this.worldName = worldName;
 
-        this.taskObjective = teamBoard.registerNewObjective("item_count", "bingo_item_count");
+        this.taskObjective = teamBoard.registerNewObjective("item_count", "bingo_item_count", "item_count");
 
         reset();
     }
@@ -126,8 +124,7 @@ public class BingoScoreboard
     public void handlePlayerLeave(final BingoPlayerLeaveEvent event)
     {
         Message.log("Player " + event.player.asOnlinePlayer().get().getDisplayName() + " left the game", worldName);
-
-        updatePlayerScoreboard(event.player);
+        event.player.asOnlinePlayer().get().setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
     }
 
     private void updatePlayerScoreboard(BingoPlayer player)

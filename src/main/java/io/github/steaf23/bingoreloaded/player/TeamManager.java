@@ -1,11 +1,13 @@
 package io.github.steaf23.bingoreloaded.player;
 
-import io.github.steaf23.bingoreloaded.*;
+import io.github.steaf23.bingoreloaded.BingoGameManager;
+import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.InventoryData;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.event.BingoPlayerJoinEvent;
 import io.github.steaf23.bingoreloaded.event.BingoPlayerLeaveEvent;
-import io.github.steaf23.bingoreloaded.gui.MenuInventory;
 import io.github.steaf23.bingoreloaded.gui.FilterType;
+import io.github.steaf23.bingoreloaded.gui.MenuInventory;
 import io.github.steaf23.bingoreloaded.gui.PaginatedPickerMenu;
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.gui.cards.LockoutBingoCard;
@@ -16,8 +18,6 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -32,8 +32,8 @@ public class TeamManager
 {
     private final Set<BingoTeam> activeTeams;
     private final Scoreboard teams;
-    private int maximumTeamSize;
-    private String worldName;
+    private final int maximumTeamSize;
+    private final String worldName;
 
     public TeamManager(Scoreboard board, String worldName)
     {
@@ -113,7 +113,7 @@ public class TeamManager
             return false;
         }
 
-        if (BingoGameManager.get().isGameWorldActive(worldName) && !activeTeams.stream().anyMatch(t -> t.getColor().name.equals(teamName)))
+        if (BingoGameManager.get().isGameWorldActive(worldName) && activeTeams.stream().noneMatch(t -> t.getColor().name.equals(teamName)))
         {
             Message.error("Team " + color.getTranslatedName() + " is not playing in this game of bingo!");
             return false;
@@ -160,14 +160,7 @@ public class TeamManager
 
     public void removeEmptyTeams()
     {
-        for (Iterator<BingoTeam> it = activeTeams.iterator(); it.hasNext();)
-        {
-            BingoTeam team = it.next();
-            if (team.players.size() == 0)
-            {
-                it.remove();
-            }
-        }
+        activeTeams.removeIf(team -> team.players.size() == 0);
     }
 
     public void initializeCards(BingoCard masterCard)
@@ -262,7 +255,7 @@ public class TeamManager
     public BingoTeam getLeadingTeam()
     {
         Optional<BingoTeam> leadingTeam = activeTeams.stream().max(
-                (t, t2) -> t.card.getCompleteCount(t) - t2.card.getCompleteCount(t2)
+                Comparator.comparingInt(t -> t.card.getCompleteCount(t))
         );
         return leadingTeam.orElse(null);
     }
@@ -270,7 +263,7 @@ public class TeamManager
     public BingoTeam getLosingTeam()
     {
         Optional<BingoTeam> losingTeam = activeTeams.stream().min(
-                (t, t2) -> t.card.getCompleteCount(t) - t2.card.getCompleteCount(t2)
+                Comparator.comparingInt(t -> t.card.getCompleteCount(t))
         );
         return losingTeam.orElse(null);
     }
@@ -337,7 +330,6 @@ public class TeamManager
                 new Message("game.player.join_back").send(onlinePlayer);
                 var joinEvent = new BingoPlayerJoinEvent(player, worldName);
                 Bukkit.getPluginManager().callEvent(joinEvent);
-                return;
             }
         }
     }
@@ -355,6 +347,10 @@ public class TeamManager
             {
                 player.getTeam().team.removeEntry(event.getPlayer().getName());
                 player.takeEffects(true);
+
+                if (ConfigData.instance.resetPlayerItems)
+                    player.switchInventory(InventoryData.inst().getDefaultIdentifier());
+
                 var leaveEvent = new BingoPlayerLeaveEvent(player, worldName);
                 Bukkit.getPluginManager().callEvent(leaveEvent);
             }

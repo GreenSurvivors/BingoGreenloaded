@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.util;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
-import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.BingoGameManager;
+import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -315,7 +315,7 @@ public class Message
     }
 
     // solve placeholders from PlaceholderAPI
-    protected static String solvePlaceholders(String input, Player player)
+    public static String solvePlaceholders(String input, Player player)
     {
         if (BingoReloaded.usesPlaceholderAPI)
         {

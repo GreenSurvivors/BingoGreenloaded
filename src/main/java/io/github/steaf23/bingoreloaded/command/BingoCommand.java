@@ -2,19 +2,20 @@ package io.github.steaf23.bingoreloaded.command;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoGameManager;
-import io.github.steaf23.bingoreloaded.data.TranslationData;
-import io.github.steaf23.bingoreloaded.player.PlayerKit;
-import io.github.steaf23.bingoreloaded.hologram.Hologram;
-import io.github.steaf23.bingoreloaded.hologram.HologramManager;
-import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.data.BingoStatsData;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
+import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.BingoMenu;
 import io.github.steaf23.bingoreloaded.gui.creator.BingoCreatorUI;
+import io.github.steaf23.bingoreloaded.hologram.Hologram;
+import io.github.steaf23.bingoreloaded.hologram.HologramManager;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
+import io.github.steaf23.bingoreloaded.player.PlayerKit;
+import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -47,28 +48,24 @@ public class BingoCommand implements CommandExecutor
             return true;
         }
 
-        switch (args[0])
-        {
-            case "join":
-                if (BingoGameManager.get().doesGameWorldExist(worldName))
-                {
+        switch (args[0]){
+            case "join" -> {
+                if (BingoGameManager.get().doesGameWorldExist(worldName)) {
                     BingoGame existingGame = BingoGameManager.get().getGame(worldName);
                     existingGame.getTeamManager().openTeamSelector(player, null);
                 }
-                break;
-            case "leave":
-                if (activeGame != null)
-                {
+            }
+            case "leave" -> {
+                if (activeGame != null) {
                     BingoPlayer participant = activeGame.getTeamManager().getBingoPlayer(player);
                     activeGame.playerQuit(participant);
-                }
-                break;
 
-            case "start":
-                if (player.hasPermission("bingo.settings"))
-                {
-                    if (args.length > 1)
-                    {
+                    player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+                }
+            }
+            case "start" -> {
+                if (player.hasPermission("bingo.settings")) {
+                    if (args.length > 1) {
                         int seed = Integer.parseInt(args[1]);
                         BingoGameManager.get().getGameSettings(worldName).cardSeed = seed;
                     }
@@ -76,108 +73,84 @@ public class BingoCommand implements CommandExecutor
                     BingoGameManager.get().startGame(worldName);
                     return true;
                 }
-                break;
-
-            case "end":
+            }
+            case "end" -> {
                 if (player.hasPermission("bingo.settings"))
                     BingoGameManager.get().endGame(worldName);
-                break;
-
-            case "getcard":
-                if (activeGame != null)
-                {
+            }
+            case "getcard" -> {
+                if (activeGame != null) {
                     BingoPlayer participant = activeGame.getTeamManager().getBingoPlayer(player);
                     if (participant != null)
                         activeGame.returnCardToPlayer(participant);
                     return true;
                 }
-                break;
-
-            case "back":
-                if (activeGame != null)
-                {
-                    if (ConfigData.instance.teleportAfterDeath)
-                    {
+            }
+            case "back" -> {
+                if (activeGame != null) {
+                    if (ConfigData.instance.teleportAfterDeath) {
                         activeGame.teleportPlayerAfterDeath(player);
                         return true;
                     }
                 }
-                break;
-
-            case "deathmatch":
-                if (!player.hasPermission("bingo.settings"))
-                {
+            }
+            case "deathmatch" -> {
+                if (!player.hasPermission("bingo.settings")) {
                     return false;
-                }
-                else if (activeGame == null)
-                {
+                } else if (activeGame == null) {
                     new Message("command.bingo.no_deathmatch").color(ChatColor.RED).send(player);
                     return false;
                 }
 
                 activeGame.startDeathMatch(3);
                 return true;
-
-            case "creator":
-                if (BingoGameManager.get().doesGameWorldExist(worldName) && player.hasPermission("bingo.manager"))
-                {
+            }
+            case "creator" -> {
+                if (BingoGameManager.get().doesGameWorldExist(worldName) && player.hasPermission("bingo.manager")) {
                     BingoCreatorUI creatorUI = new BingoCreatorUI(null);
                     creatorUI.open(player);
                 }
-                break;
-
-            case "stats":
+            }
+            case "stats" -> { //todo don't create a new hologram instance every stats commands is called after a restart
                 Hologram holo = HologramManager.create("scoreboard", player.getLocation(), "LINE UNO", Message.PREFIX_STRING, "LINOS " + ChatColor.BOLD + "DOS is very long I can not see it because it goes into the sun lol");
 
                 String path = "logo.png";
-                try
-                {
+                try {
                     Hologram holo2 = HologramManager.createImage("logo", player.getLocation(), path, ChatColor.WHITE);
-                } catch (IOException e)
-                {
+                } catch (IOException e) {
                     Message.log("NO IMAGE AT " + path);
                     throw new RuntimeException(e);
                 }
-
-                if (!ConfigData.instance.savePlayerStatistics)
-                {
+                if (!ConfigData.instance.savePlayerStatistics) {
                     TextComponent text = new TextComponent("Player statistics are not being tracked at this moment!");
                     text.setColor(ChatColor.RED);
                     Message.sendDebug(text, player);
                     return true;
                 }
                 Message msg;
-                if (args.length > 1 && player.hasPermission("bingo.admin"))
-                {
+                if (args.length > 1 && player.hasPermission("bingo.admin")) {
                     msg = BingoStatsData.getPlayerStatsFormatted(args[1]);
-                }
-                else
-                {
+                } else {
                     msg = BingoStatsData.getPlayerStatsFormatted(player.getUniqueId());
                 }
                 msg.send(player);
                 return true;
-
-            case "destroy":
-                if (args.length > 1 && player.hasPermission("bingo.admin"))
-                {
+            }
+            case "destroy" -> {
+                if (args.length > 1 && player.hasPermission("bingo.admin")) {
                     HologramManager.destroy(args[1]);
                 }
-                break;
-
-            case "kit":
+            }
+            case "kit" -> {
                 if (args.length <= 2)
                     return false;
-
-                switch (args[1])
-                {
+                switch (args[1]) {
                     case "item":
                         givePlayerBingoItem(player, args[2]);
                         break;
 
                     case "add":
-                        if (args.length < 4)
-                        {
+                        if (args.length < 4) {
                             Message.sendDebug(ChatColor.RED + "Please specify a kit name for slot " + args[2], player);
                             return false;
                         }
@@ -188,11 +161,9 @@ public class BingoCommand implements CommandExecutor
                         removePlayerKit(args[2], player);
                         break;
                 }
-                break;
-
-            default:
-                new Message("command.use").color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | back | leave | deathmatch | creator]").send(player);
-                break;
+            }
+            default ->
+                    new Message("command.use").color(ChatColor.RED).arg("/bingo [getcard | stats | start | end | join | back | leave | deathmatch | creator]").send(player);
         }
 
         return false;
@@ -213,19 +184,19 @@ public class BingoCommand implements CommandExecutor
             }
         };
 
-        String kitName = "";
+        StringBuilder kitName = new StringBuilder();
         for (int i = 0; i < kitNameParts.size() - 1; i++)
         {
-            kitName += kitNameParts.get(i) + " ";
+            kitName.append(kitNameParts.get(i)).append(" ");
         }
-        kitName += kitNameParts.get(kitNameParts.size() - 1);
+        kitName.append(kitNameParts.get(kitNameParts.size() - 1));
 
-        if (!PlayerKit.assignCustomKit(kitName, kit, commandSender))
+        if (!PlayerKit.assignCustomKit(kitName.toString(), kit, commandSender))
         {
             BaseComponent msg = new TextComponent("");
             msg.setColor(ChatColor.RED);
             msg.addExtra("Cannot add custom kit ");
-            msg.addExtra(TranslationData.convertColors(kitName));
+            msg.addExtra(TranslationData.convertColors(kitName.toString()));
             msg.addExtra(" to slot " + slot + ", this slot already contains kit ");
             msg.addExtra(PlayerKit.getCustomKit(kit).getName());
             msg.addExtra(". Remove it first!");
@@ -236,7 +207,7 @@ public class BingoCommand implements CommandExecutor
             BaseComponent msg = new TextComponent("");
             msg.setColor(ChatColor.GREEN);
             msg.addExtra("Created custom kit ");
-            msg.addExtra(TranslationData.convertColors(kitName));
+            msg.addExtra(TranslationData.convertColors(kitName.toString()));
             msg.addExtra(" in slot " + slot + " from your inventory");
             Message.sendDebug(msg, commandSender);
         }
