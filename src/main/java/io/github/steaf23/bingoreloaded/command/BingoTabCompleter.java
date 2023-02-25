@@ -1,6 +1,5 @@
 package io.github.steaf23.bingoreloaded.command;
 
-import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;

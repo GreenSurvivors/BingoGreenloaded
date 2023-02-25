@@ -9,7 +9,9 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class PaginatedPickerMenu extends MenuInventory
 {
@@ -103,45 +105,36 @@ public abstract class PaginatedPickerMenu extends MenuInventory
 
         filteredItems.clear();
 
-        switch (filterType)
-        {
-            case MATERIAL:
-                for (InventoryItem item : items)
-                {
+        switch (filterType) {
+            case MATERIAL -> {
+                for (InventoryItem item : items) {
                     String name = item.getType().name().replace("_", " ");
-                    if (name.toLowerCase().contains(keywordFilter.toLowerCase()))
-                    {
+                    if (name.toLowerCase().contains(keywordFilter.toLowerCase())) {
                         filteredItems.add(item);
                     }
                 }
-                break;
-            case DISPLAY_NAME:
-                for (InventoryItem item : items)
-                {
-                    if (ChatColor.stripColor(item.getItemMeta().getDisplayName()).toLowerCase().contains(keywordFilter.toLowerCase()))
-                    {
+            }
+            case DISPLAY_NAME -> {
+                for (InventoryItem item : items) {
+                    if (ChatColor.stripColor(item.getItemMeta().getDisplayName()).toLowerCase().contains(keywordFilter.toLowerCase())) {
                         filteredItems.add(item);
                     }
                 }
-                break;
-            case LORE:
-                for (InventoryItem item : items)
-                {
-                    if (ChatColor.stripColor(item.getItemMeta().getLore().get(0)).toLowerCase().contains(keywordFilter.toLowerCase()))
-                    {
+            }
+            case LORE -> {
+                for (InventoryItem item : items) {
+                    if (ChatColor.stripColor(item.getItemMeta().getLore().get(0)).toLowerCase().contains(keywordFilter.toLowerCase())) {
                         filteredItems.add(item);
                     }
                 }
-                break;
-            case CUSTOM:
-                for (InventoryItem item : items)
-                {
-                    if (passesFilter(item))
-                    {
+            }
+            case CUSTOM -> {
+                for (InventoryItem item : items) {
+                    if (passesFilter(item)) {
                         filteredItems.add(item);
                     }
                 }
-                break;
+            }
         }
 
         currentPage = 0;

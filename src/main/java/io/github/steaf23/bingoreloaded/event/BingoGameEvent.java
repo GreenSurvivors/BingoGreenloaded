@@ -7,6 +7,5 @@ public enum BingoGameEvent
     END,
     // receive events
     ENDED,
-    STARTED,
-    ;
+    STARTED
 }

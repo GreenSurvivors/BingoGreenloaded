@@ -1,13 +1,10 @@
 package io.github.steaf23.bingoreloaded.item;
 
-import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.util.PDCHelper;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -18,6 +15,7 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @SerializableAs("Bingo.InventoryItem")
 public class InventoryItem extends ItemStack
@@ -47,7 +45,7 @@ public class InventoryItem extends ItemStack
         if (meta != null)
         {
             meta.setDisplayName(name);
-            if (description.length >= 1 && description[0] != "")
+            if (description.length >= 1 && !Objects.equals(description[0], ""))
                 meta.setLore(List.of(description));
             meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES);
             setItemMeta(meta);
@@ -117,7 +115,7 @@ public class InventoryItem extends ItemStack
         ItemMeta meta = getItemMeta();
         if (meta != null)
         {
-            if (description.length >= 1 && description[0] != "")
+            if (description.length >= 1 && !Objects.equals(description[0], ""))
                 meta.setLore(List.of(description));
             meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
             setItemMeta(meta);
@@ -182,6 +180,7 @@ public class InventoryItem extends ItemStack
         }};
     }
 
+    @NotNull
     public static InventoryItem deserialize(Map<String, Object> data)
     {
         ItemStack stack = (ItemStack)data.get("stack");

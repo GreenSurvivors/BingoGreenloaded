@@ -69,20 +69,19 @@ public class StatisticPickerUI extends OptionMenu
 
     public void addStatisticsToSave(@NotNull List<BingoStatistic> statistics)
     {
-        statistics.addAll(statistics);
+        //statistics.addAll(statistics);
     }
 
     private TaskPickerUI createEntityMenu(Statistic stat)
     {
         List<EntityType> entities = Arrays.stream(EntityType.values())
-                .filter(type -> BingoStatistic.isEntityValidForStatistic(type))
+                .filter(BingoStatistic::isEntityValidForStatistic)
                 .toList();
 
         List<BingoTask> tasks = new ArrayList<>();
         entities.forEach(e -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat, e)))));
 
-        TaskPickerUI picker = new TaskPickerUI(tasks, "Select Entities", this, listName);
-        return picker;
+        return new TaskPickerUI(tasks, "Select Entities", this, listName);
     }
 
     private TaskPickerUI createBlockMenu(Statistic stat)
@@ -102,8 +101,7 @@ public class StatisticPickerUI extends OptionMenu
                 tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat, m))));
             }
         }
-        TaskPickerUI picker = new TaskPickerUI(tasks, "Select Blocks", this, listName);
-        return picker;
+        return new TaskPickerUI(tasks, "Select Blocks", this, listName);
     }
 
     private TaskPickerUI createItemMenu(Statistic stat)
@@ -122,8 +120,7 @@ public class StatisticPickerUI extends OptionMenu
                 tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat, m))));
             }
         }
-        TaskPickerUI picker = new TaskPickerUI(tasks, "Select Items", this, listName);
-        return picker;
+        return new TaskPickerUI(tasks, "Select Items", this, listName);
     }
 
     public TaskPickerUI createTravelMenu()
@@ -132,8 +129,7 @@ public class StatisticPickerUI extends OptionMenu
         BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.TRAVEL)
                 .forEach(stat -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))))
                 );
-        TaskPickerUI picker = new TaskPickerUI(tasks, "Travel Statistics", this, listName);
-        return picker;
+        return new TaskPickerUI(tasks, "Travel Statistics", this, listName);
     }
 
     private TaskPickerUI createContainerMenu()
@@ -142,8 +138,7 @@ public class StatisticPickerUI extends OptionMenu
         BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.CONTAINER_INTERACT)
                 .forEach(stat -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))))
                 );
-        TaskPickerUI picker = new TaskPickerUI(tasks, "Container Statistics", this, listName);
-        return picker;
+        return new TaskPickerUI(tasks, "Container Statistics", this, listName);
     }
 
     private TaskPickerUI createBlockInteractMenu()
@@ -152,8 +147,7 @@ public class StatisticPickerUI extends OptionMenu
         BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.BLOCK_INTERACT)
                 .forEach(stat -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))))
                 );
-        TaskPickerUI picker = new TaskPickerUI(tasks, "Select Blocks", this, listName);
-        return picker;
+        return new TaskPickerUI(tasks, "Select Blocks", this, listName);
     }
 
     private TaskPickerUI createDamageMenu()
@@ -162,8 +156,7 @@ public class StatisticPickerUI extends OptionMenu
         BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.DAMAGE)
                 .forEach(stat -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))))
                 );
-        TaskPickerUI picker = new TaskPickerUI(tasks, "Damage Statistics", this, listName);
-        return picker;
+        return new TaskPickerUI(tasks, "Damage Statistics", this, listName);
     }
 
     private TaskPickerUI createMiscMenu()
@@ -183,8 +176,7 @@ public class StatisticPickerUI extends OptionMenu
                     };
                 }
                 );
-        TaskPickerUI picker = new TaskPickerUI(tasks, "Other Statistics", this, listName);
-        return picker;
+        return new TaskPickerUI(tasks, "Other Statistics", this, listName);
     }
 
 }

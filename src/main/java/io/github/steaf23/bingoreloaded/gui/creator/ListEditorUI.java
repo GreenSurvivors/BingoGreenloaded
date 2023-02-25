@@ -4,7 +4,9 @@ import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.MenuInventory;
 import io.github.steaf23.bingoreloaded.gui.OptionMenu;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
-import io.github.steaf23.bingoreloaded.item.tasks.*;
+import io.github.steaf23.bingoreloaded.item.tasks.AdvancementTask;
+import io.github.steaf23.bingoreloaded.item.tasks.BingoTask;
+import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
 import io.github.steaf23.bingoreloaded.util.GUIPreset5x9;
 import net.md_5.bungee.api.ChatColor;
@@ -58,8 +60,7 @@ public class ListEditorUI extends OptionMenu
 
     public MenuInventory createStatisticsPicker()
     {
-        MenuInventory statistics = new StatisticPickerUI(this, listName);
-        return statistics;
+        return new StatisticPickerUI(this, listName);
     }
 
     private static List<InventoryItem> getItemOptions()
@@ -84,8 +85,7 @@ public class ListEditorUI extends OptionMenu
             }
         }
 
-        TaskPickerUI itemPicker = new TaskPickerUI(tasks,"Select Items", this, listName);
-        return itemPicker;
+        return new TaskPickerUI(tasks,"Select Items", this, listName);
     }
 
     private MenuInventory createAdvancementPicker()
@@ -104,7 +104,6 @@ public class ListEditorUI extends OptionMenu
             tasks.add(new BingoTask(task));
         }
 
-        TaskPickerUI advancementPicker = new TaskPickerUI(tasks, "Add Advancements", this, listName);
-        return advancementPicker;
+        return new TaskPickerUI(tasks, "Add Advancements", this, listName);
     }
 }

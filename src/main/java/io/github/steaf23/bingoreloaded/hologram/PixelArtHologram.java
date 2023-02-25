@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.hologram;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.hologram.Hologram;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 
@@ -29,18 +28,18 @@ public class PixelArtHologram extends Hologram
         int width = Math.min(16, img.getWidth());
         int height = Math.min(16, img.getHeight());
         for (int row = 0; row < height; row++) {
-            String line = "";
+            StringBuilder line = new StringBuilder();
             for (int col = 0; col < width; col++) {
                 if (((img.getRGB(col, row) >> 24) & 0xff) != 0)
                 {
-                    line += ChatColor.of("#" + Integer.toHexString((img.getRGB(col, row) & 0xffffff) | 0x1000000).substring(1)) + "█";
+                    line.append(ChatColor.of("#" + Integer.toHexString((img.getRGB(col, row) & 0xffffff) | 0x1000000).substring(1))).append("█");
                 }
                 else
                 {
-                    line += "  ";
+                    line.append("  ");
                 }
             }
-            lines.add(line);
+            lines.add(line.toString());
         }
 
         return lines.toArray(new String[]{});

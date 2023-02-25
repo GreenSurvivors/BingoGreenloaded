@@ -1,6 +1,9 @@
 package io.github.steaf23.bingoreloaded.command;
 
-import io.github.steaf23.bingoreloaded.*;
+import io.github.steaf23.bingoreloaded.BingoGame;
+import io.github.steaf23.bingoreloaded.BingoGameManager;
+import io.github.steaf23.bingoreloaded.BingoGamemode;
+import io.github.steaf23.bingoreloaded.BingoSettings;
 import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.gui.cards.CardSize;
@@ -165,14 +168,10 @@ public class AutoBingoCommand implements CommandExecutor
         try
         {
             settings.mode = BingoGamemode.fromDataString(gamemode);
-            switch (cardSize)
-            {
-                case "3":
-                    settings.cardSize = CardSize.X3;
-                    break;
-                default:
-                    settings.cardSize = CardSize.X5;
-                    break;
+            if (cardSize.equals("3")) {
+                settings.cardSize = CardSize.X3;
+            } else {
+                settings.cardSize = CardSize.X5;
             }
         }
         catch (IllegalArgumentException e)
@@ -253,14 +252,7 @@ public class AutoBingoCommand implements CommandExecutor
 
     public boolean setCountdownGameDuration(BingoSettings settings, String enableCountdown, String duration)
     {
-        if (enableCountdown.equals("true"))
-        {
-            settings.enableCountdown = true;
-        }
-        else
-        {
-            settings.enableCountdown = false;
-        }
+        settings.enableCountdown = enableCountdown.equals("true");
 
         int gameDuration = toInt(duration, 0);
         if (gameDuration > 0)
@@ -288,7 +280,7 @@ public class AutoBingoCommand implements CommandExecutor
             return false;
         }
 
-        if (teamName.toLowerCase().equals("none"))
+        if (teamName.equalsIgnoreCase("none"))
         {
             BingoPlayer bPlayer = game.getTeamManager().getBingoPlayer(player);
             if (bPlayer == null)

@@ -12,8 +12,8 @@ import java.util.Map;
 public class BingoGameManager
 {
     private static BingoGameManager INSTANCE;
-    private Map<String, BingoSettings> templates;
-    private Map<String, BingoGame> activeGames;
+    private final Map<String, BingoSettings> templates;
+    private final Map<String, BingoGame> activeGames;
     private final BingoEventListener listener;
 
     public static BingoGameManager get()

@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.event.managers;
 
 import io.github.steaf23.bingoreloaded.BingoGameManager;
 import io.github.steaf23.bingoreloaded.gui.MenuInventory;
-import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;

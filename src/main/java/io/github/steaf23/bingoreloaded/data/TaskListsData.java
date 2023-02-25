@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.item.tasks.TaskData;
-import io.github.steaf23.bingoreloaded.util.Message;
 
 import java.util.HashSet;
 import java.util.List;
@@ -22,8 +21,7 @@ public class TaskListsData
         if (!data.getConfig().contains(listName + ".tasks"))
             return new HashSet<>();
 
-        Set<TaskData> taskList = (Set<TaskData>)data.getConfig().getList(listName + ".tasks").stream().collect(Collectors.toSet());
-        return taskList;
+        return (Set<TaskData>)data.getConfig().getList(listName + ".tasks").stream().collect(Collectors.toSet());
     }
 
     public static int getTaskCount(String listName)

@@ -24,7 +24,7 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
         OTHER,
     }
 
-    private static Set<EntityType> validEntityTypes = getValidEntityTypes();
+    private static final Set<EntityType> validEntityTypes = getValidEntityTypes();
 
     public BingoStatistic(Statistic stat)
     {
@@ -61,7 +61,7 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
         Stream<Material> mats = Arrays.stream(Material.values())
                 .filter(mat -> mat.name().contains("_SPAWN_EGG"));
         mats.forEach(mat -> {
-            if (mat.name() == "MOOSHROOM_SPAWN_EGG")
+            if (mat.name().equals("MOOSHROOM_SPAWN_EGG"))
             {
                 types.add(EntityType.MUSHROOM_COW);
             }
@@ -308,8 +308,7 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
                     return Material.DRAGON_EGG;
                 }
 
-                Material spawnEgg = Material.valueOf(statistic.entityType.name() + "_SPAWN_EGG");
-                return spawnEgg;
+                return Material.valueOf(statistic.entityType.name() + "_SPAWN_EGG");
             }
         }
 

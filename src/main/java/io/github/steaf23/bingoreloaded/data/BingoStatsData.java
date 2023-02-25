@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.util.Message;
-import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -23,7 +22,7 @@ public class BingoStatsData
         }
 
         if (statType == BingoStatType.PLAYED)
-            return getPlayerStat(playerId, statType.WINS) + getPlayerStat(playerId, statType.LOSSES);
+            return getPlayerStat(playerId, BingoStatType.WINS) + getPlayerStat(playerId, BingoStatType.LOSSES);
 
         if (statType.idx < 0)
             return 0;

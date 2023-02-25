@@ -278,14 +278,7 @@ public class TeamManager
         if(bTeam == null)
         {
             FlexColor color = FlexColor.fromName(team.getName());
-            if (color != null)
-            {
-                bTeam = new BingoTeam(team, null, color);
-            }
-            else
-            {
-                bTeam = new BingoTeam(team, null, FlexColor.WHITE);
-            }
+            bTeam = new BingoTeam(team, null, Objects.requireNonNullElse(color, FlexColor.WHITE));
 
             activeTeams.add(bTeam);
         }

@@ -21,7 +21,7 @@ public class PDCHelper
 
     public static boolean getBoolean(PersistentDataContainer container, String key, boolean def)
     {
-        return container.getOrDefault(createKey(key), PersistentDataType.BYTE, (byte)(def ? 1 : 0)) == 0 ? false : true;
+        return container.getOrDefault(createKey(key), PersistentDataType.BYTE, (byte) (def ? 1 : 0)) != 0;
     }
 
     public static boolean hasBoolean(PersistentDataContainer container, String key)

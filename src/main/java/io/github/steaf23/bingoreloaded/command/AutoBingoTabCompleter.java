@@ -7,7 +7,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,35 +40,32 @@ public class AutoBingoTabCompleter implements TabCompleter
             case 2:
                 return List.of("create", "destroy", "start", "end","kit", "effects", "card", "duration", "team");
             case 3:
-                switch (args[1])
-                {
-                    case "kit":
-                        return List.of("normal", "overpowered", "reloaded", "hardcore", "custom1", "custom2", "custom3", "custom4", "custom5");
-                    case "effects":
-                        return List.of("all", "none", "water_breathing", "night_vision", "fire_resistance", "no_fall_damage", "card_speed");
-                    case "card":
-                        return BingoCardsData.getCardNames().stream().toList();
-                    case "start":
-                        return List.of("regular", "lockout", "complete");
-                    default:
-                        return null;
-                }
+                return switch (args[1]) {
+                    case "kit" ->
+                            List.of("normal", "overpowered", "reloaded", "hardcore", "custom1", "custom2", "custom3", "custom4", "custom5");
+                    case "effects" ->
+                            List.of("all", "none", "water_breathing", "night_vision", "fire_resistance", "no_fall_damage", "card_speed");
+                    case "card" -> BingoCardsData.getCardNames().stream().toList();
+                    case "start" -> List.of("regular", "lockout", "complete");
+                    default -> null;
+                };
             case 4:
-                switch (args[1])
-                {
-                    case "effects":
-                        if (args[3].equals("all") || args[3].equals("none"))
-                        {
+                switch (args[1]) {
+                    case "effects" -> {
+                        if (args[3].equals("all") || args[3].equals("none")) {
                             return null;
                         }
                         return List.of("true", "false");
-                    case "start":
+                    }
+                    case "start" -> {
                         return List.of("3", "5");
-                    case "team":
+                    }
+                    case "team" -> {
                         FlexColor[] colors = FlexColor.values();
                         List<String> list = new ArrayList<>(Arrays.stream(colors).map(c -> c.name).toList());
                         list.add(0, "none");
                         return list;
+                    }
                 }
             default:
                 return null;

@@ -119,6 +119,7 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Coun
         return Objects.hash(statistic);
     }
 
+    @NotNull
     @Override
     public PersistentDataContainer pdcSerialize(PersistentDataContainer stream)
     {
@@ -151,8 +152,7 @@ public record StatisticTask(BingoStatistic statistic, int count) implements Coun
         }
         int count = pdc.getOrDefault(BingoTask.getTaskDataKey("count"), PersistentDataType.INTEGER, 1);
 
-        StatisticTask task = new StatisticTask(new BingoStatistic(stat, entity, item), count);
-        return task;
+        return new StatisticTask(new BingoStatistic(stat, entity, item), count);
     }
 
     @NotNull

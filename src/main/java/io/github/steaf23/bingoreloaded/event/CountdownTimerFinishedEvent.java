@@ -1,8 +1,7 @@
 package io.github.steaf23.bingoreloaded.event;
 
-import io.github.steaf23.bingoreloaded.util.CountdownTimer;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public class CountdownTimerFinishedEvent extends BingoEvent
 {
@@ -14,7 +13,7 @@ public class CountdownTimerFinishedEvent extends BingoEvent
     }
 
     @Override
-    public HandlerList getHandlers()
+    public @NotNull HandlerList getHandlers()
     {
         return HANDLERS;
     }

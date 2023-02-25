@@ -17,6 +17,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 // Message builder class to construct and send messages to the player
 // Also used for debugging and console logging
@@ -51,7 +52,7 @@ public class Message
 
     public Message(String translatePath)
     {
-        if (translatePath != "")
+        if (!Objects.equals(translatePath, ""))
         {
             this.raw = TranslationData.translate(translatePath);
         }

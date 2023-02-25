@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.player;
 
 import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
-
 import io.github.steaf23.bingoreloaded.item.ItemText;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
 import net.md_5.bungee.api.ChatColor;
@@ -17,7 +16,7 @@ public class BingoTeam
     public Set<BingoPlayer> players;
     public boolean outOfTheGame = false;
 
-    private FlexColor color;
+    private final FlexColor color;
 
     public BingoTeam(Team team, BingoCard card, FlexColor color)
     {

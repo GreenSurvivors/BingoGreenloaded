@@ -6,14 +6,12 @@ import io.github.steaf23.bingoreloaded.data.YmlDataManager;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.util.FlexColor;
-import io.github.steaf23.bingoreloaded.util.Message;
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.checkerframework.checker.units.qual.A;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
