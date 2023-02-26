@@ -134,19 +134,11 @@ public enum PlayerKit
             }
             case CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5 -> {
                 CustomKit kit = customKitData.getConfig().getSerializable(configName, CustomKit.class);
-                if (kit != null)
-                {
-                    items = kit.items();
-                }
-                else
-                {
-                    items = new ArrayList<>();
-                }
-                return items;
+
+                return  kit == null ? new ArrayList<>() : kit.items();
             }
             default -> {
-                items = new ArrayList<>();
-                return items;
+                return new ArrayList<>();
             }
         }
     }

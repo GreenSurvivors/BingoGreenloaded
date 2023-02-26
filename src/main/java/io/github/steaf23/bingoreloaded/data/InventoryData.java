@@ -82,7 +82,7 @@ public class InventoryData {
      * @param identifier the identifier what inventory should be saved.
      */
     public void savePlayerData(Player player, String identifier) {
-        String fileName = "inventory_regions" + File.separator + player.getUniqueId() + ".yml";
+        String fileName = "saved_inventories" + File.separator + player.getUniqueId() + ".yml";
         File file = new File(BingoReloaded.get().getDataFolder(), fileName);
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 
@@ -129,7 +129,7 @@ public class InventoryData {
      * @param identifier the identifier what inventory should be loaded.
      */
     public void loadPlayerData(Player player, String identifier) {
-        String fileName = "inventory_regions" + File.separator + player.getUniqueId() + ".yml";
+        String fileName = "saved_inventories" + File.separator + player.getUniqueId() + ".yml";
         File file = new File(BingoReloaded.get().getDataFolder(), fileName);
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 
@@ -202,7 +202,7 @@ public class InventoryData {
      * @param player player whose inventory identifier is about to be loaded
      */
     public String loadIdentifier(Player player) {
-        File file = new File(BingoReloaded.get().getDataFolder(), "inventory_regions" + File.separator + player.getUniqueId() + ".yml");
+        File file = new File(BingoReloaded.get().getDataFolder(), "saved_inventories" + File.separator + player.getUniqueId() + ".yml");
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 
         //get active inventory identifier
