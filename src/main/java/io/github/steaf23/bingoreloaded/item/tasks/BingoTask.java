@@ -65,7 +65,7 @@ public class BingoTask
         {
             this.type = TaskType.STATISTIC;
             this.nameColor = ChatColor.LIGHT_PURPLE;
-            this.material = BingoStatistic.getMaterial(statTask.statistic());
+            this.material = BingoStaticStatistic.getMaterial(statTask.statistic());
             this.glowing = true;
         }
         else

@@ -4,6 +4,7 @@ import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.gui.MenuInventory;
 import io.github.steaf23.bingoreloaded.gui.OptionMenu;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
+import io.github.steaf23.bingoreloaded.item.tasks.BingoStaticStatistic;
 import io.github.steaf23.bingoreloaded.item.tasks.BingoStatistic;
 import io.github.steaf23.bingoreloaded.item.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.item.tasks.StatisticTask;
@@ -32,6 +33,7 @@ public class StatisticPickerUI extends OptionMenu
     {
         super("Pick Statistics", parent);
         this.listName = listName;
+
         addMenuOption(new InventoryItem(GUIPreset6x9.TWELVE.positions[0], Material.FEATHER, TITLE_PREFIX + "Travel"), createTravelMenu());
         addMenuOption(new InventoryItem(GUIPreset6x9.TWELVE.positions[1], Material.DIAMOND_SWORD, TITLE_PREFIX + "Kill"), createEntityMenu(Statistic.KILL_ENTITY));
         addMenuOption(new InventoryItem(GUIPreset6x9.TWELVE.positions[2], Material.SKELETON_SKULL, TITLE_PREFIX + "Get Killed"), createEntityMenu(Statistic.ENTITY_KILLED_BY));
@@ -75,11 +77,11 @@ public class StatisticPickerUI extends OptionMenu
     private TaskPickerUI createEntityMenu(Statistic stat)
     {
         List<EntityType> entities = Arrays.stream(EntityType.values())
-                .filter(BingoStatistic::isEntityValidForStatistic)
+                .filter(BingoStaticStatistic::isEntityValidForStatistic)
                 .toList();
 
         List<BingoTask> tasks = new ArrayList<>();
-        entities.forEach(e -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat, e)))));
+        entities.forEach(e -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat, e, null)))));
 
         return new TaskPickerUI(tasks, "Select Entities", this, listName);
     }
@@ -98,7 +100,7 @@ public class StatisticPickerUI extends OptionMenu
         {
             if (!m.name().contains("LEGACY_") && !glassPanes.contains(m) && m.isBlock() && m.isItem() && !m.isAir())
             {
-                tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat, m))));
+                tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat, null, m))));
             }
         }
         return new TaskPickerUI(tasks, "Select Blocks", this, listName);
@@ -117,7 +119,7 @@ public class StatisticPickerUI extends OptionMenu
         {
             if (!m.name().contains("LEGACY_") && !glassPanes.contains(m) && m.isItem() && !m.isAir())
             {
-                tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat, m))));
+                tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat, null, m))));
             }
         }
         return new TaskPickerUI(tasks, "Select Items", this, listName);
@@ -126,8 +128,9 @@ public class StatisticPickerUI extends OptionMenu
     public TaskPickerUI createTravelMenu()
     {
         List<BingoTask> tasks = new ArrayList<>();
-        BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.TRAVEL)
-                .forEach(stat -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))))
+
+        BingoStaticStatistic.getStatisticsOfCategory(BingoStaticStatistic.StatisticCategory.TRAVEL)
+                .forEach(stat -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat, null, null))))
                 );
         return new TaskPickerUI(tasks, "Travel Statistics", this, listName);
     }
@@ -135,8 +138,8 @@ public class StatisticPickerUI extends OptionMenu
     private TaskPickerUI createContainerMenu()
     {
         List<BingoTask> tasks = new ArrayList<>();
-        BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.CONTAINER_INTERACT)
-                .forEach(stat -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))))
+        BingoStaticStatistic.getStatisticsOfCategory(BingoStaticStatistic.StatisticCategory.CONTAINER_INTERACT)
+                .forEach(stat -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat, null, null))))
                 );
         return new TaskPickerUI(tasks, "Container Statistics", this, listName);
     }
@@ -144,8 +147,8 @@ public class StatisticPickerUI extends OptionMenu
     private TaskPickerUI createBlockInteractMenu()
     {
         List<BingoTask> tasks = new ArrayList<>();
-        BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.BLOCK_INTERACT)
-                .forEach(stat -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))))
+        BingoStaticStatistic.getStatisticsOfCategory(BingoStaticStatistic.StatisticCategory.BLOCK_INTERACT)
+                .forEach(stat -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat, null, null))))
                 );
         return new TaskPickerUI(tasks, "Select Blocks", this, listName);
     }
@@ -153,8 +156,8 @@ public class StatisticPickerUI extends OptionMenu
     private TaskPickerUI createDamageMenu()
     {
         List<BingoTask> tasks = new ArrayList<>();
-        BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.DAMAGE)
-                .forEach(stat -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))))
+        BingoStaticStatistic.getStatisticsOfCategory(BingoStaticStatistic.StatisticCategory.DAMAGE)
+                .forEach(stat -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat, null, null))))
                 );
         return new TaskPickerUI(tasks, "Damage Statistics", this, listName);
     }
@@ -162,7 +165,7 @@ public class StatisticPickerUI extends OptionMenu
     private TaskPickerUI createMiscMenu()
     {
         List<BingoTask> tasks = new ArrayList<>();
-        BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.OTHER)
+        BingoStaticStatistic.getStatisticsOfCategory(BingoStaticStatistic.StatisticCategory.OTHER)
                 .forEach(stat ->
                 {
                     // Disable certain statistics that wouldn't make sense have in a bingo minigame
@@ -172,8 +175,8 @@ public class StatisticPickerUI extends OptionMenu
                                 TIME_SINCE_REST,
                                 TOTAL_WORLD_TIME,
                                 LEAVE_GAME -> {}
-                        default -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))));
-                    };
+                        default -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat, null, null))));
+                    }
                 }
                 );
         return new TaskPickerUI(tasks, "Other Statistics", this, listName);
