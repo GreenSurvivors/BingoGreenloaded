@@ -7,11 +7,10 @@ import io.github.steaf23.bingoreloaded.data.BingoCardsData;
 import io.github.steaf23.bingoreloaded.data.TaskListsData;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.event.BingoCardTaskCompleteEvent;
+import io.github.steaf23.bingoreloaded.event.BingoStatisticCompletedEvent;
 import io.github.steaf23.bingoreloaded.gui.CardMenu;
-import io.github.steaf23.bingoreloaded.item.tasks.AdvancementTask;
-import io.github.steaf23.bingoreloaded.item.tasks.BingoTask;
-import io.github.steaf23.bingoreloaded.item.tasks.ItemTask;
-import io.github.steaf23.bingoreloaded.item.tasks.TaskData;
+import io.github.steaf23.bingoreloaded.item.tasks.*;
+import io.github.steaf23.bingoreloaded.item.tasks.statistics.BingoStatistic;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import org.bukkit.Bukkit;
@@ -23,6 +22,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -230,6 +230,9 @@ public class BingoCard
         }
 
         BingoReloaded.scheduleTask(task -> {
+            if (!game.isInProgress())
+                return;
+
             for (ItemStack stack : p.getInventory().getContents())
             {
                 if (stack != null)
@@ -274,9 +277,46 @@ public class BingoCard
         });
     }
 
+    private ItemStack completeItemSlot(ItemStack item, BingoPlayer player, BingoGame game)
+    {
+        if (player.gamePlayer().isEmpty())
+            return item;
+
+        if (game.getSettings().deathMatchItem != null)
+        {
+            if (item.getType() == game.getSettings().deathMatchItem)
+            {
+                var slotEvent = new BingoCardTaskCompleteEvent(null, player, true);
+                Bukkit.getPluginManager().callEvent(slotEvent);
+            }
+            return item;
+        }
+
+        for (BingoTask task : tasks)
+        {
+            if (task.type != BingoTask.TaskType.ITEM)
+                continue;
+
+            ItemTask data = (ItemTask)task.data;
+            if (data.material().equals(item.getType()) && data.count() <= item.getAmount())
+            {
+                if (!task.complete(player, game.getGameTime()))
+                {
+                    continue;
+                }
+                item.setAmount(item.getAmount() - data.getCount());
+                player.gamePlayer().get().updateInventory();
+                var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.getTeam()));
+                Bukkit.getPluginManager().callEvent(slotEvent);
+                break;
+            }
+        }
+        return item;
+    }
+
     public void onPlayerAdvancementDone(final PlayerAdvancementDoneEvent event, final BingoPlayer player, final BingoGame game)
     {
-        if (player.team().outOfTheGame)
+        if (player.getTeam().outOfTheGame)
             return;
 
         if (game.getSettings().deathMatchItem != null)
@@ -295,6 +335,60 @@ public class BingoCard
                     continue;
 
                 var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.team()));
+                Bukkit.getPluginManager().callEvent(slotEvent);
+                break;
+            }
+        }
+    }
+
+    public void onPlayerStatIncrement(final PlayerStatisticIncrementEvent event, final BingoPlayer player, final BingoGame game)
+    {
+
+        if (player.getTeam().outOfTheGame)
+            return;
+
+        if (game.getSettings().deathMatchItem != null)
+            return;
+
+        for (BingoTask task : tasks)
+        {
+            if (task.type != BingoTask.TaskType.STATISTIC)
+                continue;
+
+            StatisticTask data = (StatisticTask)task.data;
+            if (data.statistic().equals(new BingoStatistic(event.getStatistic(), event.getEntityType(), event.getMaterial())) &&
+                    data.getCount() == event.getNewValue())
+            {
+                if (!task.complete(player, game.getGameTime()))
+                    continue;
+
+                var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.getTeam()));
+                Bukkit.getPluginManager().callEvent(slotEvent);
+                break;
+            }
+        }
+    }
+
+    public void onPlayerStatisticCompleted(final BingoStatisticCompletedEvent event, final BingoPlayer player, final BingoGame game)
+    {
+        if (player.getTeam().outOfTheGame)
+            return;
+
+        if (game.getSettings().deathMatchItem != null)
+            return;
+
+        for (BingoTask task : tasks)
+        {
+            if (task.type != BingoTask.TaskType.STATISTIC)
+                continue;
+
+            StatisticTask data = (StatisticTask)task.data;
+            if (data.statistic().equals(event.stat))
+            {
+                if (!task.complete(player, game.getGameTime()))
+                    continue;
+
+                var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.getTeam()));
                 Bukkit.getPluginManager().callEvent(slotEvent);
                 break;
             }

@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.item.tasks;
+package io.github.steaf23.bingoreloaded.item.tasks.statistics;
 
 import org.bukkit.Material;
 import org.bukkit.Statistic;
@@ -42,5 +42,15 @@ public record BingoStatistic (@NotNull Statistic stat, @Nullable EntityType enti
             material = Material.valueOf((String)data.get("item"));
 
         return new BingoStatistic(stat, entity, material);
+    }
+
+    public boolean hasMaterialComponent()
+    {
+        return materialType != null;
+    }
+
+    public boolean hasEntityComponent()
+    {
+        return entityType != null;
     }
 }
