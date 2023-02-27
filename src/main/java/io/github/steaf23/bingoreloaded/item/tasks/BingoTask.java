@@ -3,7 +3,7 @@ package io.github.steaf23.bingoreloaded.item.tasks;
 import io.github.steaf23.bingoreloaded.data.TranslationData;
 import io.github.steaf23.bingoreloaded.item.InventoryItem;
 import io.github.steaf23.bingoreloaded.item.ItemText;
-import io.github.steaf23.bingoreloaded.item.tasks.statistics.BingoStatistic;
+import io.github.steaf23.bingoreloaded.item.tasks.statistics.BingoStaticStatistic;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.util.GameTimer;
 import io.github.steaf23.bingoreloaded.util.Message;

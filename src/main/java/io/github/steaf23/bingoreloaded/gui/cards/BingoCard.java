@@ -394,41 +394,4 @@ public class BingoCard
             }
         }
     }
-
-    private ItemStack completeItemSlot(ItemStack item, BingoPlayer player, BingoGame game)
-    {
-        if (player.gamePlayer().isEmpty())
-            return item;
-
-        if (game.getSettings().deathMatchItem != null)
-        {
-            if (item.getType() == game.getSettings().deathMatchItem)
-            {
-                var slotEvent = new BingoCardTaskCompleteEvent(null, player, true);
-                Bukkit.getPluginManager().callEvent(slotEvent);
-            }
-            return item;
-        }
-
-        for (BingoTask task : tasks)
-        {
-            if (task.type != BingoTask.TaskType.ITEM)
-                continue;
-
-            ItemTask data = (ItemTask)task.data;
-            if (data.material().equals(item.getType()) && data.count() <= item.getAmount())
-            {
-                if (!task.complete(player, game.getGameTime()))
-                {
-                    continue;
-                }
-                item.setAmount(item.getAmount() - data.getCount());
-                player.gamePlayer().get().updateInventory();
-                var slotEvent = new BingoCardTaskCompleteEvent(task, player, hasBingo(player.getTeam()));
-                Bukkit.getPluginManager().callEvent(slotEvent);
-                break;
-            }
-        }
-        return item;
-    }
 }

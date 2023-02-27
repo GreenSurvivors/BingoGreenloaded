@@ -1,4 +1,4 @@
-package io.github.steaf23.bingoreloaded.item.tasks;
+package io.github.steaf23.bingoreloaded.item.tasks.statistics;
 
 import org.bukkit.Material;
 import org.bukkit.Statistic;

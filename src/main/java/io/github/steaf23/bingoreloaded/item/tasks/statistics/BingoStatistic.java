@@ -28,6 +28,25 @@ public record BingoStatistic (@NotNull Statistic stat, @Nullable EntityType enti
         return result;
     }
 
+    /**
+     * @return True if this statistic is processed by the PlayerStatisticIncrementEvent
+     */
+    public boolean isStatisticProcessed()
+    {
+        if (getCategory() == BingoStaticStatistic.StatisticCategory.TRAVEL)
+            return false;
+
+        return switch (stat)
+                {
+                    case PLAY_ONE_MINUTE,
+                            SNEAK_TIME,
+                            TOTAL_WORLD_TIME,
+                            TIME_SINCE_REST,
+                            TIME_SINCE_DEATH -> false;
+                    default -> true;
+                };
+    }
+
     public static BingoStatistic deserialize(@NotNull Map<String, Object> data) {
         Statistic stat = Statistic.valueOf((String)data.get("statistic"));
 

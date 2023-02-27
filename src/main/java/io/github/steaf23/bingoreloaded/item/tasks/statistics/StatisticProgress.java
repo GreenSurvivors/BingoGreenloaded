@@ -2,7 +2,6 @@ package io.github.steaf23.bingoreloaded.item.tasks.statistics;
 
 import io.github.steaf23.bingoreloaded.event.BingoStatisticCompletedEvent;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
-import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -19,7 +18,7 @@ public class StatisticProgress
         this.statistic = statistic;
         this.player = player;
         this.progressLeft = targetScore;
-        if (statistic.getCategory() == BingoStatistic.StatisticCategory.TRAVEL)
+        if (statistic.getCategory() == BingoStaticStatistic.StatisticCategory.TRAVEL)
         {
             progressLeft *= 1000;
         }
