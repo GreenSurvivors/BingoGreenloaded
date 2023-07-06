@@ -2,40 +2,20 @@ package io.github.steaf23.bingoreloaded.util;
 
 import java.util.function.Consumer;
 
-public abstract class GameTimer
-{
+public abstract class GameTimer {
     protected Consumer<Long> notifier;
-    private long time;
     protected String worldName;
+    private long time;
 
-    public abstract void start();
-    public abstract long pause();
-    public abstract long stop();
-    public abstract Message getTimeDisplayMessage();
-
-    public GameTimer(String worldName)
-    {
+    public GameTimer(String worldName) {
         this.worldName = worldName;
     }
-    public long getTime()
-    {
-        return time;
-    }
 
-    protected void updateTime(long newTime)
-    {
-        time = newTime;
-        notifier.accept(newTime);
-    }
-
-    public static String getTimeAsString(long seconds)
-    {
+    public static String getTimeAsString(long seconds) {
         seconds = Math.max(seconds, 0);
-        if (seconds >= 60)
-        {
+        if (seconds >= 60) {
             long minutes = (seconds / 60) % 60;
-            if (seconds >= 3600)
-            {
+            if (seconds >= 3600) {
                 long hours = seconds / 3600;
                 return String.format("%02d:%02d:%02d", hours, minutes, seconds % 60);
             }
@@ -44,8 +24,24 @@ public abstract class GameTimer
         return String.format("00:%02d", seconds % 60);
     }
 
-    public void setNotifier(Consumer<Long> notifier)
-    {
+    public abstract void start();
+
+    public abstract long pause();
+
+    public abstract long stop();
+
+    public abstract Message getTimeDisplayMessage();
+
+    public long getTime() {
+        return time;
+    }
+
+    protected void updateTime(long newTime) {
+        time = newTime;
+        notifier.accept(newTime);
+    }
+
+    public void setNotifier(Consumer<Long> notifier) {
         this.notifier = notifier;
     }
 }

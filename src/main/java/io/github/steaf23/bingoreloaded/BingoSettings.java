@@ -12,8 +12,8 @@ import org.bukkit.Material;
 
 import java.util.EnumSet;
 
-public class BingoSettings
-{
+public class BingoSettings {
+    private final String worldName;
     public String card = ConfigData.instance.selectedCard;
     public BingoGamemode mode;
     public CardSize cardSize;
@@ -25,10 +25,7 @@ public class BingoSettings
     public boolean enableCountdown;
     public int countdownGameDuration;
 
-    private final String worldName;
-
-    public BingoSettings(String worldName)
-    {
+    public BingoSettings(String worldName) {
         this.worldName = worldName;
 
         this.card = ConfigData.instance.selectedCard;
@@ -42,16 +39,13 @@ public class BingoSettings
         this.enableCountdown = false;
     }
 
-    public Material generateDeathMatchItem()
-    {
+    public Material generateDeathMatchItem() {
         return BingoCardsData.getRandomItemTask(card).material();
     }
 
-    public void setKit(PlayerKit kit)
-    {
+    public void setKit(PlayerKit kit) {
         this.kit = kit;
-        String kitName = switch (kit)
-        {
+        String kitName = switch (kit) {
             case CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5 -> {
                 CustomKit customKit = PlayerKit.getCustomKit(kit);
                 yield customKit == null ? kit.displayName : customKit.getName();
@@ -61,8 +55,7 @@ public class BingoSettings
         new Message("game.settings.kit_selected").color(ChatColor.GOLD).arg(ChatColor.RESET + kitName).sendAll(worldName);
     }
 
-    public void setEffects(EnumSet<EffectOptionFlags> effects)
-    {
+    public void setEffects(EnumSet<EffectOptionFlags> effects) {
         this.effects = effects;
         new Message("game.settings.effects_selected").color(ChatColor.GOLD).sendAll(worldName);
     }

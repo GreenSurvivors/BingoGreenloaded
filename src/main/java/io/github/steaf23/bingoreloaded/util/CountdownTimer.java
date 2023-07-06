@@ -6,43 +6,36 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class CountdownTimer extends GameTimer
-{
-    private int startTime = 0;
+public class CountdownTimer extends GameTimer {
     private static BukkitRunnable runnable;
-    private int medThreshold;
-    private int lowThreshold;
+    private int startTime = 0;
+    private final int medThreshold;
+    private final int lowThreshold;
 
-    public CountdownTimer(int seconds, String worldName)
-    {
+    public CountdownTimer(int seconds, String worldName) {
         this(seconds, 0, 0, worldName);
     }
 
-    public CountdownTimer(int seconds, int medThreshold, int lowThreshold, String worldName)
-    {
+    public CountdownTimer(int seconds, int medThreshold, int lowThreshold, String worldName) {
         super(worldName);
         this.medThreshold = medThreshold;
         this.lowThreshold = lowThreshold;
         this.startTime = seconds;
     }
 
-    public int getStartTime()
-    {
+    public int getStartTime() {
         return startTime;
     }
 
     @Override
-    public void start()
-    {
+    public void start() {
         updateTime(startTime);
         runnable = new BukkitRunnable() {
 
             @Override
-            public void run()
-            {
+            public void run() {
                 updateTime(getTime() - 1);
-                if (getTime() <= 0)
-                {
+                if (getTime() <= 0) {
                     CountdownTimerFinishedEvent event = new CountdownTimerFinishedEvent(worldName);
                     Bukkit.getPluginManager().callEvent(event);
                     stop();
@@ -53,21 +46,16 @@ public class CountdownTimer extends GameTimer
     }
 
     @Override
-    public long pause()
-    {
+    public long pause() {
         return getTime();
     }
 
     @Override
-    public long stop()
-    {
-        try
-        {
+    public long stop() {
+        try {
             if (runnable != null)
                 runnable.cancel();
-        }
-        catch (IllegalStateException e)
-        {
+        } catch (IllegalStateException e) {
             Message.log(ChatColor.RED + "Timer couldn't be stopped since it never started!");
             return -1;
         }
@@ -75,8 +63,7 @@ public class CountdownTimer extends GameTimer
     }
 
     @Override
-    public Message getTimeDisplayMessage()
-    {
+    public Message getTimeDisplayMessage() {
         ChatColor color = ChatColor.WHITE;
         if (getTime() <= lowThreshold)
             color = ChatColor.RED;

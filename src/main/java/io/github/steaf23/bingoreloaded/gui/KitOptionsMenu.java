@@ -11,9 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-public class KitOptionsMenu extends MenuInventory
-{
-    private final BingoSettings settings;
+public class KitOptionsMenu extends MenuInventory {
     private static final InventoryItem HARDCORE = new InventoryItem(1, 1,
             Material.RED_CONCRETE, PlayerKit.HARDCORE.displayName,
             TranslationData.itemDescription("menu.kits.hardcore"));
@@ -26,19 +24,18 @@ public class KitOptionsMenu extends MenuInventory
     private static final InventoryItem RELOADED = new InventoryItem(7, 1,
             Material.CYAN_CONCRETE, PlayerKit.RELOADED.displayName,
             TranslationData.itemDescription("menu.kits.reloaded"));
+    private final BingoSettings settings;
 
-    public KitOptionsMenu(MenuInventory parent, BingoSettings settings)
-    {
+    public KitOptionsMenu(MenuInventory parent, BingoSettings settings) {
         super(45, TranslationData.itemName("menu.options.kit"), parent);
         this.settings = settings;
 
         fillOptions(HARDCORE, NORMAL, OVERPOWERED, RELOADED);
-        for (int i = 0; i < 5; i++)
-        {
+        for (int i = 0; i < 5; i++) {
             addOption(new InventoryItem(i * 2, 3, Material.GRAY_CONCRETE,
-                    "" + ChatColor.GRAY + "Custom Kit Slot " + (i + 1),
+                    ChatColor.GRAY + "Custom Kit Slot " + (i + 1),
                     "Create a custom kit from your inventory using ",
-                    "" + ChatColor.RED + ChatColor.ITALIC + "/bingo kit add " + (i + 1) + " <name>!"));
+                    String.valueOf(ChatColor.RED) + ChatColor.ITALIC + "/bingo kit add " + (i + 1) + " <name>!"));
         }
 
         CustomKit kit = PlayerKit.getCustomKit(PlayerKit.CUSTOM_1);
@@ -64,61 +61,41 @@ public class KitOptionsMenu extends MenuInventory
     }
 
     @Override
-    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
-    {
-        if (slotClicked == HARDCORE.getSlot())
-        {
+    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType) {
+        if (slotClicked == HARDCORE.getSlot()) {
             settings.setKit(PlayerKit.HARDCORE);
-        }
-        else if (slotClicked == NORMAL.getSlot())
-        {
+        } else if (slotClicked == NORMAL.getSlot()) {
             settings.setKit(PlayerKit.NORMAL);
-        }
-        else if (slotClicked == OVERPOWERED.getSlot())
-        {
+        } else if (slotClicked == OVERPOWERED.getSlot()) {
             settings.setKit(PlayerKit.OVERPOWERED);
-        }
-        else if (slotClicked == RELOADED.getSlot())
-        {
+        } else if (slotClicked == RELOADED.getSlot()) {
             settings.setKit(PlayerKit.RELOADED);
-        }
-        else if (slotClicked == 27)
-        {
+        } else if (slotClicked == 27) {
             if (event.getCurrentItem().getType() != Material.GRAY_CONCRETE)
                 settings.setKit(PlayerKit.CUSTOM_1);
             else
                 return;
-        }
-        else if (slotClicked == 27 + 2)
-        {
+        } else if (slotClicked == 27 + 2) {
             if (event.getCurrentItem().getType() != Material.GRAY_CONCRETE)
                 settings.setKit(PlayerKit.CUSTOM_2);
             else
                 return;
-        }
-        else if (slotClicked == 27 + 4)
-        {
+        } else if (slotClicked == 27 + 4) {
             if (event.getCurrentItem().getType() != Material.GRAY_CONCRETE)
                 settings.setKit(PlayerKit.CUSTOM_3);
             else
                 return;
-        }
-        else if (slotClicked == 27 + 6)
-        {
+        } else if (slotClicked == 27 + 6) {
             if (event.getCurrentItem().getType() != Material.GRAY_CONCRETE)
                 settings.setKit(PlayerKit.CUSTOM_4);
             else
                 return;
-        }
-        else if (slotClicked == 27 + 8)
-        {
+        } else if (slotClicked == 27 + 8) {
             if (event.getCurrentItem().getType() != Material.GRAY_CONCRETE)
                 settings.setKit(PlayerKit.CUSTOM_5);
             else
                 return;
-        }
-        else
-        {
+        } else {
             return;
         }
         close(player);

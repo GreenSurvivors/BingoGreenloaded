@@ -13,20 +13,17 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.List;
 
-public class CardMenu extends MenuInventory
-{
+public class CardMenu extends MenuInventory {
     private final CardSize size;
 
-    public CardMenu(CardSize size, String title)
-    {
+    public CardMenu(CardSize size, String title) {
         super(9 * size.cardSize, title, null);
         this.size = size;
         setMaxStackSizeOverride(64);
     }
 
     @Override
-    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
-    {
+    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType) {
         if (!size.taskSlots.contains(slotClicked))
             return;
 
@@ -46,18 +43,15 @@ public class CardMenu extends MenuInventory
         Message.sendDebugNoPrefix(base, player);
     }
 
-    public void show(Player player, List<BingoTask> tasks)
-    {
-        for (int i = 0; i < tasks.size(); i++)
-        {
+    public void show(Player player, List<BingoTask> tasks) {
+        for (int i = 0; i < tasks.size(); i++) {
             BingoTask task = tasks.get(i);
             addOption(task.asStack().inSlot(size.getCardInventorySlot(i)));
         }
         open(player);
     }
 
-    public void setInfo(String name, String... description)
-    {
+    public void setInfo(String name, String... description) {
         InventoryItem info = new InventoryItem(0, Material.MAP, name, description);
         addOption(info);
     }

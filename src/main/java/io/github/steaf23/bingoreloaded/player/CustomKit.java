@@ -14,17 +14,37 @@ import java.util.List;
 import java.util.Map;
 
 @SerializableAs("Bingo.CustomKit")
-public record CustomKit(String name, PlayerKit slot, List<InventoryItem> items) implements ConfigurationSerializable
-{
+public record CustomKit(String name, PlayerKit slot, List<InventoryItem> items) implements ConfigurationSerializable {
+
+    public static CustomKit deserialize(Map<String, Object> data) {
+        PlayerKit kit = switch ((int) data.get("slot")) {
+            case 1 -> PlayerKit.CUSTOM_1;
+            case 2 -> PlayerKit.CUSTOM_2;
+            case 3 -> PlayerKit.CUSTOM_3;
+            case 4 -> PlayerKit.CUSTOM_4;
+            case 5 -> PlayerKit.CUSTOM_5;
+            default -> throw new IllegalStateException("Unexpected value: " + (int) data.get("slot"));
+        };
+        return new CustomKit((String) data.get("name"), kit, (List<InventoryItem>) data.get("items"));
+    }
+
+    public static CustomKit fromPlayerInventory(Player player, String kitName, PlayerKit kitSlot) {
+        List<InventoryItem> items = new ArrayList<>();
+        int slot = 0;
+        for (ItemStack itemStack : player.getInventory()) {
+            if (itemStack != null)
+                items.add(new InventoryItem(slot, itemStack));
+            slot += 1;
+        }
+        return new CustomKit(kitName, kitSlot, items);
+    }
 
     @NotNull
     @Override
-    public Map<String, Object> serialize()
-    {
+    public Map<String, Object> serialize() {
         Map<String, Object> data = new HashMap<>();
 
-        int slotId = switch (slot)
-        {
+        int slotId = switch (slot) {
             case CUSTOM_1 -> 1;
             case CUSTOM_2 -> 2;
             case CUSTOM_3 -> 3;
@@ -42,35 +62,7 @@ public record CustomKit(String name, PlayerKit slot, List<InventoryItem> items) 
         return data;
     }
 
-    public static CustomKit deserialize(Map<String, Object> data)
-    {
-        PlayerKit kit = switch ((int)data.get("slot"))
-        {
-            case 1 -> PlayerKit.CUSTOM_1;
-            case 2 -> PlayerKit.CUSTOM_2;
-            case 3 -> PlayerKit.CUSTOM_3;
-            case 4 -> PlayerKit.CUSTOM_4;
-            case 5 -> PlayerKit.CUSTOM_5;
-            default -> throw new IllegalStateException("Unexpected value: " + (int) data.get("slot"));
-        };
-        return new CustomKit((String)data.get("name"), kit, (List<InventoryItem>)data.get("items"));
-    }
-
-    public static CustomKit fromPlayerInventory(Player player, String kitName, PlayerKit kitSlot)
-    {
-        List<InventoryItem> items = new ArrayList<>();
-        int slot = 0;
-        for (ItemStack itemStack : player.getInventory())
-        {
-            if (itemStack != null)
-                items.add(new InventoryItem(slot, itemStack));
-            slot += 1;
-        }
-        return new CustomKit(kitName, kitSlot, items);
-    }
-
-    public String getName()
-    {
+    public String getName() {
         return TranslationData.convertColors(name);
     }
 }

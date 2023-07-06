@@ -19,19 +19,15 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.*;
 
-public class ListEditorUI extends OptionMenu
-{
-    private final String listName;
-
+public class ListEditorUI extends OptionMenu {
     private static final InventoryItem ITEMS = new InventoryItem(GUIPreset5x9.THREE_CENTER.positions[0], Material.APPLE, TITLE_PREFIX + "Items", "Click to add or remove items");
     private static final InventoryItem ADVANCEMENTS = new InventoryItem(GUIPreset5x9.THREE_CENTER.positions[1], Material.ENDER_EYE, TITLE_PREFIX + "Advancements", "Click to add or remove advancements");
     private static final InventoryItem STATISTICS = new InventoryItem(GUIPreset5x9.THREE_CENTER.positions[2], Material.GLOBE_BANNER_PATTERN, TITLE_PREFIX + "Statistics", "Click to add or remove statistics");
-
-    private static final InventoryItem SAVE = new InventoryItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + TranslationData.translate("menu.save_exit"));
+    private static final InventoryItem SAVE = new InventoryItem(49, Material.REDSTONE, String.valueOf(ChatColor.RED) + ChatColor.BOLD + TranslationData.translate("menu.save_exit"));
     private static final InventoryItem BLANK = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
+    private final String listName;
 
-    public ListEditorUI(String listName, MenuInventory parent)
-    {
+    public ListEditorUI(String listName, MenuInventory parent) {
         super("Editing '" + listName + "'", parent);
         this.listName = listName;
         addMenuOption(ITEMS, createItemPicker());
@@ -48,55 +44,44 @@ public class ListEditorUI extends OptionMenu
                 BLANK.inSlot(53));
     }
 
+    private static List<InventoryItem> getItemOptions() {
+        return new ArrayList<>();
+    }
+
     @Override
-    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
-    {
-        if (slotClicked == SAVE.getSlot())
-        {
+    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType) {
+        if (slotClicked == SAVE.getSlot()) {
             close(player);
         }
         super.delegateClick(event, slotClicked, player, clickType);
     }
 
-    public MenuInventory createStatisticsPicker()
-    {
+    public MenuInventory createStatisticsPicker() {
         return new StatisticPickerUI(this, listName);
     }
 
-    private static List<InventoryItem> getItemOptions()
-    {
-        return new ArrayList<>();
-    }
-
-    private MenuInventory createItemPicker()
-    {
+    private MenuInventory createItemPicker() {
         Set<Material> glassPanes = new HashSet<>();
-        for (FlexColor flexColor : FlexColor.values())
-        {
+        for (FlexColor flexColor : FlexColor.values()) {
             glassPanes.add(flexColor.glassPane);
         }
 
         List<BingoTask> tasks = new ArrayList<>();
-        for (Material m : Material.values())
-        {
-            if (!m.name().contains("LEGACY_") && !glassPanes.contains(m) && m.isItem() && !m.isAir())
-            {
+        for (Material m : Material.values()) {
+            if (!m.name().contains("LEGACY_") && !glassPanes.contains(m) && m.isItem() && !m.isAir()) {
                 tasks.add(new BingoTask(new ItemTask(m, 1)));
             }
         }
 
-        return new TaskPickerUI(tasks,"Select Items", this, listName);
+        return new TaskPickerUI(tasks, "Select Items", this, listName);
     }
 
-    private MenuInventory createAdvancementPicker()
-    {
+    private MenuInventory createAdvancementPicker() {
         List<BingoTask> tasks = new ArrayList<>();
-        for (Iterator<Advancement> it = Bukkit.advancementIterator(); it.hasNext(); )
-        {
+        for (Iterator<Advancement> it = Bukkit.advancementIterator(); it.hasNext(); ) {
             Advancement a = it.next();
             String key = a.getKey().getKey();
-            if (key.startsWith("recipes/") || key.endsWith("/root"))
-            {
+            if (key.startsWith("recipes/") || key.endsWith("/root")) {
                 continue;
             }
 

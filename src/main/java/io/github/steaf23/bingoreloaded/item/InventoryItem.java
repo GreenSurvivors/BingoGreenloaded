@@ -18,32 +18,27 @@ import java.util.Map;
 import java.util.Objects;
 
 @SerializableAs("Bingo.InventoryItem")
-public class InventoryItem extends ItemStack
-{
+public class InventoryItem extends ItemStack {
     /**
      * Describes the slot the item should be in when put in any inventory.
      */
     private int slot = -1;
     private ChatColor chatColor;
 
-    public InventoryItem(Material material, String name, String... description)
-    {
+    public InventoryItem(Material material, String name, String... description) {
         this(-1, material, name, description);
     }
 
-    public InventoryItem(int slotX, int slotY, Material material, String name, String... description)
-    {
+    public InventoryItem(int slotX, int slotY, Material material, String name, String... description) {
         this(9 * slotY + slotX, material, name, description);
     }
 
-    public InventoryItem(int slot, Material material, String name, String... description)
-    {
+    public InventoryItem(int slot, Material material, String name, String... description) {
         super(material);
         this.slot = slot;
 
         ItemMeta meta = getItemMeta();
-        if (meta != null)
-        {
+        if (meta != null) {
             meta.setDisplayName(name);
             if (description.length >= 1 && !Objects.equals(description[0], ""))
                 meta.setLore(List.of(description));
@@ -52,69 +47,62 @@ public class InventoryItem extends ItemStack
         }
     }
 
-    public InventoryItem(int slot, ItemStack item)
-    {
+    public InventoryItem(int slot, ItemStack item) {
         this(item);
         this.slot = slot;
     }
 
-    public InventoryItem(ItemStack item)
-    {
+    public InventoryItem(ItemStack item) {
         super(item);
     }
 
+    @NotNull
+    public static InventoryItem deserialize(Map<String, Object> data) {
+        ItemStack stack = (ItemStack) data.get("stack");
+        int slot = (int) data.get("slot");
+        return new InventoryItem(slot, stack);
+    }
 
-    public InventoryItem withEnchantment(Enchantment enchantment, int level)
-    {
+    public InventoryItem withEnchantment(Enchantment enchantment, int level) {
         addEnchantment(enchantment, level);
         return this;
     }
 
-    public InventoryItem withIllegalEnchantment(Enchantment enchantment, int level)
-    {
+    public InventoryItem withIllegalEnchantment(Enchantment enchantment, int level) {
         addUnsafeEnchantment(enchantment, level);
         return this;
     }
 
-    public InventoryItem withAmount(int amount)
-    {
+    public InventoryItem withAmount(int amount) {
         setAmount(amount);
         return this;
     }
 
-    public ItemStack getAsStack()
-    {
+    public ItemStack getAsStack() {
         return new ItemStack(this);
     }
 
-
-    public InventoryItem copy()
-    {
-        return new InventoryItem(slot, getType(), getItemMeta().getDisplayName(), getItemMeta().getLore() == null ? new String[]{""} : getItemMeta().getLore().toArray( new String[0]));
+    public InventoryItem copy() {
+        return new InventoryItem(slot, getType(), getItemMeta().getDisplayName(), getItemMeta().getLore() == null ? new String[]{"" } : getItemMeta().getLore().toArray(new String[0]));
     }
 
-    public InventoryItem inSlot(int slot)
-    {
+    public InventoryItem inSlot(int slot) {
         InventoryItem item = new InventoryItem(slot, this);
         item.slot = slot;
         return item;
     }
 
-    public InventoryItem inSlot(int slotX, int slotY)
-    {
+    public InventoryItem inSlot(int slotX, int slotY) {
         return inSlot(9 * slotY + slotX);
     }
 
-    public int getSlot()
-    {
+    public int getSlot() {
         return slot;
     }
 
-    public void setDescription(String... description)
-    {
+    public void setDescription(String... description) {
         ItemMeta meta = getItemMeta();
-        if (meta != null)
-        {
+        if (meta != null) {
             if (description.length >= 1 && !Objects.equals(description[0], ""))
                 meta.setLore(List.of(description));
             meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
@@ -122,41 +110,22 @@ public class InventoryItem extends ItemStack
         }
     }
 
-    public void setName(String name)
-    {
+    public void setName(String name) {
         ItemMeta meta = getItemMeta();
-        if (meta != null)
-        {
+        if (meta != null) {
             meta.setDisplayName(name);
         }
     }
 
-    public void highlight(boolean value)
-    {
-        if (value)
-        {
+    public void highlight(boolean value) {
+        if (value) {
             addUnsafeEnchantment(Enchantment.DURABILITY, 1);
-        }
-        else
-        {
+        } else {
             removeEnchantment(Enchantment.DURABILITY);
         }
     }
 
-    /**
-     * Additional key that can be used for item comparison, saved in pdc
-     * @param key
-     */
-    public void setKey(@Nullable String key)
-    {
-        var meta = this.getItemMeta();
-        var pdc = meta.getPersistentDataContainer();
-        pdc.set(PDCHelper.createKey("item.compare_key"), PersistentDataType.STRING, key);
-        this.setItemMeta(meta);
-    }
-
-    public boolean isKeyEqual(ItemStack other)
-    {
+    public boolean isKeyEqual(ItemStack other) {
         if (other == null || other.getItemMeta() == null)
             return false;
 
@@ -164,27 +133,29 @@ public class InventoryItem extends ItemStack
                 .get(PDCHelper.createKey("item.compare_key"), PersistentDataType.STRING));
     }
 
-    public String getKey()
-    {
+    public String getKey() {
         return this.getItemMeta().getPersistentDataContainer()
                 .get(PDCHelper.createKey("item.compare_key"), PersistentDataType.STRING);
     }
 
-    @NotNull
-    @Override
-    public Map<String, Object> serialize()
-    {
-        return new HashMap<>(){{
-            put("slot", slot);
-            put("stack", getAsStack());
-        }};
+    /**
+     * Additional key that can be used for item comparison, saved in pdc
+     *
+     * @param key
+     */
+    public void setKey(@Nullable String key) {
+        var meta = this.getItemMeta();
+        var pdc = meta.getPersistentDataContainer();
+        pdc.set(PDCHelper.createKey("item.compare_key"), PersistentDataType.STRING, key);
+        this.setItemMeta(meta);
     }
 
     @NotNull
-    public static InventoryItem deserialize(Map<String, Object> data)
-    {
-        ItemStack stack = (ItemStack)data.get("stack");
-        int slot = (int)data.get("slot");
-        return new InventoryItem(slot, stack);
+    @Override
+    public Map<String, Object> serialize() {
+        return new HashMap<>() {{
+            put("slot", slot);
+            put("stack", getAsStack());
+        }};
     }
 }

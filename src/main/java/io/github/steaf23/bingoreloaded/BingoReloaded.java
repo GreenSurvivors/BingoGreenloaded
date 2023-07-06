@@ -27,8 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public class BingoReloaded extends JavaPlugin
-{
+public class BingoReloaded extends JavaPlugin {
     public static final String NAME = "BingoReloaded";
 
     // Amount of ticks per second.
@@ -39,9 +38,32 @@ public class BingoReloaded extends JavaPlugin
     private BingoGameManager gameManager;
     private MenuEventManager menuManager;
 
+    private static void registerListener(Listener listener) {
+        Plugin plugin = Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME);
+        Bukkit.getPluginManager().registerEvents(listener, plugin);
+    }
+
+    private static void unregisterListener(Listener listener) {
+        HandlerList.unregisterAll(listener);
+    }
+
+    public static BingoReloaded get() {
+        return getPlugin(BingoReloaded.class);
+    }
+
+    public static void scheduleTask(@NotNull Consumer<BukkitTask> task) {
+        BingoReloaded.scheduleTask(task, 0);
+    }
+
+    public static void scheduleTask(@NotNull Consumer<BukkitTask> task, long delay) {
+        if (delay <= 0)
+            Bukkit.getScheduler().runTask(BingoReloaded.get(), task);
+        else
+            Bukkit.getScheduler().runTaskLater(BingoReloaded.get(), task, delay);
+    }
+
     @Override
-    public void onEnable()
-    {
+    public void onEnable() {
         reloadConfig();
         saveDefaultConfig();
         ConfigData.instance.loadConfig(this.getConfig());
@@ -62,21 +84,18 @@ public class BingoReloaded extends JavaPlugin
         ItemCooldownManager.create();
 
         PluginCommand bingoCommand = getCommand("bingo");
-        if (bingoCommand != null)
-        {
+        if (bingoCommand != null) {
             bingoCommand.setExecutor(new BingoCommand());
-            bingoCommand.setTabCompleter( new BingoTabCompleter());
+            bingoCommand.setTabCompleter(new BingoTabCompleter());
         }
 
         PluginCommand autoBingoCommand = getCommand("autobingo");
-        if (autoBingoCommand != null)
-        {
+        if (autoBingoCommand != null) {
             autoBingoCommand.setExecutor(new AutoBingoCommand());
             autoBingoCommand.setTabCompleter(new AutoBingoTabCompleter());
         }
 
-        if (ConfigData.instance.enableTeamChat)
-        {
+        if (ConfigData.instance.enableTeamChat) {
             PluginCommand teamChatCommand = getCommand("btc");
             if (teamChatCommand != null)
                 teamChatCommand.setExecutor(new TeamChatCommand());
@@ -99,34 +118,5 @@ public class BingoReloaded extends JavaPlugin
         unregisterListener(menuManager);
 
         Bukkit.getLogger().info(ChatColor.RED + "Disabled " + this.getName());
-    }
-
-    private static void registerListener(Listener listener)
-    {
-        Plugin plugin = Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME);
-        Bukkit.getPluginManager().registerEvents(listener, plugin);
-    }
-
-    private static void unregisterListener(Listener listener)
-    {
-        HandlerList.unregisterAll(listener);
-    }
-
-    public static BingoReloaded get()
-    {
-        return getPlugin(BingoReloaded.class);
-    }
-
-    public static void scheduleTask(@NotNull Consumer<BukkitTask> task)
-    {
-        BingoReloaded.scheduleTask(task, 0);
-    }
-
-    public static void scheduleTask(@NotNull Consumer<BukkitTask> task, long delay)
-    {
-        if (delay <= 0)
-            Bukkit.getScheduler().runTask(BingoReloaded.get(), task);
-        else
-            Bukkit.getScheduler().runTaskLater(BingoReloaded.get(), task, delay);
     }
 }

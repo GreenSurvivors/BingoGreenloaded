@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui;
 
-public enum FilterType
-{
+public enum FilterType {
     DISPLAY_NAME,
     MATERIAL,
     LORE,

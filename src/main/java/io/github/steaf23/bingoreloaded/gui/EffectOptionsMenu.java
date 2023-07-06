@@ -14,15 +14,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.EnumSet;
 import java.util.List;
 
-public class EffectOptionsMenu extends MenuInventory
-{
+public class EffectOptionsMenu extends MenuInventory {
     private final BingoSettings settings;
     private final EnumSet<EffectOptionFlags> flags;
 
     private final InventoryItem[] options;
 
-    public EffectOptionsMenu(MenuInventory parent, BingoSettings settings)
-    {
+    public EffectOptionsMenu(MenuInventory parent, BingoSettings settings) {
         super(45, TranslationData.translate("menu.options.effects.name"), parent);
         this.settings = settings;
 
@@ -38,7 +36,7 @@ public class EffectOptionsMenu extends MenuInventory
                 new InventoryItem(GUIPreset5x9.FIVE_TOP_WIDE.positions[4],
                         Material.FEATHER, ""),
                 new InventoryItem(44, Material.DIAMOND,
-                        "" + ChatColor.AQUA + ChatColor.BOLD + TranslationData.translate("menu.save_exit"))
+                        String.valueOf(ChatColor.AQUA) + ChatColor.BOLD + TranslationData.translate("menu.save_exit"))
         };
         fillOptions(options);
 
@@ -47,25 +45,20 @@ public class EffectOptionsMenu extends MenuInventory
     }
 
     @Override
-    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
-    {
-        for (int i = 0; i < options.length - 1; i++)
-        {
-            if (slotClicked == options[i].getSlot())
-            {
+    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType) {
+        for (int i = 0; i < options.length - 1; i++) {
+            if (slotClicked == options[i].getSlot()) {
                 toggleOption(i);
             }
         }
 
-        if (slotClicked == options[5].getSlot())
-        {
+        if (slotClicked == options[5].getSlot()) {
             settings.effects = flags;
             close(player);
         }
     }
 
-    private void toggleOption(int index)
-    {
+    private void toggleOption(int index) {
         EffectOptionFlags option = EffectOptionFlags.values()[index];
         if (flags.contains(option))
             flags.remove(option);
@@ -74,20 +67,14 @@ public class EffectOptionsMenu extends MenuInventory
         updateUI();
     }
 
-    public void updateUI()
-    {
-        for (int i = 0; i < options.length - 1; i++)
-        {
+    public void updateUI() {
+        for (int i = 0; i < options.length - 1; i++) {
             ItemMeta meta = options[i].getItemMeta();
-            if (meta != null)
-            {
-                if (flags.contains(EffectOptionFlags.values()[i]))
-                {
+            if (meta != null) {
+                if (flags.contains(EffectOptionFlags.values()[i])) {
                     meta.setDisplayName("" + ChatColor.GREEN + ChatColor.BOLD + EffectOptionFlags.values()[i].name + " " + TranslationData.translate("menu.effects.enabled"));
                     meta.setLore(List.of(ChatColor.GREEN + TranslationData.translate("menu.effects.disable")));
-                }
-                else
-                {
+                } else {
                     meta.setDisplayName("" + ChatColor.RED + ChatColor.BOLD + EffectOptionFlags.values()[i].name + " " + TranslationData.translate("menu.effects.disabled"));
                     meta.setLore(List.of(ChatColor.RED + TranslationData.translate("menu.effects.enable")));
                 }

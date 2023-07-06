@@ -7,28 +7,23 @@ import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CompleteBingoCard extends BingoCard
-{
-    public CompleteBingoCard(CardSize size)
-    {
+public class CompleteBingoCard extends BingoCard {
+    public CompleteBingoCard(CardSize size) {
         super(size);
         menu.setInfo(TranslationData.itemName("menu.card.info_complete"),
                 TranslationData.itemDescription("menu.card.info_complete"));
     }
 
     @Override
-    public boolean hasBingo(BingoTeam team)
-    {
+    public boolean hasBingo(BingoTeam team) {
         return getCompleteCount(team) == size.fullCardSize;
     }
 
     @Override
-    public CompleteBingoCard copy()
-    {
+    public CompleteBingoCard copy() {
         CompleteBingoCard card = new CompleteBingoCard(this.size);
         List<BingoTask> newTasks = new ArrayList<>();
-        for (var t : tasks)
-        {
+        for (var t : tasks) {
             newTasks.add(t.copy());
         }
         card.tasks = newTasks;

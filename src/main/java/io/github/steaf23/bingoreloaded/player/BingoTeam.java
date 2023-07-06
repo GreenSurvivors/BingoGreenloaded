@@ -9,51 +9,42 @@ import org.bukkit.scoreboard.Team;
 import java.util.HashSet;
 import java.util.Set;
 
-public class BingoTeam
-{
+public class BingoTeam {
     public final Team team;
+    private final FlexColor color;
     public BingoCard card;
     public Set<BingoPlayer> players;
     public boolean outOfTheGame = false;
 
-    private final FlexColor color;
-
-    public BingoTeam(Team team, BingoCard card, FlexColor color)
-    {
+    public BingoTeam(Team team, BingoCard card, FlexColor color) {
         this.team = team;
         this.card = card;
         this.color = color;
         this.players = new HashSet<>();
     }
 
-    public String getName()
-    {
+    public String getName() {
         return color.name;
     }
 
-    public FlexColor getColor()
-    {
+    public FlexColor getColor() {
         return color;
     }
 
-    public ItemText getColoredName()
-    {
+    public ItemText getColoredName() {
         return new ItemText(color.getTranslatedName(), color.chatColor, ChatColor.BOLD);
     }
 
-    public Set<BingoPlayer> getPlayers()
-    {
+    public Set<BingoPlayer> getPlayers() {
         return players;
     }
 
-    public void addPlayer(BingoPlayer player)
-    {
+    public void addPlayer(BingoPlayer player) {
         players.add(player);
         team.addEntry(player.playerId().toString());
     }
 
-    public void removePlayer(BingoPlayer player)
-    {
+    public void removePlayer(BingoPlayer player) {
         players.remove(player);
         team.removeEntry(player.playerId().toString());
     }

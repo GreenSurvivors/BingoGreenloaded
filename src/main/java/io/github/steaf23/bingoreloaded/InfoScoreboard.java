@@ -9,39 +9,41 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-public class InfoScoreboard
-{
+public class InfoScoreboard {
     private final Scoreboard board;
     private final Objective sidebar;
 
-    public InfoScoreboard(String title, Scoreboard board)
-    {
+    public InfoScoreboard(String title, Scoreboard board) {
         this.board = board;
         this.sidebar = board.registerNewObjective("info", "dummy", title);
         sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
 
-        for (int i = 0; i < 15; i++)
-        {
+        for (int i = 0; i < 15; i++) {
             Team team = board.registerNewTeam("LINE_" + i);
             team.addEntry(lineEntry(i));
         }
     }
 
-    public void clearDisplay()
-    {
-        for (int i = 0; i < 15; i++)
-        {
+    private static String lineEntry(int index) {
+        if (index < 0 || index > 14) {
+            Message.log("Line index " + index + " out of range for scoreboard (use 0-14)");
+            return "";
+        }
+
+        return ChatColor.values()[index].toString();
+    }
+
+    public void clearDisplay() {
+        for (int i = 0; i < 15; i++) {
             setLineText(i, "");
         }
     }
 
-    public void updatePlayerBoard(Player player)
-    {
+    public void updatePlayerBoard(Player player) {
         player.setScoreboard(board);
     }
 
-    public void clearPlayerBoard(Player player)
-    {
+    public void clearPlayerBoard(Player player) {
         player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
     }
 
@@ -51,10 +53,8 @@ public class InfoScoreboard
      * @param lineIndex
      * @param text
      */
-    public void setLineText(int lineIndex, String text)
-    {
-        if (lineIndex < 0 || lineIndex > 14)
-        {
+    public void setLineText(int lineIndex, String text) {
+        if (lineIndex < 0 || lineIndex > 14) {
             Message.log("Line index " + lineIndex + " out of range for scoreboard (use 0-14)");
             return;
         }
@@ -65,16 +65,5 @@ public class InfoScoreboard
             board.resetScores(lineEntry(lineIndex));
         else
             sidebar.getScore(lineEntry(lineIndex)).setScore(0);
-    }
-
-    private static String lineEntry(int index)
-    {
-        if (index < 0 || index > 14)
-        {
-            Message.log("Line index " + index + " out of range for scoreboard (use 0-14)");
-            return "";
-        }
-
-        return ChatColor.values()[index].toString();
     }
 }

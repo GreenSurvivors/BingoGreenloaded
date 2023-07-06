@@ -12,73 +12,58 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class YmlDataManager
-{
+public class YmlDataManager {
     private final Plugin plugin;
     private final String fileName;
     private FileConfiguration dataConfig = null;
     private File configFile = null;
 
-    public YmlDataManager(String fileName)
-    {
+    public YmlDataManager(String fileName) {
         this.plugin = Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME);
         this.fileName = fileName;
 
-        try
-        {
+        try {
             saveDefaultConfig();
-        }
-        catch(IllegalArgumentException exc)
-        {
+        } catch (IllegalArgumentException exc) {
             Message.log(exc.getMessage());
         }
     }
 
-    public void reloadConfig()
-    {
+    public void reloadConfig() {
         dataConfig = YamlConfiguration.loadConfiguration(getConfigFile());
 
         //create InputStream
         InputStream defaultStream = plugin.getResource(fileName);
-        if (defaultStream != null)
-        {
+        if (defaultStream != null) {
             YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultStream));
             dataConfig.setDefaults(defaultConfig);
         }
     }
 
-    public FileConfiguration getConfig()
-    {
+    public FileConfiguration getConfig() {
         if (dataConfig == null)
             reloadConfig();
 
         return dataConfig;
     }
 
-    public void saveConfig()
-    {
+    public void saveConfig() {
         if (dataConfig == null || configFile == null) return;
 
-        try
-        {
+        try {
             getConfig().save(configFile);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             Message.log(e.getMessage());
         }
     }
 
-    public void saveDefaultConfig()
-    {
-        if (!getConfigFile().exists())
-        {
+    public void saveDefaultConfig() {
+        if (!getConfigFile().exists()) {
             plugin.saveResource(fileName, false);
         }
     }
 
-    private File getConfigFile()
-    {
+    private File getConfigFile() {
         if (configFile == null)
             configFile = new File(plugin.getDataFolder(), fileName);
 

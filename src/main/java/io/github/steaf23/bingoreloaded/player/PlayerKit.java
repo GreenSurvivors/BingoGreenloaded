@@ -16,8 +16,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-public enum PlayerKit
-{
+public enum PlayerKit {
     HARDCORE("hardcore", ChatColor.BOLD + TranslationData.itemName("menu.kits.hardcore"), EnumSet.noneOf(EffectOptionFlags.class)),
     NORMAL("normal", ChatColor.BOLD + TranslationData.itemName("menu.kits.normal"), EnumSet.of(EffectOptionFlags.SPEED, EffectOptionFlags.NO_FALL_DAMAGE)),
     OVERPOWERED("overpowered", ChatColor.BOLD + TranslationData.itemName("menu.kits.overpowered"), EnumSet.allOf(EffectOptionFlags.class)),
@@ -31,41 +30,92 @@ public enum PlayerKit
 
     public static final InventoryItem cardItem = createCardItem();
     public static final InventoryItem wandItem = createGoUpWand();
-
+    private static final YmlDataManager customKitData = new YmlDataManager("custom_kit.yml");
     public final String configName;
     public final String displayName;
     public final EnumSet<EffectOptionFlags> defaultEffects;
 
-    private static final YmlDataManager customKitData = new YmlDataManager("custom_kit.yml");
-
-    PlayerKit(String configName, String displayName, EnumSet<EffectOptionFlags> defaultEffects)
-    {
+    PlayerKit(String configName, String displayName, EnumSet<EffectOptionFlags> defaultEffects) {
         this.configName = configName;
         this.displayName = displayName;
         this.defaultEffects = defaultEffects;
     }
 
-    public List<InventoryItem> getItems(FlexColor teamColor)
-    {
+    public static PlayerKit fromConfig(String name) {
+        if (name == null)
+            return HARDCORE;
+        return switch (name.toLowerCase()) {
+            case "normal" -> NORMAL;
+            case "overpowered" -> OVERPOWERED;
+            case "reloaded" -> RELOADED;
+            case "custom", "custom1" -> CUSTOM_1;
+            case "custom2" -> CUSTOM_2;
+            case "custom3" -> CUSTOM_3;
+            case "custom4" -> CUSTOM_4;
+            case "custom5" -> CUSTOM_5;
+            default -> HARDCORE;
+        };
+    }
+
+    public static boolean assignCustomKit(String kitName, PlayerKit slot, Player commandSender) {
+        if (customKitData.getConfig().contains(slot.configName))
+            return false;
+
+        customKitData.getConfig().set(slot.configName, CustomKit.fromPlayerInventory(commandSender, kitName, slot));
+        customKitData.saveConfig();
+        return true;
+    }
+
+    public static boolean removeCustomKit(PlayerKit slot) {
+        if (!customKitData.getConfig().contains(slot.configName))
+            return false;
+
+        customKitData.getConfig().set(slot.configName, null);
+        customKitData.saveConfig();
+
+        return true;
+    }
+
+    public static CustomKit getCustomKit(PlayerKit slot) {
+        return customKitData.getConfig().getSerializable(slot.configName, CustomKit.class);
+    }
+
+    private static InventoryItem createGoUpWand() {
+        InventoryItem wand = new InventoryItem(
+                (int) (ConfigData.instance.wandCooldown * 1000),
+                Material.WARPED_FUNGUS_ON_A_STICK,
+                String.valueOf(ChatColor.DARK_PURPLE) + ChatColor.ITALIC + ChatColor.BOLD + TranslationData.itemName("items.wand"),
+                TranslationData.itemDescription("items.wand")).withEnchantment(Enchantment.DURABILITY, 3);
+        wand.setKey("wand");
+        return wand;
+    }
+
+    private static InventoryItem createCardItem() {
+        InventoryItem card = new InventoryItem(
+                Material.MAP,
+                String.valueOf(ChatColor.DARK_PURPLE) + ChatColor.ITALIC + ChatColor.BOLD + TranslationData.itemName("items.card"),
+                TranslationData.itemDescription("items.card"));
+        card.setKey("card");
+        return card;
+    }
+
+    public List<InventoryItem> getItems(FlexColor teamColor) {
         InventoryItem helmet = new InventoryItem(39, Material.LEATHER_HELMET, "");
         LeatherArmorMeta helmetMeta = (LeatherArmorMeta) helmet.getItemMeta();
-        if (helmetMeta != null)
-        {
+        if (helmetMeta != null) {
             helmetMeta.setColor(FlexColor.toBukkitColor(teamColor.chatColor.getColor()));
         }
         helmet.setItemMeta(helmetMeta);
 
         InventoryItem boots = new InventoryItem(36, Material.LEATHER_BOOTS, "");
         LeatherArmorMeta bootMeta = (LeatherArmorMeta) boots.getItemMeta();
-        if (bootMeta != null)
-        {
+        if (bootMeta != null) {
             bootMeta.setColor(FlexColor.toBukkitColor(teamColor.chatColor.getColor()));
         }
         boots.setItemMeta(bootMeta);
 
         List<InventoryItem> items;
-        switch (this)
-        {
+        switch (this) {
             case NORMAL -> {
                 items = new ArrayList<>();
                 items.add(helmet
@@ -135,76 +185,11 @@ public enum PlayerKit
             case CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5 -> {
                 CustomKit kit = customKitData.getConfig().getSerializable(configName, CustomKit.class);
 
-                return  kit == null ? new ArrayList<>() : kit.items();
+                return kit == null ? new ArrayList<>() : kit.items();
             }
             default -> {
                 return new ArrayList<>();
             }
         }
-    }
-
-    public static PlayerKit fromConfig(String name)
-    {
-        if (name == null)
-            return HARDCORE;
-        return switch (name.toLowerCase())
-        {
-            case "normal" -> NORMAL;
-            case "overpowered" -> OVERPOWERED;
-            case "reloaded" -> RELOADED;
-            case "custom", "custom1" -> CUSTOM_1;
-            case "custom2" -> CUSTOM_2;
-            case "custom3" -> CUSTOM_3;
-            case "custom4" -> CUSTOM_4;
-            case "custom5" -> CUSTOM_5;
-            default -> HARDCORE;
-        };
-    }
-
-    public static boolean assignCustomKit(String kitName, PlayerKit slot, Player commandSender)
-    {
-        if (customKitData.getConfig().contains(slot.configName))
-            return false;
-
-        customKitData.getConfig().set(slot.configName, CustomKit.fromPlayerInventory(commandSender, kitName, slot));
-        customKitData.saveConfig();
-        return true;
-    }
-
-    public static boolean removeCustomKit(PlayerKit slot)
-    {
-        if (!customKitData.getConfig().contains(slot.configName))
-            return false;
-
-        customKitData.getConfig().set(slot.configName, null);
-        customKitData.saveConfig();
-
-        return true;
-    }
-
-    public static CustomKit getCustomKit(PlayerKit slot)
-    {
-        return customKitData.getConfig().getSerializable(slot.configName, CustomKit.class);
-    }
-
-    private static InventoryItem createGoUpWand()
-    {
-        InventoryItem wand = new InventoryItem(
-                (int)(ConfigData.instance.wandCooldown * 1000),
-                Material.WARPED_FUNGUS_ON_A_STICK,
-                "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + TranslationData.itemName("items.wand"),
-                TranslationData.itemDescription("items.wand")).withEnchantment(Enchantment.DURABILITY, 3);
-        wand.setKey("wand");
-        return wand;
-    }
-
-    private static InventoryItem createCardItem()
-    {
-        InventoryItem card = new InventoryItem(
-                Material.MAP,
-                "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + TranslationData.itemName("items.card"),
-                TranslationData.itemDescription("items.card"));
-        card.setKey("card");
-        return card;
     }
 }

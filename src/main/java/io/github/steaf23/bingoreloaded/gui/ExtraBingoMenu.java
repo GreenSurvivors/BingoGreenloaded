@@ -11,8 +11,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 
-public class ExtraBingoMenu extends MenuInventory
-{
+public class ExtraBingoMenu extends MenuInventory {
 
     private static final int TEAM_MAX = 64;
     private static final int DURATION_MAX = 60;
@@ -26,8 +25,7 @@ public class ExtraBingoMenu extends MenuInventory
     private final InventoryItem gameDuration = new InventoryItem(GUIPreset5x9.THREE_CENTER.positions[2],
             Material.RECOVERY_COMPASS, TITLE_PREFIX + "Countdown Duration");
 
-    public ExtraBingoMenu(MenuInventory parent, BingoSettings settings)
-    {
+    public ExtraBingoMenu(MenuInventory parent, BingoSettings settings) {
         super(45, TranslationData.translate("menu.options.title"), parent);
         this.settings = settings;
         var meta = countdown.getItemMeta();
@@ -35,20 +33,13 @@ public class ExtraBingoMenu extends MenuInventory
     }
 
     @Override
-    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
-    {
-        if (slotClicked == exit.getSlot())
-        {
+    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType) {
+        if (slotClicked == exit.getSlot()) {
             close(player);
-        }
-        else if (slotClicked == maxTeamMembers.getSlot())
-        {
-            if (clickType == ClickType.LEFT)
-            {
+        } else if (slotClicked == maxTeamMembers.getSlot()) {
+            if (clickType == ClickType.LEFT) {
                 maxTeamMembers.setAmount(Math.min(TEAM_MAX, maxTeamMembers.getAmount() + 1));
-            }
-            else if (clickType == ClickType.RIGHT)
-            {
+            } else if (clickType == ClickType.RIGHT) {
                 maxTeamMembers.setAmount(Math.max(1, maxTeamMembers.getAmount() - 1));
             }
 
@@ -57,21 +48,14 @@ public class ExtraBingoMenu extends MenuInventory
                     "§rUse the mouse buttons to increase/ decrease",
                     "the maximum amount of players per team");
             addOption(maxTeamMembers);
-        }
-        else if (slotClicked == countdown.getSlot())
-        {
+        } else if (slotClicked == countdown.getSlot()) {
             settings.enableCountdown = !settings.enableCountdown;
             countdown.highlight(settings.enableCountdown);
             addOption(countdown);
-        }
-        else if (slotClicked == gameDuration.getSlot())
-        {
-            if (clickType == ClickType.LEFT)
-            {
+        } else if (slotClicked == gameDuration.getSlot()) {
+            if (clickType == ClickType.LEFT) {
                 gameDuration.setAmount(Math.min(DURATION_MAX, gameDuration.getAmount() + 1));
-            }
-            else if (clickType == ClickType.RIGHT)
-            {
+            } else if (clickType == ClickType.RIGHT) {
                 gameDuration.setAmount(Math.max(1, gameDuration.getAmount() - 1));
             }
 
@@ -84,16 +68,14 @@ public class ExtraBingoMenu extends MenuInventory
     }
 
     @Override
-    public void handleClose(final InventoryCloseEvent event)
-    {
+    public void handleClose(final InventoryCloseEvent event) {
         settings.maxTeamSize = maxTeamMembers.getAmount();
         settings.countdownGameDuration = gameDuration.getAmount();
         super.handleClose(event);
     }
 
     @Override
-    public void handleOpen(InventoryOpenEvent event)
-    {
+    public void handleOpen(InventoryOpenEvent event) {
         super.handleOpen(event);
         maxTeamMembers.setAmount(Math.max(0, Math.min(TEAM_MAX, settings.maxTeamSize)));
         maxTeamMembers.setDescription(

@@ -9,32 +9,25 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HologramManager
-{
-    private Map<String, Hologram> holograms;
+public class HologramManager {
     private static HologramManager INSTANCE;
+    private static final YmlDataManager data = new YmlDataManager("data/holograms.yml");
+    private final Map<String, Hologram> holograms;
 
-    private static YmlDataManager data = new YmlDataManager("holograms.yml");
-
-    private HologramManager()
-    {
+    private HologramManager() {
         this.holograms = new HashMap<>();
     }
 
-    public static HologramManager get()
-    {
-        if (INSTANCE == null)
-        {
+    public static HologramManager get() {
+        if (INSTANCE == null) {
             INSTANCE = new HologramManager();
         }
         return INSTANCE;
     }
 
-    public static Hologram create(String id, Location location, String... lines)
-    {
+    public static Hologram create(String id, Location location, String... lines) {
         var holograms = get().holograms;
-        if (holograms.containsKey(id))
-        {
+        if (holograms.containsKey(id)) {
             Message.warn("Hologram with id " + id + " already exists");
             return holograms.get(id);
         }
@@ -44,11 +37,9 @@ public class HologramManager
         return holo;
     }
 
-    public static Hologram createImage(String id, Location location, String imagePath, ChatColor backgroundColor) throws IOException
-    {
+    public static Hologram createImage(String id, Location location, String imagePath, ChatColor backgroundColor) throws IOException {
         var holograms = get().holograms;
-        if (holograms.containsKey(id))
-        {
+        if (holograms.containsKey(id)) {
             Message.warn("Hologram with id " + id + " already exists");
             return holograms.get(id);
         }
@@ -58,16 +49,12 @@ public class HologramManager
         return holo;
     }
 
-    public static void destroy(String id)
-    {
+    public static void destroy(String id) {
         var holograms = get().holograms;
-        if (holograms.containsKey(id))
-        {
+        if (holograms.containsKey(id)) {
             holograms.get(id).destroy();
             holograms.remove(id);
-        }
-        else
-        {
+        } else {
             Message.warn("Hologram with id " + id + " does not exist");
         }
     }

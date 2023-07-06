@@ -14,31 +14,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class AutoBingoTabCompleter implements TabCompleter
-{
+public class AutoBingoTabCompleter implements TabCompleter {
     @Nullable
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String alias, @NotNull String[] args)
-    {
-        if (commandSender instanceof Player p && !p.hasPermission("bingo.admin"))
-        {
+    public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+        if (commandSender instanceof Player p && !p.hasPermission("bingo.admin")) {
             return new ArrayList<>();
         }
 
-        switch (args.length)
-        {
+        switch (args.length) {
             case 1:
                 List<String> allWorlds = new ArrayList<>();
-                for (var world : Bukkit.getWorlds())
-                {
-                    if (!world.getName().contains("_nether") && !world.getName().contains("_the_end"))
-                    {
+                for (var world : Bukkit.getWorlds()) {
+                    if (!world.getName().contains("_nether") && !world.getName().contains("_the_end")) {
                         allWorlds.add(world.getName());
                     }
                 }
                 return allWorlds;
             case 2:
-                return List.of("create", "destroy", "start", "end","kit", "effects", "card", "duration", "team");
+                return List.of("create", "destroy", "start", "end", "kit", "effects", "card", "duration", "team");
             case 3:
                 return switch (args[1]) {
                     case "kit" ->

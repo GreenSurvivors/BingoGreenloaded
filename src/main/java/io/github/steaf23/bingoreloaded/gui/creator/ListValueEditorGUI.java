@@ -13,10 +13,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
-public class ListValueEditorGUI extends MenuInventory
-{
-    private static final InventoryItem CANCEL = new InventoryItem(39, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + "Cancel");
-    private static final InventoryItem SAVE = new InventoryItem(41, Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + "Save");
+public class ListValueEditorGUI extends MenuInventory {
+    private static final InventoryItem CANCEL = new InventoryItem(39, Material.REDSTONE, String.valueOf(ChatColor.RED) + ChatColor.BOLD + "Cancel");
+    private static final InventoryItem SAVE = new InventoryItem(41, Material.DIAMOND, String.valueOf(ChatColor.AQUA) + ChatColor.BOLD + "Save");
     private static final InventoryItem INFO = new InventoryItem(0, Material.MAP,
             ChatColor.BOLD + "Edit list values",
             "Here you can change how often",
@@ -28,13 +27,11 @@ public class ListValueEditorGUI extends MenuInventory
     private final InventoryItem maxCounter = new InventoryItem(24, Material.TARGET, " ");
 
     private final CardEditorUI cardEditor;
-
+    private final String listName;
     public int minCount = BingoCardsData.MIN_ITEMS;
     public int maxCount = BingoCardsData.MAX_ITEMS;
-    private final String listName;
 
-    public ListValueEditorGUI(CardEditorUI parent, String listName, int maxStart, int minStart)
-    {
+    public ListValueEditorGUI(CardEditorUI parent, String listName, int maxStart, int minStart) {
         super(45, "Updating Values", parent);
         this.cardEditor = parent;
         this.listName = listName;
@@ -46,43 +43,29 @@ public class ListValueEditorGUI extends MenuInventory
     }
 
     @Override
-    public void delegateClick(final InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
-    {
-        if (slotClicked == maxCounter.getSlot())
-        {
-            if (clickType.isLeftClick())
-            {
+    public void delegateClick(final InventoryClickEvent event, int slotClicked, Player player, ClickType clickType) {
+        if (slotClicked == maxCounter.getSlot()) {
+            if (clickType.isLeftClick()) {
                 updateMax(maxCount + 1);
-            }
-            else if (clickType.isRightClick())
-            {
+            } else if (clickType.isRightClick()) {
                 updateMax(maxCount - 1);
             }
         }
-        if (slotClicked == minCounter.getSlot())
-        {
-            if (clickType.isLeftClick())
-            {
+        if (slotClicked == minCounter.getSlot()) {
+            if (clickType.isLeftClick()) {
                 updateMin(minCount + 1);
-            }
-            else if (clickType.isRightClick())
-            {
+            } else if (clickType.isRightClick()) {
                 updateMin(minCount - 1);
             }
-        }
-        else if (slotClicked == SAVE.getSlot())
-        {
+        } else if (slotClicked == SAVE.getSlot()) {
             setValueForList();
             close(player);
-        }
-        else if (slotClicked == CANCEL.getSlot())
-        {
+        } else if (slotClicked == CANCEL.getSlot()) {
             close(player);
         }
     }
 
-    public void updateMax(int newValue)
-    {
+    public void updateMax(int newValue) {
         // Set the max count to be between MIN_ITEMS and the amount of tasks in that list if it's smaller than MAX_ITEMS.
         maxCount = Math.floorMod(newValue - minCount, Math.max(1, Math.min(BingoCardsData.MAX_ITEMS, TaskListsData.getTasks(listName).size())) - minCount + 1) + minCount;
         maxCounter.setAmount(maxCount);
@@ -95,8 +78,7 @@ public class ListValueEditorGUI extends MenuInventory
         addOption(maxCounter);
     }
 
-    public void updateMin(int newValue)
-    {
+    public void updateMin(int newValue) {
         minCount = Math.floorMod(newValue - 1, maxCount) + 1;
         minCounter.setAmount(minCount);
         ItemMeta meta = minCounter.getItemMeta();
@@ -108,8 +90,7 @@ public class ListValueEditorGUI extends MenuInventory
         addOption(minCounter);
     }
 
-    private void setValueForList()
-    {
+    private void setValueForList() {
         BingoCardsData.setList(cardEditor.cardName, listName, maxCount, minCount);
         cardEditor.updateCardDisplay();
     }

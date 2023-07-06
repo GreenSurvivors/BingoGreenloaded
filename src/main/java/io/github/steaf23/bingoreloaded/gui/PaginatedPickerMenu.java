@@ -13,40 +13,26 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class PaginatedPickerMenu extends MenuInventory
-{
-    /**
-     * Called by this Inventory's ClickEvents.
-     * @param event
-     * @param clickedOption item that was clicked on, it's slot being the same slot that was clicked on.
-     * @param player
-     */
-    public abstract void onOptionClickedDelegate(final InventoryClickEvent event, InventoryItem clickedOption, Player player);
-
+public abstract class PaginatedPickerMenu extends MenuInventory {
     public static final int ITEMS_PER_PAGE = 45;
-
+    protected static final InventoryItem BG_ITEM = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
+    protected static final InventoryItem NEXT = new InventoryItem(53, Material.STRUCTURE_VOID, String.valueOf(ChatColor.LIGHT_PURPLE) + ChatColor.BOLD + TranslationData.translate("menu.next"), "");
+    protected static final InventoryItem PREVIOUS = new InventoryItem(45, Material.BARRIER, String.valueOf(ChatColor.LIGHT_PURPLE) + ChatColor.BOLD + TranslationData.translate("menu.prev"), "");
+    protected static final InventoryItem CLOSE = new InventoryItem(49, Material.REDSTONE, String.valueOf(ChatColor.RED) + ChatColor.BOLD + TranslationData.translate("menu.save_exit"), "");
+    protected static final InventoryItem FILTER = new InventoryItem(46, Material.SPYGLASS, TITLE_PREFIX + TranslationData.translate("menu.filter"), "");
     // All the items that exist in this picker
     private final List<InventoryItem> items;
-
     // All selected items in this picker
     private final List<InventoryItem> selectedItems;
-
     // All items that pass the filter, these are always the items shown to the player
     private final List<InventoryItem> filteredItems;
+    public FilterType filterType;
     private int pageAmount;
     private int currentPage;
     private UserInputMenu filter;
     private String keywordFilter;
-    public FilterType filterType;
 
-    protected static final InventoryItem BG_ITEM = new InventoryItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
-    protected static final InventoryItem NEXT = new InventoryItem(53, Material.STRUCTURE_VOID, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + TranslationData.translate("menu.next"), "");
-    protected static final InventoryItem PREVIOUS = new InventoryItem(45, Material.BARRIER, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + TranslationData.translate("menu.prev"), "");
-    protected static final InventoryItem CLOSE = new InventoryItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + TranslationData.translate("menu.save_exit"), "");
-    protected static final InventoryItem FILTER = new InventoryItem(46, Material.SPYGLASS, TITLE_PREFIX + TranslationData.translate("menu.filter"), "");
-
-    public PaginatedPickerMenu(List<InventoryItem> options, String title, MenuInventory parent, FilterType filterType)
-    {
+    public PaginatedPickerMenu(List<InventoryItem> options, String title, MenuInventory parent, FilterType filterType) {
         super(54, title != null ? title : "Item Picker", parent);
 
         fillOptions(PREVIOUS,
@@ -69,33 +55,32 @@ public abstract class PaginatedPickerMenu extends MenuInventory
         clearFilter();
     }
 
+    /**
+     * Called by this Inventory's ClickEvents.
+     *
+     * @param event
+     * @param clickedOption item that was clicked on, it's slot being the same slot that was clicked on.
+     * @param player
+     */
+    public abstract void onOptionClickedDelegate(final InventoryClickEvent event, InventoryItem clickedOption, Player player);
+
     @Override
-    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
-    {
-        if (slotClicked == NEXT.getSlot())
-        {
+    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType) {
+        if (slotClicked == NEXT.getSlot()) {
             nextPage();
-        }
-        else if (slotClicked == PREVIOUS.getSlot())
-        {
+        } else if (slotClicked == PREVIOUS.getSlot()) {
             previousPage();
-        }
-        else if (slotClicked == CLOSE.getSlot())
-        {
+        } else if (slotClicked == CLOSE.getSlot()) {
             close(player);
-        }
-        else if (slotClicked == FILTER.getSlot())
-        {
+        } else if (slotClicked == FILTER.getSlot()) {
             UserInputMenu.open("Filter by name", this::applyFilter, player, this, keywordFilter.isBlank() ? "name" : keywordFilter);
-        }
-        else if (isSlotValidOption(slotClicked)) //If it is a normal item;
+        } else if (isSlotValidOption(slotClicked)) //If it is a normal item;
         {
             onOptionClickedDelegate(event, filteredItems.get(ITEMS_PER_PAGE * currentPage + slotClicked).inSlot(slotClicked), player);
         }
     }
 
-    public void applyFilter(String filter)
-    {
+    public void applyFilter(String filter) {
         keywordFilter = filter;
         InventoryItem filterItem = FILTER.copy();
         ItemMeta meta = filterItem.getItemMeta();
@@ -142,36 +127,31 @@ public abstract class PaginatedPickerMenu extends MenuInventory
         updatePage();
     }
 
-    public void clearFilter()
-    {
+    public void clearFilter() {
         applyFilter("");
     }
 
     /**
      * Implement this method if filterType is set to CUSTOM
+     *
      * @param item
      * @return Whether the item should be shown when this filter is applied.
      */
-    public boolean passesFilter(InventoryItem item)
-    {
+    public boolean passesFilter(InventoryItem item) {
         return false;
     }
 
-    public String getFilter()
-    {
+    public String getFilter() {
         return keywordFilter;
     }
 
-    protected boolean isSlotValidOption(int slot)
-    {
+    protected boolean isSlotValidOption(int slot) {
         return ITEMS_PER_PAGE * currentPage + slot < filteredItems.size();
     }
 
-    public void addItems(InventoryItem... newItems)
-    {
+    public void addItems(InventoryItem... newItems) {
         //first remove any previous whitespace
-        while (items.size() > 0)
-        {
+        while (items.size() > 0) {
             InventoryItem lastItem = items.get(items.size() - 1);
 
             if (lastItem.getType().isAir())
@@ -185,11 +165,9 @@ public abstract class PaginatedPickerMenu extends MenuInventory
         clearFilter();
     }
 
-    public void removeItems(int... itemIndices)
-    {
+    public void removeItems(int... itemIndices) {
         //first remove any previous whitespace
-        while (items.size() > 0)
-        {
+        while (items.size() > 0) {
             InventoryItem lastItem = items.get(items.size() - 1);
 
             if (lastItem.getType().isAir())
@@ -203,35 +181,27 @@ public abstract class PaginatedPickerMenu extends MenuInventory
         updatePage();
     }
 
-    public void clearItems()
-    {
+    public void clearItems() {
         items.clear();
         updatePage();
     }
 
-    public List<InventoryItem> getItems()
-    {
+    public List<InventoryItem> getItems() {
         return items;
     }
 
-    public List<InventoryItem> getSelectedItems()
-    {
+    public List<InventoryItem> getSelectedItems() {
         return selectedItems;
     }
 
-    public void selectItem(InventoryItem item, boolean value)
-    {
-        if (!items.contains(item))
-        {
+    public void selectItem(InventoryItem item, boolean value) {
+        if (!items.contains(item)) {
             return;
         }
 
-        if (value)
-        {
+        if (value) {
             selectedItems.add(item);
-        }
-        else
-        {
+        } else {
             selectedItems.remove(item);
         }
 
@@ -241,27 +211,23 @@ public abstract class PaginatedPickerMenu extends MenuInventory
         updatePage();
     }
 
-    protected void nextPage()
-    {
+    protected void nextPage() {
         updatePageAmount();
         currentPage = Math.floorMod(currentPage + 1, pageAmount);
         updatePage();
     }
 
-    protected void previousPage()
-    {
+    protected void previousPage() {
         updatePageAmount();
         currentPage = Math.floorMod(currentPage - 1, pageAmount);
         updatePage();
     }
 
-    protected void updatePage()
-    {
+    protected void updatePage() {
         updatePageAmount();
 
         int startingIndex = currentPage * ITEMS_PER_PAGE;
-        for (int i = 0; i < ITEMS_PER_PAGE; i++)
-        {
+        for (int i = 0; i < ITEMS_PER_PAGE; i++) {
             if (startingIndex + i < filteredItems.size())
                 addOption(filteredItems.get(startingIndex + i).inSlot(i));
             else
@@ -273,8 +239,7 @@ public abstract class PaginatedPickerMenu extends MenuInventory
 
         InventoryItem next = getOption(NEXT.getSlot());
         ItemMeta nextMeta = next.getItemMeta();
-        if (nextMeta != null)
-        {
+        if (nextMeta != null) {
             nextMeta.setLore(List.of(pageCountDesc));
         }
         next.setItemMeta(nextMeta);
@@ -282,21 +247,18 @@ public abstract class PaginatedPickerMenu extends MenuInventory
 
         InventoryItem previous = getOption(PREVIOUS.getSlot());
         ItemMeta prevMeta = previous.getItemMeta();
-        if (prevMeta != null)
-        {
+        if (prevMeta != null) {
             prevMeta.setLore(List.of(pageCountDesc));
         }
         previous.setItemMeta(prevMeta);
         addOption(previous);
     }
 
-    private void updatePageAmount()
-    {
-        pageAmount = Math.max(1, (int)Math.ceil(filteredItems.size() / (double)ITEMS_PER_PAGE));
+    private void updatePageAmount() {
+        pageAmount = Math.max(1, (int) Math.ceil(filteredItems.size() / (double) ITEMS_PER_PAGE));
     }
 
-    public int getCurrentPage()
-    {
+    public int getCurrentPage() {
         return currentPage;
     }
 
@@ -307,16 +269,13 @@ public abstract class PaginatedPickerMenu extends MenuInventory
      * @param newItem
      * @param slot
      */
-    public void replaceItem(InventoryItem newItem, int slot)
-    {
+    public void replaceItem(InventoryItem newItem, int slot) {
         InventoryItem oldItem = filteredItems.get(ITEMS_PER_PAGE * currentPage + slot);
         replaceItem(newItem, oldItem);
     }
 
-    public void replaceItem(InventoryItem newItem, InventoryItem oldItem)
-    {
-        if (!items.contains(oldItem))
-        {
+    public void replaceItem(InventoryItem newItem, InventoryItem oldItem) {
+        if (!items.contains(oldItem)) {
             return;
         }
 

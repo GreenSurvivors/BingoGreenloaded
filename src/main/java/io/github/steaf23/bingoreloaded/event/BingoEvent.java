@@ -4,25 +4,21 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BingoEvent extends Event
-{
-    public final String worldName;
+public abstract class BingoEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
+    public final String worldName;
 
-    protected BingoEvent(String worldName)
-    {
+    protected BingoEvent(String worldName) {
         this.worldName = worldName;
+    }
+
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
     }
 
     @NotNull
     @Override
-    public HandlerList getHandlers()
-    {
-        return HANDLERS;
-    }
-
-    public static HandlerList getHandlerList()
-    {
+    public HandlerList getHandlers() {
         return HANDLERS;
     }
 }

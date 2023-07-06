@@ -22,55 +22,37 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-public class BingoTask
-{
-    public enum TaskType
-    {
-        ITEM,
-        STATISTIC,
-        ADVANCEMENT,
-    }
-
-    public Optional<BingoPlayer> completedBy;
-    public long completedAt;
-    private boolean voided;
-
+public class BingoTask {
     public final TaskType type;
     public final TaskData data;
     public final ChatColor nameColor;
     public final Material material;
     public final boolean glowing;
-
-    public BingoTask(TaskData data)
-    {
+    public Optional<BingoPlayer> completedBy;
+    public long completedAt;
+    private boolean voided;
+    public BingoTask(TaskData data) {
         this.data = data;
         this.completedBy = Optional.empty();
         this.voided = false;
         this.completedAt = -1L;
 
-        if (data instanceof ItemTask itemTask)
-        {
+        if (data instanceof ItemTask itemTask) {
             this.type = TaskType.ITEM;
             this.nameColor = ChatColor.YELLOW;
             this.material = itemTask.material();
             this.glowing = false;
-        }
-        else if (data instanceof AdvancementTask advTask)
-        {
+        } else if (data instanceof AdvancementTask advTask) {
             this.type = TaskType.ADVANCEMENT;
             this.nameColor = ChatColor.GREEN;
             this.material = Material.FILLED_MAP;
             this.glowing = true;
-        }
-        else if (data instanceof StatisticTask statTask)
-        {
+        } else if (data instanceof StatisticTask statTask) {
             this.type = TaskType.STATISTIC;
             this.nameColor = ChatColor.LIGHT_PURPLE;
             this.material = BingoStaticStatistic.getMaterial(statTask.statistic());
             this.glowing = true;
-        }
-        else
-        {
+        } else {
             Message.log("This Type of data is not supported by BingoTask: '" + data + "'!");
             this.type = TaskType.ITEM;
             this.glowing = false;
@@ -79,21 +61,49 @@ public class BingoTask
         }
     }
 
-    public void setVoided(boolean value)
-    {
+    public static BingoTask fromStack(ItemStack in) {
+        PersistentDataContainer pdcData = in.getItemMeta().getPersistentDataContainer();
+
+        boolean voided = pdcData.getOrDefault(getTaskDataKey("voided"), PersistentDataType.BYTE, (byte) 0) != 0;
+        UUID completedBy = null;
+        String idStr = pdcData.getOrDefault(getTaskDataKey("completed_by"), PersistentDataType.STRING, "");
+        long timeStr = pdcData.getOrDefault(getTaskDataKey("completed_at"), PersistentDataType.LONG, -1L);
+        if (idStr != "")
+            completedBy = UUID.fromString(idStr);
+
+        String typeStr = pdcData.getOrDefault(getTaskDataKey("type"), PersistentDataType.STRING, "");
+        TaskType type;
+        if (typeStr.isEmpty()) {
+            Message.log("Cannot create a valid task from this item stack!");
+            return null;
+        }
+
+        type = TaskType.valueOf(typeStr);
+        BingoTask task = switch (type) {
+            case ADVANCEMENT -> new BingoTask(AdvancementTask.fromPdc(pdcData));
+            case STATISTIC -> new BingoTask(StatisticTask.fromPdc(pdcData));
+            default -> new BingoTask(ItemTask.fromPdc(pdcData));
+        };
+
+        return task;
+    }
+
+    public static NamespacedKey getTaskDataKey(String property) {
+        return PDCHelper.createKey("task." + property);
+    }
+
+    public boolean isVoided() {
+        return voided && completedBy.isPresent();
+    }
+
+    public void setVoided(boolean value) {
         if (value && completedBy.isEmpty())
             return;
 
         voided = value;
     }
 
-    public boolean isVoided()
-    {
-        return voided && completedBy.isPresent();
-    }
-
-    public InventoryItem asStack()
-    {
+    public InventoryItem asStack() {
         ItemStack item;
 
         // Step 1: create the item and put the new name, description and material on it.
@@ -109,8 +119,7 @@ public class BingoTask
 
             item = new ItemStack(Material.BEDROCK);
             ItemText.buildItemText(item, itemName, addedDesc);
-        }
-        else if (completedBy.isPresent()) // COMPLETED TASK
+        } else if (completedBy.isPresent()) // COMPLETED TASK
         {
             Material completeMaterial = completedBy.get().getTeam().getColor().glassPane;
 
@@ -119,7 +128,7 @@ public class BingoTask
             ItemText itemName = new ItemText(ChatColor.GRAY, ChatColor.STRIKETHROUGH);
             itemName.add(data.getItemDisplayName());
 
-            Set<ChatColor> modifiers = new HashSet<>(){{
+            Set<ChatColor> modifiers = new HashSet<>() {{
                 add(ChatColor.DARK_PURPLE);
                 add(ChatColor.ITALIC);
             }};
@@ -134,12 +143,10 @@ public class BingoTask
                     desc);
 
             ItemMeta meta = item.getItemMeta();
-            if (meta != null)
-            {
+            if (meta != null) {
                 item.setItemMeta(meta);
             }
-        }
-        else // DEFAULT TASK
+        } else // DEFAULT TASK
         {
             ItemText itemName = new ItemText(nameColor);
             itemName.add(data.getItemDisplayName());
@@ -161,7 +168,7 @@ public class BingoTask
         pdcData = data.pdcSerialize(pdcData);
         // Then serialize generic task info/ live data
         pdcData.set(getTaskDataKey("type"), PersistentDataType.STRING, type.name());
-        pdcData.set(getTaskDataKey("voided"), PersistentDataType.BYTE, (byte)(voided ? 1 : 0));
+        pdcData.set(getTaskDataKey("voided"), PersistentDataType.BYTE, (byte) (voided ? 1 : 0));
         pdcData.set(getTaskDataKey("completed_at"), PersistentDataType.LONG, completedAt);
         if (completedBy.isPresent())
             pdcData.set(getTaskDataKey("completed_by"), PersistentDataType.STRING, completedBy.get().gamePlayer().get().getUniqueId().toString());
@@ -171,51 +178,14 @@ public class BingoTask
         meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         finalItem.setItemMeta(meta);
 
-        if (glowing && completedBy.isEmpty())
-        {
+        if (glowing && completedBy.isEmpty()) {
             finalItem.highlight(true);
         }
 
         return finalItem;
     }
 
-    public static BingoTask fromStack(ItemStack in)
-    {
-        PersistentDataContainer pdcData = in.getItemMeta().getPersistentDataContainer();
-
-        boolean voided = pdcData.getOrDefault(getTaskDataKey("voided"), PersistentDataType.BYTE, (byte)0) != 0;
-        UUID completedBy = null;
-        String idStr = pdcData.getOrDefault(getTaskDataKey("completed_by"), PersistentDataType.STRING, "");
-        long timeStr = pdcData.getOrDefault(getTaskDataKey("completed_at"), PersistentDataType.LONG, -1L);
-        if (idStr != "")
-            completedBy = UUID.fromString(idStr);
-
-        String typeStr = pdcData.getOrDefault(getTaskDataKey("type"), PersistentDataType.STRING, "");
-        TaskType type;
-        if (typeStr.isEmpty())
-        {
-            Message.log("Cannot create a valid task from this item stack!");
-            return null;
-        }
-
-        type = TaskType.valueOf(typeStr);
-        BingoTask task = switch (type)
-        {
-            case ADVANCEMENT -> new BingoTask(AdvancementTask.fromPdc(pdcData));
-            case STATISTIC -> new BingoTask(StatisticTask.fromPdc(pdcData));
-            default ->  new BingoTask(ItemTask.fromPdc(pdcData));
-        };
-
-        return task;
-    }
-
-    public static NamespacedKey getTaskDataKey(String property)
-    {
-        return PDCHelper.createKey("task." + property);
-    }
-
-    public boolean complete(BingoPlayer player, long time)
-    {
+    public boolean complete(BingoPlayer player, long time) {
         if (completedBy.isPresent())
             return false;
 
@@ -232,8 +202,13 @@ public class BingoTask
         return true;
     }
 
-    public BingoTask copy()
-    {
+    public BingoTask copy() {
         return new BingoTask(data);
+    }
+
+    public enum TaskType {
+        ITEM,
+        STATISTIC,
+        ADVANCEMENT,
     }
 }

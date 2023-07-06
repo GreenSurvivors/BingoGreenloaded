@@ -16,36 +16,29 @@ import java.util.List;
 
 // This class is used to navigate through the cards and lists.
 // Uses a double ListPicker, one for cards and one for lists.
-public class BingoCreatorUI extends MenuInventory
-{
+public class BingoCreatorUI extends MenuInventory {
     public static final InventoryItem CARD = new InventoryItem(11, Material.FILLED_MAP, TITLE_PREFIX + "Edit Cards", "Click to view and edit bingo cards!");
     public static final InventoryItem LIST = new InventoryItem(15, Material.PAPER, TITLE_PREFIX + "Edit Lists", "Click to view and edit bingo lists!");
 
-    public BingoCreatorUI(MenuInventory parent)
-    {
+    public BingoCreatorUI(MenuInventory parent) {
         super(27, "Card Creator", parent);
         fillOptions(CARD, LIST);
     }
 
     @Override
-    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
-    {
-        if (slotClicked == CARD.getSlot())
-        {
-            PaginatedPickerMenu cardPicker = new PaginatedPickerMenu(new ArrayList<>(), "Choose A Card", this, FilterType.DISPLAY_NAME)
-            {
-                private static final InventoryItem CREATE_CARD = new InventoryItem(51, Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + "New Card");
+    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType) {
+        if (slotClicked == CARD.getSlot()) {
+            PaginatedPickerMenu cardPicker = new PaginatedPickerMenu(new ArrayList<>(), "Choose A Card", this, FilterType.DISPLAY_NAME) {
+                private static final InventoryItem CREATE_CARD = new InventoryItem(51, Material.EMERALD, String.valueOf(ChatColor.GREEN) + ChatColor.BOLD + "New Card");
 
                 @Override
-                public void handleOpen(final InventoryOpenEvent event)
-                {
+                public void handleOpen(final InventoryOpenEvent event) {
                     super.handleOpen(event);
                     addOption(CREATE_CARD);
                     clearItems();
 
                     List<InventoryItem> items = new ArrayList<>();
-                    for (String card : BingoCardsData.getCardNames())
-                    {
+                    for (String card : BingoCardsData.getCardNames()) {
                         InventoryItem item = new InventoryItem(Material.FILLED_MAP, card,
                                 "This card contains " + BingoCardsData.getLists(card).size() + " list(s)",
                                 ChatColor.GRAY + "Right-click for more options");
@@ -55,46 +48,35 @@ public class BingoCreatorUI extends MenuInventory
                 }
 
                 @Override
-                public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
-                {
-                    if (slotClicked == CREATE_CARD.getSlot())
-                    {
+                public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType) {
+                    if (slotClicked == CREATE_CARD.getSlot()) {
                         createCard(player);
                     }
                     super.delegateClick(event, slotClicked, player, clickType);
                 }
 
                 @Override
-                public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
-                {
-                    if (event.getClick() == ClickType.LEFT)
-                    {
+                public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player) {
+                    if (event.getClick() == ClickType.LEFT) {
                         openCardEditor(clickedOption.getItemMeta().getDisplayName(), player);
-                    }
-                    else if (event.getClick() == ClickType.RIGHT)
-                    {
+                    } else if (event.getClick() == ClickType.RIGHT) {
                         createCardContext(clickedOption.getItemMeta().getDisplayName(), player, this);
                     }
                 }
             };
             cardPicker.open(player);
-        }
-        else if (slotClicked == LIST.getSlot())
-        {
-            PaginatedPickerMenu listPicker = new PaginatedPickerMenu(new ArrayList<>(), "Choose A List", this, FilterType.DISPLAY_NAME)
-            {
-                private static final InventoryItem CREATE_LIST = new InventoryItem(51, Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + "New List");
+        } else if (slotClicked == LIST.getSlot()) {
+            PaginatedPickerMenu listPicker = new PaginatedPickerMenu(new ArrayList<>(), "Choose A List", this, FilterType.DISPLAY_NAME) {
+                private static final InventoryItem CREATE_LIST = new InventoryItem(51, Material.EMERALD, String.valueOf(ChatColor.GREEN) + ChatColor.BOLD + "New List");
 
                 @Override
-                public void handleOpen(final InventoryOpenEvent event)
-                {
+                public void handleOpen(final InventoryOpenEvent event) {
                     super.handleOpen(event);
                     addOption(CREATE_LIST);
                     clearItems();
 
                     List<InventoryItem> items = new ArrayList<>();
-                    for (String list : TaskListsData.getListNames())
-                    {
+                    for (String list : TaskListsData.getListNames()) {
                         InventoryItem item = new InventoryItem(Material.PAPER, list,
                                 "This list contains " + TaskListsData.getTasks(list).size() + " tasks",
                                 ChatColor.GRAY + "Right-click for more options");
@@ -104,24 +86,18 @@ public class BingoCreatorUI extends MenuInventory
                 }
 
                 @Override
-                public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
-                {
-                    if (slotClicked == CREATE_LIST.getSlot())
-                    {
+                public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType) {
+                    if (slotClicked == CREATE_LIST.getSlot()) {
                         createList(player);
                     }
                     super.delegateClick(event, slotClicked, player, clickType);
                 }
 
                 @Override
-                public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
-                {
-                    if (event.getClick() == ClickType.LEFT)
-                    {
+                public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player) {
+                    if (event.getClick() == ClickType.LEFT) {
                         openListEditor(clickedOption.getItemMeta().getDisplayName(), player);
-                    }
-                    else if (event.getClick() == ClickType.RIGHT)
-                    {
+                    } else if (event.getClick() == ClickType.RIGHT) {
                         createListContext(clickedOption.getItemMeta().getDisplayName(), player, this);
                     }
                 }
@@ -130,36 +106,31 @@ public class BingoCreatorUI extends MenuInventory
         }
     }
 
-    private void openCardEditor(String cardName, Player player)
-    {
+    private void openCardEditor(String cardName, Player player) {
         CardEditorUI editor = new CardEditorUI(cardName, this);
         editor.open(player);
     }
 
-    private void openListEditor(String listName, Player player)
-    {
+    private void openListEditor(String listName, Player player) {
         ListEditorUI editor = new ListEditorUI(listName, this);
         editor.open(player);
     }
 
-    public void createCard(Player player)
-    {
+    public void createCard(Player player) {
         UserInputMenu.open("Enter new card name", (input) -> {
             if (!input.equals(""))
                 openCardEditor(input.toLowerCase().replace(" ", "_"), player);
         }, player, this);
     }
 
-    public void createList(Player player)
-    {
+    public void createList(Player player) {
         UserInputMenu.open("Enter new list name", (input) -> {
             if (!input.equals(""))
                 openListEditor(input.toLowerCase().replace(" ", "_"), player);
         }, player, this);
     }
 
-    public void createCardContext(String cardName, Player player, MenuInventory parent)
-    {
+    public void createCardContext(String cardName, Player player, MenuInventory parent) {
         ContextMenu menu = new ContextMenu("What to do with '" + cardName + "'", parent);
         menu.addAction("Remove", Material.BARRIER, (clickType) -> {
             BingoCardsData.removeCard(cardName);
@@ -178,8 +149,7 @@ public class BingoCreatorUI extends MenuInventory
         menu.open(player);
     }
 
-    public void createListContext(String listName, Player player, MenuInventory parent)
-    {
+    public void createListContext(String listName, Player player, MenuInventory parent) {
         ContextMenu menu = new ContextMenu("What to do with '" + listName + "'", parent);
         menu.addAction("Remove", Material.BARRIER, (clickType) -> {
             TaskListsData.removeList(listName);

@@ -13,18 +13,15 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class UserInputMenu
-{
-    private static final InventoryItem EMPTY = new InventoryItem(Material.ELYTRA, "" + ChatColor.GRAY + ChatColor.BOLD + TranslationData.translate("menu.clear"), "");
-    private static final InventoryItem ACCEPT = new InventoryItem(Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + TranslationData.translate("menu.accept"), "");
+public class UserInputMenu {
+    private static final InventoryItem EMPTY = new InventoryItem(Material.ELYTRA, String.valueOf(ChatColor.GRAY) + ChatColor.BOLD + TranslationData.translate("menu.clear"), "");
+    private static final InventoryItem ACCEPT = new InventoryItem(Material.DIAMOND, String.valueOf(ChatColor.AQUA) + ChatColor.BOLD + TranslationData.translate("menu.accept"), "");
 
-    public static void open(String title, Consumer<String> result, Player player, MenuInventory parent)
-    {
+    public static void open(String title, Consumer<String> result, Player player, MenuInventory parent) {
         UserInputMenu.open(title, result, player, parent, "name");
     }
 
-    public static void open(String title, Consumer<String> result, Player player, MenuInventory parent, String startingText)
-    {
+    public static void open(String title, Consumer<String> result, Player player, MenuInventory parent, String startingText) {
         AnvilGUI anvil = new AnvilGUI.Builder()
                 .onComplete(completion -> {
                     if (parent != null)

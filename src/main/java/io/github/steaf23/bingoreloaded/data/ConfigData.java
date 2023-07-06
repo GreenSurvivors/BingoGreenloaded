@@ -5,38 +5,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import javax.annotation.Nullable;
 
-public class ConfigData
-{
-    public enum PlayerTeleportStrategy
-    {
-        ALONE("alone"),
-        TEAM("team"),
-        ALL("all"),
-        NONE("none"),
-        CUSTOM("custom");
-
-        public final String name;
-
-        PlayerTeleportStrategy(String name)
-        {
-            this.name = name;
-        }
-
-        static PlayerTeleportStrategy fromName(@Nullable String name)
-        {
-            if (name == null)
-                return ALL;
-            return switch (name.toLowerCase())
-                    {
-                        case "alone" -> ALONE;
-                        case "team" -> TEAM;
-                        case "all" -> ALL;
-                        case "custom" -> CUSTOM;
-                        default -> NONE;
-                    };
-        }
-    }
-
+public class ConfigData {
+    public static final ConfigData instance = new ConfigData();
     public int teleportMaxDistance;
     public PlayerTeleportStrategy playerTeleportStrategy;
     public boolean teleportAfterDeath;
@@ -62,10 +32,7 @@ public class ConfigData
     public boolean keepScoreboardVisible;
     public boolean showPlayerInScoreboard;
 
-    public static final ConfigData instance = new ConfigData();
-
-    public void loadConfig(FileConfiguration config)
-    {
+    public void loadConfig(FileConfiguration config) {
         this.language = "languages/" + config.getString("language", "en_us.yml");
         this.teleportMaxDistance = config.getInt("teleportMaxDistance", 1000000);
         this.playerTeleportStrategy = PlayerTeleportStrategy.fromName(config.getString("playerTeleportStrategy", "ALL"));
@@ -89,5 +56,31 @@ public class ConfigData
         this.sendPlayerCommandQuit = config.getString("sendPlayerCommandQuit", "");
         this.keepScoreboardVisible = config.getBoolean("keepScoreboardVisible", true);
         this.showPlayerInScoreboard = config.getBoolean("showPlayerInScoreboard", true);
+    }
+
+    public enum PlayerTeleportStrategy {
+        ALONE("alone"),
+        TEAM("team"),
+        ALL("all"),
+        NONE("none"),
+        CUSTOM("custom");
+
+        public final String name;
+
+        PlayerTeleportStrategy(String name) {
+            this.name = name;
+        }
+
+        static PlayerTeleportStrategy fromName(@Nullable String name) {
+            if (name == null)
+                return ALL;
+            return switch (name.toLowerCase()) {
+                case "alone" -> ALONE;
+                case "team" -> TEAM;
+                case "all" -> ALL;
+                case "custom" -> CUSTOM;
+                default -> NONE;
+            };
+        }
     }
 }

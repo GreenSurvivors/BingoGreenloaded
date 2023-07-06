@@ -12,7 +12,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SerializableAs("Bingo.Statistic")
-public record BingoStatistic (@NotNull Statistic stat, @Nullable EntityType entityType, @Nullable Material materialType) implements ConfigurationSerializable {
+public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entityType,
+                             @Nullable Material materialType) implements ConfigurationSerializable {
+
+    public static BingoStatistic deserialize(@NotNull Map<String, Object> data) {
+        Statistic stat = Statistic.valueOf((String) data.get("statistic"));
+
+        String entityStr = (String) data.getOrDefault("entity", null);
+        EntityType entity = null;
+        if (entityStr != null && !entityStr.isEmpty())
+            entity = EntityType.valueOf((String) data.get("entity"));
+
+        String materialStr = (String) data.getOrDefault("item", null);
+        Material material = null;
+        if (materialStr != null && !materialStr.isEmpty())
+            material = Material.valueOf((String) data.get("item"));
+
+        return new BingoStatistic(stat, entity, material);
+    }
 
     public BingoStaticStatistic.StatisticCategory getCategory() {
         return BingoStaticStatistic.determineStatCategory(stat);
@@ -31,45 +48,25 @@ public record BingoStatistic (@NotNull Statistic stat, @Nullable EntityType enti
     /**
      * @return True if this statistic is processed by the PlayerStatisticIncrementEvent
      */
-    public boolean isStatisticProcessed()
-    {
+    public boolean isStatisticProcessed() {
         if (getCategory() == BingoStaticStatistic.StatisticCategory.TRAVEL)
             return false;
 
-        return switch (stat)
-                {
-                    case PLAY_ONE_MINUTE,
-                            SNEAK_TIME,
-                            TOTAL_WORLD_TIME,
-                            TIME_SINCE_REST,
-                            TIME_SINCE_DEATH -> false;
-                    default -> true;
-                };
+        return switch (stat) {
+            case PLAY_ONE_MINUTE,
+                    SNEAK_TIME,
+                    TOTAL_WORLD_TIME,
+                    TIME_SINCE_REST,
+                    TIME_SINCE_DEATH -> false;
+            default -> true;
+        };
     }
 
-    public static BingoStatistic deserialize(@NotNull Map<String, Object> data) {
-        Statistic stat = Statistic.valueOf((String)data.get("statistic"));
-
-        String entityStr = (String) data.getOrDefault("entity", null);
-        EntityType entity = null;
-        if (entityStr != null && !entityStr.isEmpty())
-            entity = EntityType.valueOf((String)data.get("entity"));
-
-        String materialStr = (String) data.getOrDefault("item", null);
-        Material material = null;
-        if (materialStr != null && !materialStr.isEmpty())
-            material = Material.valueOf((String)data.get("item"));
-
-        return new BingoStatistic(stat, entity, material);
-    }
-
-    public boolean hasMaterialComponent()
-    {
+    public boolean hasMaterialComponent() {
         return materialType != null;
     }
 
-    public boolean hasEntityComponent()
-    {
+    public boolean hasEntityComponent() {
         return entityType != null;
     }
 }

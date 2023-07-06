@@ -6,15 +6,14 @@ import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 
-public enum FlexColor
-{
+public enum FlexColor {
     BROWN("brown", ChatColor.of("#734829"), DyeColor.BROWN, 12, Material.BROWN_CONCRETE, Material.BROWN_STAINED_GLASS_PANE, Material.BROWN_BANNER),
     ORANGE("orange", ChatColor.of("#f17716"), DyeColor.ORANGE, 1, Material.ORANGE_CONCRETE, Material.ORANGE_STAINED_GLASS_PANE, Material.ORANGE_BANNER),
     WHITE("white", ChatColor.of("#eaeded"), DyeColor.WHITE, 0, Material.WHITE_CONCRETE, Material.WHITE_STAINED_GLASS_PANE, Material.WHITE_BANNER),
     GRAY("gray", ChatColor.of("#3f4548"), DyeColor.GRAY, 7, Material.GRAY_CONCRETE, Material.GRAY_STAINED_GLASS_PANE, Material.GRAY_BANNER),
     LIGHT_GRAY("light_gray", ChatColor.of("#8e8f87"), DyeColor.LIGHT_GRAY, 8, Material.LIGHT_GRAY_CONCRETE, Material.LIGHT_GRAY_STAINED_GLASS_PANE, Material.LIGHT_GRAY_BANNER),
     BLACK("black", ChatColor.of("#16161b"), DyeColor.BLACK, 15, Material.BLACK_CONCRETE, Material.BLACK_STAINED_GLASS_PANE, Material.BLACK_BANNER),
-    BLUE("blue", ChatColor.of("#353a9e"), DyeColor.BLUE,11, Material.BLUE_CONCRETE, Material.BLUE_STAINED_GLASS_PANE, Material.BLUE_BANNER),
+    BLUE("blue", ChatColor.of("#353a9e"), DyeColor.BLUE, 11, Material.BLUE_CONCRETE, Material.BLUE_STAINED_GLASS_PANE, Material.BLUE_BANNER),
     LIGHT_BLUE("light_blue", ChatColor.of("#3cb0da"), DyeColor.LIGHT_BLUE, 3, Material.LIGHT_BLUE_CONCRETE, Material.LIGHT_BLUE_STAINED_GLASS_PANE, Material.LIGHT_BLUE_BANNER),
     GREEN("green", ChatColor.of("#556e1c"), DyeColor.GREEN, 13, Material.GREEN_CONCRETE, Material.GREEN_STAINED_GLASS_PANE, Material.GREEN_BANNER),
     LIME("lime", ChatColor.of("#71ba1a"), DyeColor.LIME, 5, Material.LIME_CONCRETE, Material.LIME_STAINED_GLASS_PANE, Material.LIME_BANNER),
@@ -37,8 +36,7 @@ public enum FlexColor
     public final Material banner;
     public final Material beds;
 
-    FlexColor(String name, ChatColor chatColor, DyeColor dyeColor, int nbtColor, Material concrete, Material glassPane, Material banner)
-    {
+    FlexColor(String name, ChatColor chatColor, DyeColor dyeColor, int nbtColor, Material concrete, Material glassPane, Material banner) {
         this.chatColor = chatColor;
         this.dyeColor = dyeColor;
         this.nbtColor = nbtColor;
@@ -51,17 +49,9 @@ public enum FlexColor
         this.beds = null;
     }
 
-    public String getTranslatedName()
-    {
-        return TranslationData.translate("teams." + name);
-    }
-
-    public static FlexColor fromName(String name)
-    {
-        for (FlexColor c : FlexColor.values())
-        {
-            if (c.name.equals(name))
-            {
+    public static FlexColor fromName(String name) {
+        for (FlexColor c : FlexColor.values()) {
+            if (c.name.equals(name)) {
                 return c;
             }
         }
@@ -70,10 +60,8 @@ public enum FlexColor
         return null;
     }
 
-    public static FlexColor fromChatColor(ChatColor color)
-    {
-        for (FlexColor flexColor : FlexColor.values())
-        {
+    public static FlexColor fromChatColor(ChatColor color) {
+        for (FlexColor flexColor : FlexColor.values()) {
             if (flexColor.chatColor.equals(color))
                 return flexColor;
         }
@@ -82,18 +70,15 @@ public enum FlexColor
         return null;
     }
 
-    public static org.bukkit.Color toBukkitColor(java.awt.Color color)
-    {
+    public static org.bukkit.Color toBukkitColor(java.awt.Color color) {
         int r = color.getRed();
         int g = color.getGreen();
         int b = color.getBlue();
         return Color.fromRGB(r, g, b);
     }
 
-    public static FlexColor fromDye(DyeColor dye)
-    {
-        for (FlexColor flexColor : FlexColor.values())
-        {
+    public static FlexColor fromDye(DyeColor dye) {
+        for (FlexColor flexColor : FlexColor.values()) {
             if (flexColor.dyeColor.equals(dye))
                 return flexColor;
         }
@@ -102,10 +87,8 @@ public enum FlexColor
         return null;
     }
 
-    public static FlexColor fromConcrete(Material concrete)
-    {
-        for (FlexColor flexColor : FlexColor.values())
-        {
+    public static FlexColor fromConcrete(Material concrete) {
+        for (FlexColor flexColor : FlexColor.values()) {
             if (flexColor.concrete.equals(concrete))
                 return flexColor;
         }
@@ -114,10 +97,8 @@ public enum FlexColor
         return null;
     }
 
-    public static FlexColor fromGlassPane(Material glassPane)
-    {
-        for (FlexColor flexColor : FlexColor.values())
-        {
+    public static FlexColor fromGlassPane(Material glassPane) {
+        for (FlexColor flexColor : FlexColor.values()) {
             if (flexColor.glassPane.equals(glassPane))
                 return flexColor;
         }
@@ -126,10 +107,8 @@ public enum FlexColor
         return null;
     }
 
-    public static FlexColor fromBanner(Material banner)
-    {
-        for (FlexColor flexColor : FlexColor.values())
-        {
+    public static FlexColor fromBanner(Material banner) {
+        for (FlexColor flexColor : FlexColor.values()) {
             if (flexColor.banner.equals(banner))
                 return flexColor;
         }
@@ -138,15 +117,17 @@ public enum FlexColor
         return null;
     }
 
-    public static FlexColor fromNbt(int nbtColor)
-    {
-        for (FlexColor flexColor : FlexColor.values())
-        {
+    public static FlexColor fromNbt(int nbtColor) {
+        for (FlexColor flexColor : FlexColor.values()) {
             if (flexColor.nbtColor == nbtColor)
                 return flexColor;
         }
 
         Message.warn("Could not find a color fitting to " + nbtColor + "(nbt) !");
         return null;
+    }
+
+    public String getTranslatedName() {
+        return TranslationData.translate("teams." + name);
     }
 }

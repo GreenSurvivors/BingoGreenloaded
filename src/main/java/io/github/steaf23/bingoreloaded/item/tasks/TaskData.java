@@ -8,12 +8,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 
-public interface TaskData extends ConfigurationSerializable, Serializable
-{
+public interface TaskData extends ConfigurationSerializable, Serializable {
     ItemText getItemDisplayName();
+
     ItemText[] getItemDescription();
+
     BaseComponent getDescription();
+
     int getStackSize();
+
     boolean isTaskEqual(TaskData other);
+
     @NotNull PersistentDataContainer pdcSerialize(PersistentDataContainer stream);
 }

@@ -26,21 +26,17 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class BingoCommand implements CommandExecutor
-{
+public class BingoCommand implements CommandExecutor {
     @Override
-    public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String s, String[] args)
-    {
-        if (!(commandSender instanceof Player player) || !player.hasPermission("bingo.player"))
-        {
+    public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String s, String[] args) {
+        if (!(commandSender instanceof Player player) || !player.hasPermission("bingo.player")) {
             return false;
         }
 
         String worldName = BingoGameManager.getWorldName(player.getWorld());
         BingoGame activeGame = BingoGameManager.get().getActiveGame(worldName);
-        
-        if (args.length == 0)
-        {
+
+        if (args.length == 0) {
             if (!BingoGameManager.get().doesGameWorldExist(worldName))
                 return false;
 
@@ -48,7 +44,7 @@ public class BingoCommand implements CommandExecutor
             return true;
         }
 
-        switch (args[0]){
+        switch (args[0]) {
             case "join" -> {
                 if (BingoGameManager.get().doesGameWorldExist(worldName)) {
                     BingoGame existingGame = BingoGameManager.get().getGame(worldName);
@@ -169,10 +165,8 @@ public class BingoCommand implements CommandExecutor
         return false;
     }
 
-    public void addPlayerKit(String slot, List<String> kitNameParts, Player commandSender)
-    {
-        PlayerKit kit = switch (slot)
-        {
+    public void addPlayerKit(String slot, List<String> kitNameParts, Player commandSender) {
+        PlayerKit kit = switch (slot) {
             case "1" -> PlayerKit.CUSTOM_1;
             case "2" -> PlayerKit.CUSTOM_2;
             case "3" -> PlayerKit.CUSTOM_3;
@@ -185,14 +179,12 @@ public class BingoCommand implements CommandExecutor
         };
 
         StringBuilder kitName = new StringBuilder();
-        for (int i = 0; i < kitNameParts.size() - 1; i++)
-        {
+        for (int i = 0; i < kitNameParts.size() - 1; i++) {
             kitName.append(kitNameParts.get(i)).append(" ");
         }
         kitName.append(kitNameParts.get(kitNameParts.size() - 1));
 
-        if (!PlayerKit.assignCustomKit(kitName.toString(), kit, commandSender))
-        {
+        if (!PlayerKit.assignCustomKit(kitName.toString(), kit, commandSender)) {
             BaseComponent msg = new TextComponent("");
             msg.setColor(ChatColor.RED);
             msg.addExtra("Cannot add custom kit ");
@@ -201,9 +193,7 @@ public class BingoCommand implements CommandExecutor
             msg.addExtra(PlayerKit.getCustomKit(kit).getName());
             msg.addExtra(". Remove it first!");
             Message.sendDebug(msg, commandSender);
-        }
-        else
-        {
+        } else {
             BaseComponent msg = new TextComponent("");
             msg.setColor(ChatColor.GREEN);
             msg.addExtra("Created custom kit ");
@@ -213,10 +203,8 @@ public class BingoCommand implements CommandExecutor
         }
     }
 
-    public void removePlayerKit(String slot, Player commandSender)
-    {
-        PlayerKit kit = switch (slot)
-        {
+    public void removePlayerKit(String slot, Player commandSender) {
+        PlayerKit kit = switch (slot) {
             case "1" -> PlayerKit.CUSTOM_1;
             case "2" -> PlayerKit.CUSTOM_2;
             case "3" -> PlayerKit.CUSTOM_3;
@@ -228,15 +216,12 @@ public class BingoCommand implements CommandExecutor
             }
         };
 
-        if (PlayerKit.getCustomKit(kit) == null)
-        {
+        if (PlayerKit.getCustomKit(kit) == null) {
             BaseComponent msg = new TextComponent("");
             msg.setColor(ChatColor.RED);
             msg.addExtra("Cannot remove kit from slot " + slot + " because no custom kit is assigned to this slot");
             Message.sendDebug(msg, commandSender);
-        }
-        else
-        {
+        } else {
             BaseComponent msg = new TextComponent("");
             msg.setColor(ChatColor.GREEN);
             msg.addExtra("Removed custom kit ");
@@ -247,10 +232,8 @@ public class BingoCommand implements CommandExecutor
         }
     }
 
-    public void givePlayerBingoItem(Player player, String itemName)
-    {
-        if (itemName.equals("wand"))
-        {
+    public void givePlayerBingoItem(Player player, String itemName) {
+        if (itemName.equals("wand")) {
             player.getInventory().addItem(PlayerKit.wandItem);
         }
     }

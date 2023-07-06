@@ -22,12 +22,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TeamChatCommand implements Listener, CommandExecutor
-{
+public class TeamChatCommand implements Listener, CommandExecutor {
     private final List<BingoPlayer> enabledPlayers;
 
-    public TeamChatCommand()
-    {
+    public TeamChatCommand() {
         this.enabledPlayers = new ArrayList<>();
 
         Plugin plugin = Bukkit.getPluginManager().getPlugin(BingoReloaded.NAME);
@@ -37,8 +35,7 @@ public class TeamChatCommand implements Listener, CommandExecutor
     }
 
     @EventHandler
-    public void onPlayerSendMessage(final AsyncPlayerChatEvent event)
-    {
+    public void onPlayerSendMessage(final AsyncPlayerChatEvent event) {
         BingoGame game = BingoGameManager.get().getGame(BingoGameManager.getWorldName(event.getPlayer().getWorld()));
         if (game == null)
             return;
@@ -56,44 +53,36 @@ public class TeamChatCommand implements Listener, CommandExecutor
         event.setCancelled(true);
     }
 
-    public void sendMessage(BingoTeam team, Player player, String message)
-    {
-        for (String entry : team.team.getEntries())
-        {
+    public void sendMessage(BingoTeam team, Player player, String message) {
+        for (String entry : team.team.getEntries()) {
             Player member = Bukkit.getPlayer(entry);
             if (member == null) continue;
 
             if (!member.isOnline()) continue;
 
             member.sendMessage(ChatColor.DARK_RED + "[" + team.getColoredName().asLegacyString() + ChatColor.DARK_RED + "]" +
-                    ChatColor.RESET  + "<" + player.getName() + "> " + message);
+                    ChatColor.RESET + "<" + player.getName() + "> " + message);
         }
     }
 
     @Override
-    public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String s, String[] args)
-    {
-        if (commandSender instanceof Player p)
-        {
+    public boolean onCommand(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String s, String[] args) {
+        if (commandSender instanceof Player p) {
             BingoGame game = BingoGameManager.get().getGame(BingoGameManager.getWorldName(p.getWorld()));
             if (game == null)
                 return false;
 
             TeamManager teamManager = game.getTeamManager();
             BingoPlayer player = teamManager.getBingoPlayer(p);
-            if (!teamManager.getParticipants().contains(player))
-            {
+            if (!teamManager.getParticipants().contains(player)) {
                 new Message("game.team.no_chat").color(ChatColor.RED).send(p);
                 return false;
             }
 
-            if (enabledPlayers.contains(player))
-            {
+            if (enabledPlayers.contains(player)) {
                 enabledPlayers.remove(player);
                 new Message("game.team.chat_off").color(ChatColor.GREEN).arg("/btc").send(p);
-            }
-            else
-            {
+            } else {
                 enabledPlayers.add(player);
                 new Message("game.team.chat_on").color(ChatColor.GREEN).arg("/btc").send(p);
             }

@@ -18,10 +18,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BingoMenu extends MenuInventory
-{
-    private final InventoryItem start = new InventoryItem(GUIPreset5x9.SEVEN_CENTER1.positions[3],
-            Material.LIME_CONCRETE, TITLE_PREFIX + TranslationData.itemName("menu.options.start"));
+public class BingoMenu extends MenuInventory {
     private static final InventoryItem JOIN = new InventoryItem(GUIPreset5x9.SEVEN_CENTER1.positions[0],
             Material.WHITE_GLAZED_TERRACOTTA, TITLE_PREFIX + TranslationData.itemName("menu.options.team"));
     private static final InventoryItem LEAVE = new InventoryItem(GUIPreset5x9.SEVEN_CENTER1.positions[1],
@@ -36,112 +33,33 @@ public class BingoMenu extends MenuInventory
             Material.POTION, TITLE_PREFIX + TranslationData.itemName("menu.options.effects"));
     private static final InventoryItem EXTRA = new InventoryItem(44,
             Material.STRUCTURE_VOID, TITLE_PREFIX + TranslationData.translate("menu.next"));
-
     private static final InventoryItem JOIN_P = JOIN.inSlot(GUIPreset5x9.TWO_HORIZONTAL_WIDE.positions[0]);
     private static final InventoryItem LEAVE_P = LEAVE.inSlot(GUIPreset5x9.TWO_HORIZONTAL_WIDE.positions[1]);
+    private final InventoryItem start = new InventoryItem(GUIPreset5x9.SEVEN_CENTER1.positions[3],
+            Material.LIME_CONCRETE, TITLE_PREFIX + TranslationData.itemName("menu.options.start"));
 
-    @Override
-    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
-    {
-        String worldName = BingoGameManager.getWorldName(player.getWorld());
-
-        if (!player.hasPermission("bingo.settings"))
-        {
-            BingoGame game = BingoGameManager.get().getGame(worldName);
-
-            if (slotClicked == JOIN_P.getSlot())
-            {
-                game.getTeamManager().openTeamSelector(player, this);
-            }
-            else if (slotClicked == LEAVE_P.getSlot())
-            {
-                game.playerQuit(game.getTeamManager().getBingoPlayer(player));
-            }
-            return;
-        }
-
-        BingoSettings settings = BingoGameManager.get().getGameSettings(worldName);
-
-        if (slotClicked == JOIN.getSlot())
-        {
-            BingoGame game = BingoGameManager.get().getGame(worldName);
-            game.getTeamManager().openTeamSelector(player, this);
-        }
-        else if (slotClicked == LEAVE.getSlot())
-        {
-            BingoGame game = BingoGameManager.get().getGame(worldName);
-            game.playerQuit(game.getTeamManager().getBingoPlayer(player));
-        }
-        else if (slotClicked == KIT.getSlot())
-        {
-            KitOptionsMenu kitSelector = new KitOptionsMenu(this, settings);
-            kitSelector.open(player);
-        }
-        else if (slotClicked == MODE.getSlot())
-        {
-            GamemodeOptionsMenu gamemodeSelector = new GamemodeOptionsMenu(this, settings);
-            gamemodeSelector.open(player);
-        }
-        else if (slotClicked == CARD.getSlot())
-        {
-            openCardPicker(player);
-        }
-        else if (slotClicked == EFFECTS.getSlot())
-        {
-            EffectOptionsMenu effectSelector = new EffectOptionsMenu(this, settings);
-            effectSelector.open(player);
-        }
-        else if (slotClicked == EXTRA.getSlot())
-        {
-             ExtraBingoMenu extraOptions = new ExtraBingoMenu(this, settings);
-             extraOptions.open(player);
-        }
-        else if (slotClicked == start.getSlot())
-        {
-            if (BingoGameManager.get().isGameWorldActive(player.getWorld()))
-            {
-                BingoGameManager.get().endGame(BingoGameManager.getWorldName(player.getWorld()));
-                start.setType(Material.LIME_CONCRETE);
-                ItemMeta meta = start.getItemMeta();
-                if (meta != null)
-                {
-                    meta.setDisplayName(TITLE_PREFIX + TranslationData.itemName("menu.options.start"));
-                    start.setItemMeta(meta);
-                }
-                addOption(start);
-            }
-            else
-            {
-                BingoGameManager.get().startGame(BingoGameManager.getWorldName(player.getWorld()));
-            }
-        }
+    private BingoMenu() {
+        super(45, TranslationData.translate("menu.options.title"), null);
     }
 
-    public static void openOptions(Player player)
-    {
+    public static void openOptions(Player player) {
         BingoMenu options = new BingoMenu();
-        if (BingoGameManager.get().isGameWorldActive(player.getWorld()))
-        {
+        if (BingoGameManager.get().isGameWorldActive(player.getWorld())) {
             options.start.setType(Material.RED_CONCRETE);
             ItemMeta meta = options.start.getItemMeta();
-            if (meta != null)
-            {
+            if (meta != null) {
                 meta.setDisplayName(TITLE_PREFIX + TranslationData.itemName("menu.options.end"));
                 options.start.setItemMeta(meta);
             }
-        }
-        else
-        {
+        } else {
             options.start.setType(Material.LIME_CONCRETE);
             ItemMeta meta = options.start.getItemMeta();
-            if (meta != null)
-            {
+            if (meta != null) {
                 meta.setDisplayName(TITLE_PREFIX + TranslationData.itemName("menu.options.start"));
                 options.start.setItemMeta(meta);
             }
         }
-        if (player.hasPermission("bingo.settings"))
-        {
+        if (player.hasPermission("bingo.settings")) {
             options.fillOptions(
                     JOIN,
                     LEAVE,
@@ -152,9 +70,7 @@ public class BingoMenu extends MenuInventory
                     EFFECTS,
                     EXTRA
             );
-        }
-        else if (player.hasPermission("bingo.player"))
-        {
+        } else if (player.hasPermission("bingo.player")) {
             options.fillOptions(
                     JOIN_P.inSlot(20),
                     LEAVE_P.inSlot(24)
@@ -163,30 +79,73 @@ public class BingoMenu extends MenuInventory
         options.open(player);
     }
 
-    private BingoMenu()
-    {
-        super(45, TranslationData.translate("menu.options.title"), null);
-    }
+    @Override
+    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType) {
+        String worldName = BingoGameManager.getWorldName(player.getWorld());
 
-    private void openCardPicker(Player player)
-    {
-        List<InventoryItem> cards = new ArrayList<>();
+        if (!player.hasPermission("bingo.settings")) {
+            BingoGame game = BingoGameManager.get().getGame(worldName);
 
-        for (String cardName : BingoCardsData.getCardNames())
-        {
-            cards.add(new InventoryItem(Material.PAPER, cardName,
-                    ChatColor.DARK_PURPLE + TranslationData.translate("creator.card_item.desc",
-                            "" + BingoCardsData.getLists(cardName).size())));
+            if (slotClicked == JOIN_P.getSlot()) {
+                game.getTeamManager().openTeamSelector(player, this);
+            } else if (slotClicked == LEAVE_P.getSlot()) {
+                game.playerQuit(game.getTeamManager().getBingoPlayer(player));
+            }
+            return;
         }
 
-        PaginatedPickerMenu cardPicker = new PaginatedPickerMenu(cards, TranslationData.itemName("menu.options.card"),this, FilterType.DISPLAY_NAME)
-        {
+        BingoSettings settings = BingoGameManager.get().getGameSettings(worldName);
+
+        if (slotClicked == JOIN.getSlot()) {
+            BingoGame game = BingoGameManager.get().getGame(worldName);
+            game.getTeamManager().openTeamSelector(player, this);
+        } else if (slotClicked == LEAVE.getSlot()) {
+            BingoGame game = BingoGameManager.get().getGame(worldName);
+            game.playerQuit(game.getTeamManager().getBingoPlayer(player));
+        } else if (slotClicked == KIT.getSlot()) {
+            KitOptionsMenu kitSelector = new KitOptionsMenu(this, settings);
+            kitSelector.open(player);
+        } else if (slotClicked == MODE.getSlot()) {
+            GamemodeOptionsMenu gamemodeSelector = new GamemodeOptionsMenu(this, settings);
+            gamemodeSelector.open(player);
+        } else if (slotClicked == CARD.getSlot()) {
+            openCardPicker(player);
+        } else if (slotClicked == EFFECTS.getSlot()) {
+            EffectOptionsMenu effectSelector = new EffectOptionsMenu(this, settings);
+            effectSelector.open(player);
+        } else if (slotClicked == EXTRA.getSlot()) {
+            ExtraBingoMenu extraOptions = new ExtraBingoMenu(this, settings);
+            extraOptions.open(player);
+        } else if (slotClicked == start.getSlot()) {
+            if (BingoGameManager.get().isGameWorldActive(player.getWorld())) {
+                BingoGameManager.get().endGame(BingoGameManager.getWorldName(player.getWorld()));
+                start.setType(Material.LIME_CONCRETE);
+                ItemMeta meta = start.getItemMeta();
+                if (meta != null) {
+                    meta.setDisplayName(TITLE_PREFIX + TranslationData.itemName("menu.options.start"));
+                    start.setItemMeta(meta);
+                }
+                addOption(start);
+            } else {
+                BingoGameManager.get().startGame(BingoGameManager.getWorldName(player.getWorld()));
+            }
+        }
+    }
+
+    private void openCardPicker(Player player) {
+        List<InventoryItem> cards = new ArrayList<>();
+
+        for (String cardName : BingoCardsData.getCardNames()) {
+            cards.add(new InventoryItem(Material.PAPER, cardName,
+                    ChatColor.DARK_PURPLE + TranslationData.translate("creator.card_item.desc",
+                            String.valueOf(BingoCardsData.getLists(cardName).size()))));
+        }
+
+        PaginatedPickerMenu cardPicker = new PaginatedPickerMenu(cards, TranslationData.itemName("menu.options.card"), this, FilterType.DISPLAY_NAME) {
             @Override
-            public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player)
-            {
+            public void onOptionClickedDelegate(InventoryClickEvent event, InventoryItem clickedOption, Player player) {
                 ItemMeta meta = clickedOption.getItemMeta();
-                if (meta != null)
-                {
+                if (meta != null) {
                     cardSelected(meta.getDisplayName(), BingoGameManager.getWorldName(player.getWorld()));
                 }
                 close(player);
@@ -195,8 +154,7 @@ public class BingoMenu extends MenuInventory
         cardPicker.open(player);
     }
 
-    private void cardSelected(String cardName, String worldName)
-    {
+    private void cardSelected(String cardName, String worldName) {
         if (cardName == null) return;
         new Message("game.settings.card_selected").color(ChatColor.GOLD).arg(cardName).sendAll(worldName);
         BingoGameManager.get().getGameSettings(worldName).card = cardName;

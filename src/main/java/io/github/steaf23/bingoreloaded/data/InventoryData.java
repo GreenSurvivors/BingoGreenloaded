@@ -44,13 +44,22 @@ public class InventoryData {
     private String defaultGameModeStr = GameMode.ADVENTURE.name();
     private String defaultIdentifier = "default";
 
-    public static InventoryData inst(){
+    public static InventoryData inst() {
         if (instance == null)
             instance = new InventoryData();
         return instance;
     }
 
-    public void setDefaults (ItemStack inventoryContent, float exp, int level, float health, int food, String gameModeStr, String identifier){
+    /**
+     * Combining all arguments to a single FileConfiguration key.
+     * @param args key arguments in order
+     * @return String
+     */
+    private static @NotNull String buildKey(String... args) {
+        return String.join(".", args);
+    }
+
+    public void setDefaults(ItemStack inventoryContent, float exp, int level, float health, int food, String gameModeStr, String identifier) {
         Arrays.fill(defaultInventory, inventoryContent);
         Arrays.fill(defaultEnderInv, inventoryContent);
 
@@ -68,17 +77,8 @@ public class InventoryData {
     }
 
     /**
-     * Combining all arguments to a single FileConfiguration key.
-     * @param args key arguments in order
-     * @return String
-     */
-    private static @NotNull String buildKey(String...args) {
-        return String.join(".", args);
-    }
-
-    /**
      * Saves the inventory of a player
-     * @param player player whose inventory is about to be saved
+     * @param player     player whose inventory is about to be saved
      * @param identifier the identifier what inventory should be saved.
      */
     public void savePlayerData(Player player, String identifier) {
@@ -98,7 +98,7 @@ public class InventoryData {
         //save attributes
         cfg.set(buildKey(identifier, ATTRIBUTES), Arrays.stream(Attribute.values()).map(attribute -> {
             AttributeInstance attributeInstance = player.getAttribute(attribute);
-            if (attributeInstance != null){
+            if (attributeInstance != null) {
                 Map<String, Object> attributeMap = new HashMap<>();
                 attributeMap.put(ATTRIBUTE_TYPE, attribute.name());
                 attributeMap.put(ATTRIBUTE_BASE_VALUE, attributeInstance.getBaseValue());
@@ -125,7 +125,7 @@ public class InventoryData {
 
     /**
      * loads the inventory and stats of a player, depending on the identifier
-     * @param player player whose inventory is about to be loaded
+     * @param player     player whose inventory is about to be loaded
      * @param identifier the identifier what inventory should be loaded.
      */
     public void loadPlayerData(Player player, String identifier) {
@@ -151,13 +151,13 @@ public class InventoryData {
         List<?> inventoryListLoaded = cfg.getList(buildKey(identifier, INVENTORY));
         List<?> enderListLoaded = cfg.getList(buildKey(identifier, ENDERCHEST));
 
-        if (inventoryListLoaded == null){
+        if (inventoryListLoaded == null) {
             player.getInventory().setContents(defaultInventory);
         } else {
             List<ItemStack> inventoryList = new ArrayList<>();
 
-            for (Object obj : inventoryListLoaded){
-                if (obj instanceof ItemStack || obj == null){
+            for (Object obj : inventoryListLoaded) {
+                if (obj instanceof ItemStack || obj == null) {
                     inventoryList.add((ItemStack) obj);
                 }
             }
@@ -165,13 +165,13 @@ public class InventoryData {
             player.getInventory().setContents(inventoryList.toArray(new ItemStack[0]));
         }
 
-        if (enderListLoaded == null){
+        if (enderListLoaded == null) {
             player.getEnderChest().setContents(defaultEnderInv);
         } else {
             List<ItemStack> enderList = new ArrayList<>();
 
-            for (Object obj : enderListLoaded){
-                if (obj instanceof ItemStack || obj == null){
+            for (Object obj : enderListLoaded) {
+                if (obj instanceof ItemStack || obj == null) {
                     enderList.add((ItemStack) obj);
                 }
             }
@@ -181,7 +181,7 @@ public class InventoryData {
 
         player.updateInventory();
 
-        player.setExp(Math.max(0, (float)cfg.getDouble(buildKey(identifier, STATS, EXP), defaultExp)));
+        player.setExp(Math.max(0, (float) cfg.getDouble(buildKey(identifier, STATS, EXP), defaultExp)));
         player.setLevel(Math.max(0, cfg.getInt(buildKey(identifier, STATS, LEVEL), defaultLevel)));
         player.setHealth(Math.max(0, Math.min(defaultHealth, cfg.getDouble(buildKey(identifier, STATS, HEALTH), defaultHealth))));
         player.setFoodLevel(Math.max(0, Math.min(defaultFood, cfg.getInt(buildKey(identifier, STATS, HUNGER), defaultFood))));
@@ -189,8 +189,7 @@ public class InventoryData {
         String GameModeStr = cfg.getString(buildKey(identifier, GAMEMODE));
         GameMode gameMode = GameMode.valueOf(defaultGameModeStr);
 
-        if(GameModeStr != null && Arrays.stream(GameMode.values()).map(Enum::name).anyMatch(GameModeStr::equals))
-        {
+        if (GameModeStr != null && Arrays.stream(GameMode.values()).map(Enum::name).anyMatch(GameModeStr::equals)) {
             gameMode = GameMode.valueOf(GameModeStr);
         }
 

@@ -34,39 +34,33 @@ import java.util.UUID;
  * as long as they are taking place in the same world and the player stays in the same team.
  * This record will still exist if the player leaves the game/world.
  * This record will exist during at least the currently ongoing game.
- * @param playerId UUID of the player
- * @param team Team of the player
+ * @param playerId  UUID of the player
+ * @param team      Team of the player
  * @param worldName World name of the game this player can play in.
  */
-public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, String playerName, String displayName)
-{
+public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, String playerName, String displayName) {
     @NotNull
-    public Optional<Player> gamePlayer()
-    {
+    public Optional<Player> gamePlayer() {
         if (!offline().isOnline())
             return Optional.empty();
 
         Player player = Bukkit.getPlayer(playerId);
-        if (player == null || !BingoGameManager.getWorldName(player.getWorld()).equals(worldName))
-        {
+        if (player == null || !BingoGameManager.getWorldName(player.getWorld()).equals(worldName)) {
             return Optional.empty();
         }
         return Optional.of(player);
     }
 
     @NotNull
-    public Optional<Player> asOnlinePlayer()
-    {
+    public Optional<Player> asOnlinePlayer() {
         return Optional.ofNullable(Bukkit.getPlayer(playerId));
     }
 
-    public OfflinePlayer offline()
-    {
+    public OfflinePlayer offline() {
         return Bukkit.getOfflinePlayer(playerId);
     }
 
-    public void giveKit(PlayerKit kit)
-    {
+    public void giveKit(PlayerKit kit) {
         if (gamePlayer().isEmpty())
             return;
 
@@ -83,8 +77,7 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
             var meta = i.getItemMeta();
 
             // Show enchantments except on the wand
-            if (!PlayerKit.wandItem.isKeyEqual(i))
-            {
+            if (!PlayerKit.wandItem.isKeyEqual(i)) {
                 meta.removeItemFlags(ItemFlag.values());
             }
             var pdc = meta.getPersistentDataContainer();
@@ -95,8 +88,7 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
         });
     }
 
-    public void giveBingoCard()
-    {
+    public void giveBingoCard() {
         if (gamePlayer().isEmpty())
             return;
 
@@ -105,10 +97,8 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
         Message.log("Giving card to " + player.getDisplayName(), worldName);
 
         BingoReloaded.scheduleTask(task -> {
-            for (ItemStack itemStack : player.getInventory())
-            {
-                if (PlayerKit.cardItem.isKeyEqual(itemStack))
-                {
+            for (ItemStack itemStack : player.getInventory()) {
+                if (PlayerKit.cardItem.isKeyEqual(itemStack)) {
                     player.getInventory().remove(itemStack);
                     break;
                 }
@@ -118,8 +108,7 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
         });
     }
 
-    public void giveEffects(EnumSet<EffectOptionFlags> effects)
-    {
+    public void giveEffects(EnumSet<EffectOptionFlags> effects) {
         if (gamePlayer().isEmpty())
             return;
 
@@ -144,13 +133,10 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
     }
 
     /**
-     *
      * @param identifier
      */
-    public void switchInventory (String identifier)
-    {
-        if (offline().isOnline())
-        {
+    public void switchInventory(String identifier) {
+        if (offline().isOnline()) {
             Message.log("switching inventory " + asOnlinePlayer().get().getDisplayName(), worldName);
 
             InventoryData.inst().loadPlayerData(asOnlinePlayer().get(), identifier);
@@ -158,39 +144,30 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
     }
 
     /**
-     *
      * @param force ignore if the player is actually in the world playing the game at this moment.
      */
-    public void takeEffects(boolean force)
-    {
-        if (force)
-        {
-            if (offline().isOnline())
-            {
+    public void takeEffects(boolean force) {
+        if (force) {
+            if (offline().isOnline()) {
                 Message.log("Taking effects from " + asOnlinePlayer().get().getDisplayName(), worldName);
 
-                for (PotionEffectType effect : PotionEffectType.values())
-                {
+                for (PotionEffectType effect : PotionEffectType.values()) {
                     Bukkit.getPlayer(playerId).removePotionEffect(effect);
                 }
             }
-        }
-        else
-        {
+        } else {
             if (gamePlayer().isEmpty())
                 return;
 
             Message.log("Taking effects from " + asOnlinePlayer().get().getDisplayName(), worldName);
 
-            for (PotionEffectType effect : PotionEffectType.values())
-            {
+            for (PotionEffectType effect : PotionEffectType.values()) {
                 gamePlayer().get().removePotionEffect(effect);
             }
         }
     }
 
-    public void showDeathMatchItem(Material deathMatchItem)
-    {
+    public void showDeathMatchItem(Material deathMatchItem) {
         if (gamePlayer().isEmpty())
             return;
 
@@ -202,35 +179,30 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
                 .send(gamePlayer().get());
     }
 
-    public boolean useGoUpWand(ItemStack wand)
-    {
+    public boolean useGoUpWand(ItemStack wand) {
         if (gamePlayer().isEmpty())
-             return false;
+            return false;
 
         Player player = gamePlayer().get();
         if (!PlayerKit.wandItem.isKeyEqual(wand))
             return false;
 
-        if (!ItemCooldownManager.isCooldownOver(playerId, wand))
-        {
+        if (!ItemCooldownManager.isCooldownOver(playerId, wand)) {
             double timeLeft = ItemCooldownManager.getTimeLeft(playerId, wand) / 1000.0;
             new Message("game.item.cooldown").color(ChatColor.RED).arg(String.format("%.2f", timeLeft)).send(player);
             return false;
         }
 
         BingoReloaded.scheduleTask(task -> {
-            ItemCooldownManager.addCooldown(playerId, wand, (int)(ConfigData.instance.wandCooldown * 1000));
+            ItemCooldownManager.addCooldown(playerId, wand, (int) (ConfigData.instance.wandCooldown * 1000));
 
             double distance = 0.0;
             double fallDistance = 5.0;
             // Use the wand
-            if (gamePlayer().get().isSneaking())
-            {
+            if (gamePlayer().get().isSneaking()) {
                 distance = -ConfigData.instance.wandDown;
                 fallDistance = 0.0;
-            }
-            else
-            {
+            } else {
                 distance = ConfigData.instance.wandUp + 5;
             }
 
@@ -254,8 +226,7 @@ public record BingoPlayer(UUID playerId, BingoTeam team, String worldName, Strin
     }
 
     @Nullable
-    public BingoTeam getTeam()
-    {
+    public BingoTeam getTeam() {
         return team().players.contains(this) ? team() : null;
     }
 }

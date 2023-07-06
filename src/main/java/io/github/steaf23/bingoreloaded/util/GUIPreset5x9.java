@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.util;
 
-public enum GUIPreset5x9
-{
+public enum GUIPreset5x9 {
     ONE_CENTER(new int[]{22}),
     ONE_TOP(new int[]{13}),
     ONE_BOTTOM(new int[]{31}),
@@ -40,8 +39,7 @@ public enum GUIPreset5x9
 
     public final int[] positions;
 
-    GUIPreset5x9(int[] positions)
-    {
+    GUIPreset5x9(int[] positions) {
         this.positions = positions;
     }
 }

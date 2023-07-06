@@ -10,14 +10,11 @@ import java.util.Map;
 import java.util.UUID;
 
 
-public class BingoStatsData
-{
+public class BingoStatsData {
     private static final YmlDataManager data = new YmlDataManager("player_stats.yml");
 
-    public static int getPlayerStat(UUID playerId, BingoStatType statType)
-    {
-        if (!ConfigData.instance.savePlayerStatistics)
-        {
+    public static int getPlayerStat(UUID playerId, BingoStatType statType) {
+        if (!ConfigData.instance.savePlayerStatistics) {
             return -1;
         }
 
@@ -32,15 +29,12 @@ public class BingoStatsData
         return Integer.parseInt(stats[statType.idx]);
     }
 
-    public static void incrementPlayerStat(Player player, BingoStatType statType)
-    {
+    public static void incrementPlayerStat(Player player, BingoStatType statType) {
         BingoStatsData.incrementPlayerStat(player.getUniqueId(), statType, 1);
     }
 
-    public static void incrementPlayerStat(UUID playerId, BingoStatType statType, int by)
-    {
-        if (!ConfigData.instance.savePlayerStatistics)
-        {
+    public static void incrementPlayerStat(UUID playerId, BingoStatType statType, int by) {
+        if (!ConfigData.instance.savePlayerStatistics) {
             return;
         }
 
@@ -56,14 +50,12 @@ public class BingoStatsData
         setPlayerData(playerId, String.join(";", stats));
     }
 
-    public static String asScoreboard(int numEntries, @Nullable BingoStatType sortedBy)
-    {
+    public static String asScoreboard(int numEntries, @Nullable BingoStatType sortedBy) {
         //TODO: implement
         return "";
     }
 
-    public static Message getPlayerStatsFormatted(UUID playerId)
-    {
+    public static Message getPlayerStatsFormatted(UUID playerId) {
         String stats = getPlayerData(playerId);
         String[] statList = stats.split(";");
         return new Message().untranslated("{0}'s statistics: Wins: {1}, Losses: {2}, Games finished: {3}, Tasks completed: {4}, Wand uses: {5}")
@@ -82,41 +74,32 @@ public class BingoStatsData
      * @param playerName
      * @return
      */
-    public static Message getPlayerStatsFormatted(String playerName)
-    {
+    public static Message getPlayerStatsFormatted(String playerName) {
         UUID playerId = getPlayerUUID(playerName);
-        if (playerId != null)
-        {
+        if (playerId != null) {
             return getPlayerStatsFormatted(playerId);
-        }
-        else
-        {
+        } else {
             return new Message().untranslated("Could not find statistics for player {0}!").color(ChatColor.RED)
                     .arg(playerName).color(ChatColor.WHITE);
         }
     }
 
-    private static String getPlayerData(UUID playerId)
-    {
+    private static String getPlayerData(UUID playerId) {
         return data.getConfig().getString(playerId.toString(), "0;0;0;0;0");
     }
 
-    private static UUID getPlayerUUID(String playerName)
-    {
-        Map<String, Object>  playerData = data.getConfig().getValues(false);
-        for (String recordName : playerData.keySet())
-        {
+    private static UUID getPlayerUUID(String playerName) {
+        Map<String, Object> playerData = data.getConfig().getValues(false);
+        for (String recordName : playerData.keySet()) {
             UUID playerId = UUID.fromString(recordName);
-            if (Bukkit.getPlayer(playerId).getName().equals(playerName))
-            {
+            if (Bukkit.getPlayer(playerId).getName().equals(playerName)) {
                 return playerId;
             }
         }
         return null;
     }
 
-    private static void setPlayerData(UUID playerId, String statData)
-    {
+    private static void setPlayerData(UUID playerId, String statData) {
         data.getConfig().set(playerId.toString(), statData);
         data.saveConfig();
     }

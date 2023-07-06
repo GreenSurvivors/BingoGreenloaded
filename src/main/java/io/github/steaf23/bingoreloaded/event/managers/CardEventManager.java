@@ -18,26 +18,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CardEventManager
-{
+public class CardEventManager {
     private final List<BingoCard> cards;
 
-    private String worldName;
+    private final String worldName;
 
-    public CardEventManager(String worldName)
-    {
+    public CardEventManager(String worldName) {
         this.cards = new ArrayList<>();
         this.worldName = worldName;
     }
 
-    public void setCards(List<BingoCard> newCards)
-    {
+    public void setCards(List<BingoCard> newCards) {
         this.cards.clear();
         this.cards.addAll(newCards);
     }
 
-    public void handlePlayerAdvancementCompleted(final PlayerAdvancementDoneEvent event)
-    {
+    public void handlePlayerAdvancementCompleted(final PlayerAdvancementDoneEvent event) {
         BingoGame game = BingoGameManager.get().getActiveGame(worldName);
         if (game == null)
             return;
@@ -50,15 +46,13 @@ public class CardEventManager
         if (team == null)
             return;
 
-        for (BingoCard card : cards)
-        {
+        for (BingoCard card : cards) {
             if (team.card.equals(card))
                 card.onPlayerAdvancementDone(event, player, game);
         }
     }
 
-    public void handlePlayerDroppedItem(final PlayerDropItemEvent event)
-    {
+    public void handlePlayerDroppedItem(final PlayerDropItemEvent event) {
         BingoGame game = BingoGameManager.get().getActiveGame(worldName);
         if (game == null)
             return;
@@ -71,15 +65,13 @@ public class CardEventManager
         if (team == null)
             return;
 
-        for (BingoCard card : cards)
-        {
+        for (BingoCard card : cards) {
             if (team.card.equals(card))
                 card.onPlayerDroppedItem(event, player, game);
         }
     }
 
-    public void handlePlayerPickupItem(final EntityPickupItemEvent event)
-    {
+    public void handlePlayerPickupItem(final EntityPickupItemEvent event) {
         BingoGame game = BingoGameManager.get().getActiveGame(worldName);
         if (game == null || !(event.getEntity() instanceof Player p))
             return;
@@ -92,15 +84,13 @@ public class CardEventManager
         if (team == null)
             return;
 
-        for (BingoCard card : cards)
-        {
+        for (BingoCard card : cards) {
             if (team.card.equals(card))
                 card.onPlayerCollectItem(event, player, game);
         }
     }
 
-    public void handleInventoryClicked(final InventoryClickEvent event)
-    {
+    public void handleInventoryClicked(final InventoryClickEvent event) {
         BingoGame game = BingoGameManager.get().getActiveGame(worldName);
         if (game == null || !(event.getWhoClicked() instanceof Player p))
             return;
@@ -113,26 +103,21 @@ public class CardEventManager
         if (team == null)
             return;
 
-        for (BingoCard card : cards)
-        {
+        for (BingoCard card : cards) {
             if (team.card.equals(card))
                 card.onInventoryClick(event, player, game);
         }
     }
 
-    public void handleTaskCompleted(final BingoCardTaskCompleteEvent event)
-    {
-        for (BingoCard card : cards)
-        {
-            if (card instanceof LockoutBingoCard lockoutCard)
-            {
+    public void handleTaskCompleted(final BingoCardTaskCompleteEvent event) {
+        for (BingoCard card : cards) {
+            if (card instanceof LockoutBingoCard lockoutCard) {
                 lockoutCard.onCardSlotCompleteEvent(event);
             }
         }
     }
 
-    public void handleStatisticCompleted(final BingoStatisticCompletedEvent event)
-    {
+    public void handleStatisticCompleted(final BingoStatisticCompletedEvent event) {
         BingoGame game = BingoGameManager.get().getActiveGame(worldName);
         if (game == null)
             return;
@@ -144,8 +129,7 @@ public class CardEventManager
         if (team == null)
             return;
 
-        for (BingoCard card : cards)
-        {
+        for (BingoCard card : cards) {
             if (team.card.equals(card))
                 card.onPlayerStatisticCompleted(event, event.player, game);
         }

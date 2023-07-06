@@ -11,14 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-public class ContextMenu extends MenuInventory
-{
+public class ContextMenu extends MenuInventory {
     public static final int MAX_ACTIONS = 7;
     private static final InventoryItem CLOSE = new InventoryItem(8, Material.REDSTONE, TITLE_PREFIX + TranslationData.translate("menu.exit"));
     private final List<Function<ClickType, Boolean>> actions;
 
-    public ContextMenu(String title, MenuInventory parent)
-    {
+    public ContextMenu(String title, MenuInventory parent) {
         super(9, title, parent);
         this.actions = new ArrayList<>();
 
@@ -26,16 +24,11 @@ public class ContextMenu extends MenuInventory
     }
 
     @Override
-    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
-    {
-        if (slotClicked == CLOSE.getSlot())
-        {
+    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType) {
+        if (slotClicked == CLOSE.getSlot()) {
             close(player);
-        }
-        else if (slotClicked < actions.size())
-        {
-            if (actions.get(slotClicked).apply(clickType))
-            {
+        } else if (slotClicked < actions.size()) {
+            if (actions.get(slotClicked).apply(clickType)) {
                 close(player);
             }
         }
@@ -44,13 +37,12 @@ public class ContextMenu extends MenuInventory
     /**
      * Adds an option for players to select to this context menu.
      * Actions are carried out when the corresponding items are clicked by the player.
-     * @param name Name of the action.
+     * @param name     Name of the action.
      * @param material Material to represent this action in the menu.
-     * @param action Code to execute, return false if the inventory should not be closed by this context menu.
-     *               This is useful when for example the menu gets closed by the caller instead.
+     * @param action   Code to execute, return false if the inventory should not be closed by this context menu.
+     *                 This is useful when for example the menu gets closed by the caller instead.
      */
-    public void addAction(String name, Material material, Function<ClickType, Boolean> action)
-    {
+    public void addAction(String name, Material material, Function<ClickType, Boolean> action) {
         if (actions.size() >= MAX_ACTIONS)
             return;
 
@@ -58,8 +50,7 @@ public class ContextMenu extends MenuInventory
         actions.add(action);
     }
 
-    public void clearActions()
-    {
+    public void clearActions() {
         actions.clear();
         inventory.clear();
         addOption(CLOSE);

@@ -2,42 +2,34 @@ package io.github.steaf23.bingoreloaded.item.tasks.statistics;
 
 import io.github.steaf23.bingoreloaded.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoGameManager;
-import io.github.steaf23.bingoreloaded.event.BingoStatisticCompletedEvent;
-import io.github.steaf23.bingoreloaded.gui.cards.BingoCard;
 import io.github.steaf23.bingoreloaded.item.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.item.tasks.StatisticTask;
 import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
-import io.github.steaf23.bingoreloaded.util.Message;
-import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
-public class StatisticTracker
-{
+public class StatisticTracker {
     private final List<StatisticProgress> statistics;
     private final String worldName;
 
-    public StatisticTracker(String worldName)
-    {
+    public StatisticTracker(String worldName) {
         this.statistics = new ArrayList<>();
         this.worldName = worldName;
     }
 
-    public void start(Set<BingoTeam> teams)
-    {
-        for (BingoTeam team : teams)
-        {
-            for (BingoTask task : team.card.tasks)
-            {
+    public void start(Set<BingoTeam> teams) {
+        for (BingoTeam team : teams) {
+            for (BingoTask task : team.card.tasks) {
                 if (task.type != BingoTask.TaskType.STATISTIC)
                     continue;
 
-                StatisticTask statTask = (StatisticTask)task.data;
+                StatisticTask statTask = (StatisticTask) task.data;
 
-                for (BingoPlayer player : team.getPlayers())
-                {
+                for (BingoPlayer player : team.getPlayers()) {
                     if (statistics.stream().anyMatch(progress ->
                             progress.player.equals(player) && progress.statistic.equals(statTask.statistic())))
                         continue;
@@ -48,8 +40,7 @@ public class StatisticTracker
         }
     }
 
-    public double getProgressLeft(BingoPlayer player, BingoStatistic statistic)
-    {
+    public double getProgressLeft(BingoPlayer player, BingoStatistic statistic) {
         List<StatisticProgress> statProgress = statistics.stream().filter(progress ->
                 progress.player.equals(player) && progress.statistic.equals(statistic)).toList();
 
@@ -59,19 +50,16 @@ public class StatisticTracker
         return statProgress.get(0).progressLeft;
     }
 
-    public void updateProgress()
-    {
+    public void updateProgress() {
         statistics.forEach(StatisticProgress::updatePeriodicProgress);
         statistics.removeIf(progress -> progress.progressLeft <= 0);
     }
 
-    public void reset()
-    {
+    public void reset() {
         statistics.clear();
     }
 
-    public void handleStatisticIncrement(final PlayerStatisticIncrementEvent event)
-    {
+    public void handleStatisticIncrement(final PlayerStatisticIncrementEvent event) {
         BingoGame game = BingoGameManager.get().getActiveGame(worldName);
         if (game == null)
             return;
@@ -88,8 +76,7 @@ public class StatisticTracker
 
         List<StatisticProgress> matchingStatistic = statistics.stream().filter(progress ->
                 progress.player.equals(player) && progress.statistic.equals(stat)).toList();
-        if (matchingStatistic.size() == 1)
-        {
+        if (matchingStatistic.size() == 1) {
             matchingStatistic.get(0).setProgress(event.getNewValue());
         }
 

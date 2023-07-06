@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.event;
 
-public enum BingoGameEvent
-{
+public enum BingoGameEvent {
     // send events
     START,
     END,

@@ -14,13 +14,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-public class GamemodeOptionsMenu extends MenuInventory
-{
+public class GamemodeOptionsMenu extends MenuInventory {
     private final BingoSettings settings;
     private final InventoryItem[] options;
 
-    public GamemodeOptionsMenu(MenuInventory parent, BingoSettings settings)
-    {
+    public GamemodeOptionsMenu(MenuInventory parent, BingoSettings settings) {
         super(45, TranslationData.itemName("menu.options.mode"), parent);
         this.settings = settings;
         options = new InventoryItem[]{
@@ -41,36 +39,27 @@ public class GamemodeOptionsMenu extends MenuInventory
     }
 
     @Override
-    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType)
-    {
+    public void delegateClick(InventoryClickEvent event, int slotClicked, Player player, ClickType clickType) {
         //TODO: move messages to BingoSettings
         BingoGamemode chosenMode = BingoGamemode.REGULAR;
         CardSize chosenSize = CardSize.X5;
 
         String worldName = BingoGameManager.getWorldName(player.getWorld());
 
-        if (slotClicked == options[0].getSlot() || slotClicked == options[3].getSlot())
-        {
+        if (slotClicked == options[0].getSlot() || slotClicked == options[3].getSlot()) {
             new Message("game.settings.regular_selected").color(ChatColor.GOLD).sendAll(worldName);
-        }
-        else if (slotClicked == options[1].getSlot() || slotClicked == options[4].getSlot())
-        {
+        } else if (slotClicked == options[1].getSlot() || slotClicked == options[4].getSlot()) {
             new Message("game.settings.lockout_selected").color(ChatColor.GOLD).sendAll(worldName);
 
             chosenMode = BingoGamemode.LOCKOUT;
-        }
-        else if (slotClicked == options[2].getSlot() || slotClicked == options[5].getSlot())
-        {
+        } else if (slotClicked == options[2].getSlot() || slotClicked == options[5].getSlot()) {
             new Message("game.settings.complete_selected").color(ChatColor.GOLD).sendAll(worldName);
             chosenMode = BingoGamemode.COMPLETE;
         }
 
-        if (slotClicked == options[0].getSlot() || slotClicked == options[1].getSlot() || slotClicked == options[2].getSlot())
-        {
+        if (slotClicked == options[0].getSlot() || slotClicked == options[1].getSlot() || slotClicked == options[2].getSlot()) {
             new Message("game.settings.cardsize").color(ChatColor.GOLD).arg("5x5").sendAll(worldName);
-        }
-        else if (slotClicked == options[3].getSlot() || slotClicked == options[4].getSlot() || slotClicked == options[5].getSlot())
-        {
+        } else if (slotClicked == options[3].getSlot() || slotClicked == options[4].getSlot() || slotClicked == options[5].getSlot()) {
             new Message("game.settings.cardsize").color(ChatColor.GOLD).arg("3x3").sendAll(worldName);
             chosenSize = CardSize.X3;
         }

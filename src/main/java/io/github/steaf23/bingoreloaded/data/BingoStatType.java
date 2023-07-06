@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.data;
 
-public enum BingoStatType
-{
+public enum BingoStatType {
     PLAYED(-1),
     WINS(0),
     LOSSES(1),
@@ -12,8 +11,7 @@ public enum BingoStatType
 
     public final int idx;
 
-    BingoStatType(int idx)
-    {
+    BingoStatType(int idx) {
         this.idx = idx;
     }
 }
