@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
+import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.tasks.StatisticTask;
@@ -18,15 +18,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 // TODO: add description to statistic and when to trigger them
-public class StatisticSelectionMenu extends BasicMenu
-{
-    public String listName;
-
+public class StatisticSelectionMenu extends BasicMenu {
     protected static final MenuItem BG_ITEM = new MenuItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
     protected static final MenuItem QUIT = new MenuItem(49, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate(), "");
+    public String listName;
 
-    public StatisticSelectionMenu(MenuManager menuManager, String listName)
-    {
+    public StatisticSelectionMenu(MenuManager menuManager, String listName) {
         super(menuManager, "Pick Statistics", 6);
         this.listName = listName;
         addAction(new MenuItem(1, 0, Material.FEATHER, TITLE_PREFIX + "Travel"), p -> createTravelMenu().open(p));
@@ -53,13 +50,11 @@ public class StatisticSelectionMenu extends BasicMenu
         );
     }
 
-    public void addStatisticsToSave(@NotNull List<BingoStatistic> statistics)
-    {
+    public void addStatisticsToSave(@NotNull List<BingoStatistic> statistics) {
         statistics.addAll(statistics);
     }
 
-    private TaskPickerMenu createEntityMenu(Statistic stat)
-    {
+    private TaskPickerMenu createEntityMenu(Statistic stat) {
         List<EntityType> entities = Arrays.stream(EntityType.values())
                 .filter(type -> BingoStatistic.isEntityValidForStatistic(type))
                 .collect(Collectors.toList());
@@ -71,20 +66,16 @@ public class StatisticSelectionMenu extends BasicMenu
         return picker;
     }
 
-    private TaskPickerMenu createBlockMenu(Statistic stat)
-    {
+    private TaskPickerMenu createBlockMenu(Statistic stat) {
         Set<Material> glassPanes = new HashSet<>();
-        for (FlexColor flexColor : FlexColor.values())
-        {
+        for (FlexColor flexColor : FlexColor.values()) {
             glassPanes.add(flexColor.glassPane);
         }
 
         List<BingoTask> tasks = new ArrayList<>();
 
-        for (Material m : Material.values())
-        {
-            if (!m.name().contains("LEGACY_") && !glassPanes.contains(m) && m.isBlock() && m.isItem() && !m.isAir())
-            {
+        for (Material m : Material.values()) {
+            if (!m.name().contains("LEGACY_") && !glassPanes.contains(m) && m.isBlock() && m.isItem() && !m.isAir()) {
                 tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat, m))));
             }
         }
@@ -92,19 +83,15 @@ public class StatisticSelectionMenu extends BasicMenu
         return picker;
     }
 
-    private TaskPickerMenu createItemMenu(Statistic stat)
-    {
+    private TaskPickerMenu createItemMenu(Statistic stat) {
         Set<Material> glassPanes = new HashSet<>();
-        for (FlexColor flexColor : FlexColor.values())
-        {
+        for (FlexColor flexColor : FlexColor.values()) {
             glassPanes.add(flexColor.glassPane);
         }
 
         List<BingoTask> tasks = new ArrayList<>();
-        for (Material m : Material.values())
-        {
-            if (!m.name().contains("LEGACY_") && !glassPanes.contains(m) && m.isItem() && !m.isAir())
-            {
+        for (Material m : Material.values()) {
+            if (!m.name().contains("LEGACY_") && !glassPanes.contains(m) && m.isItem() && !m.isAir()) {
                 tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat, m))));
             }
         }
@@ -112,19 +99,16 @@ public class StatisticSelectionMenu extends BasicMenu
         return picker;
     }
 
-    public TaskPickerMenu createTravelMenu()
-    {
+    public TaskPickerMenu createTravelMenu() {
         List<BingoTask> tasks = new ArrayList<>();
-        for (Statistic stat : BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.TRAVEL))
-        {
+        for (Statistic stat : BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.TRAVEL)) {
             tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))));
         }
         TaskPickerMenu picker = new TaskPickerMenu(getMenuManager(), "Travel Statistics", tasks, listName);
         return picker;
     }
 
-    private TaskPickerMenu createContainerMenu()
-    {
+    private TaskPickerMenu createContainerMenu() {
         List<BingoTask> tasks = new ArrayList<>();
         BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.CONTAINER_INTERACT)
                 .forEach(stat -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))))
@@ -133,18 +117,16 @@ public class StatisticSelectionMenu extends BasicMenu
         return picker;
     }
 
-    private TaskPickerMenu createBlockInteractMenu()
-    {
+    private TaskPickerMenu createBlockInteractMenu() {
         List<BingoTask> tasks = new ArrayList<>();
         BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.BLOCK_INTERACT)
                 .forEach(stat -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))))
                 );
-        TaskPickerMenu picker = new TaskPickerMenu(getMenuManager(),  "Select Blocks", tasks, listName);
+        TaskPickerMenu picker = new TaskPickerMenu(getMenuManager(), "Select Blocks", tasks, listName);
         return picker;
     }
 
-    private TaskPickerMenu createDamageMenu()
-    {
+    private TaskPickerMenu createDamageMenu() {
         List<BingoTask> tasks = new ArrayList<>();
         BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.DAMAGE)
                 .forEach(stat -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))))
@@ -153,22 +135,22 @@ public class StatisticSelectionMenu extends BasicMenu
         return picker;
     }
 
-    private TaskPickerMenu createMiscMenu()
-    {
+    private TaskPickerMenu createMiscMenu() {
         List<BingoTask> tasks = new ArrayList<>();
         BingoStatistic.getStatisticsOfCategory(BingoStatistic.StatisticCategory.OTHER)
                 .forEach(stat ->
-                {
-                    // Disable certain statistics that wouldn't make sense have in a bingo minigame
-                    switch (stat)
-                    {
-                        case TIME_SINCE_DEATH,
-                                TIME_SINCE_REST,
-                                TOTAL_WORLD_TIME,
-                                LEAVE_GAME -> {}
-                        default -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))));
-                    };
-                }
+                        {
+                            // Disable certain statistics that wouldn't make sense have in a bingo minigame
+                            switch (stat) {
+                                case TIME_SINCE_DEATH,
+                                        TIME_SINCE_REST,
+                                        TOTAL_WORLD_TIME,
+                                        LEAVE_GAME -> {
+                                }
+                                default -> tasks.add(new BingoTask(new StatisticTask(new BingoStatistic(stat))));
+                            }
+                            ;
+                        }
                 );
         TaskPickerMenu picker = new TaskPickerMenu(getMenuManager(), "Other Statistics", tasks, listName);
         return picker;

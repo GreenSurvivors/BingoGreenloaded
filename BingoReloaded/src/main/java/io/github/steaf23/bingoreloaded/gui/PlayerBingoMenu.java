@@ -9,8 +9,7 @@ import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-public class PlayerBingoMenu extends BasicMenu
-{
+public class PlayerBingoMenu extends BasicMenu {
     private static final MenuItem JOIN = new MenuItem(2, 1,
             Material.WHITE_GLAZED_TERRACOTTA, TITLE_PREFIX + BingoTranslation.OPTIONS_TEAM.translate());
 

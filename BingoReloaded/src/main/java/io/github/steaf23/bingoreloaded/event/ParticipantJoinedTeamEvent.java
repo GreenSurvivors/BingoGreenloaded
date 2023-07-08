@@ -1,14 +1,12 @@
 package io.github.steaf23.bingoreloaded.event;
 
-import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 
 import javax.annotation.Nullable;
 
-public class ParticipantJoinedTeamEvent extends BingoEvent
-{
+public class ParticipantJoinedTeamEvent extends BingoEvent {
     private final BingoParticipant participant;
     private final BingoTeam team;
 

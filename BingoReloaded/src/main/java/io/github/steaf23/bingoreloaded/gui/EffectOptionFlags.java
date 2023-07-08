@@ -4,8 +4,7 @@ import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 
 import java.util.EnumSet;
 
-public enum EffectOptionFlags
-{
+public enum EffectOptionFlags {
     NIGHT_VISION(BingoTranslation.EFFECTS_NIGHT_VISION.translate()),
     WATER_BREATHING(BingoTranslation.EFFECTS_WATER_BREATH.translate()),
     FIRE_RESISTANCE(BingoTranslation.EFFECTS_FIRE_RES.translate()),
@@ -13,13 +12,10 @@ public enum EffectOptionFlags
     SPEED(BingoTranslation.EFFECTS_SPEED.translate()),
     NO_DURABILITY(BingoTranslation.EFFECTS_NO_DURABILITY.translate());
 
-    public final String name;
-
-    EffectOptionFlags(String name)
-    {
-        this.name = name;
-    }
-
     public static final EnumSet<EffectOptionFlags> ALL_ON = EnumSet.allOf(EffectOptionFlags.class);
     public static final EnumSet<EffectOptionFlags> ALL_OFF = EnumSet.noneOf(EffectOptionFlags.class);
+    public final String name;
+    EffectOptionFlags(String name) {
+        this.name = name;
+    }
 }

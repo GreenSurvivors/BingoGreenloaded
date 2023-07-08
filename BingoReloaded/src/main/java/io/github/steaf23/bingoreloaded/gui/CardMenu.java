@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.cards.CardSize;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
+import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
 import io.github.steaf23.bingoreloaded.util.Message;
@@ -16,12 +16,10 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.List;
 
-public class CardMenu extends BasicMenu
-{
+public class CardMenu extends BasicMenu {
     private final CardSize size;
 
-    public CardMenu(MenuManager menuManager, CardSize cardSize, String title)
-    {
+    public CardMenu(MenuManager menuManager, CardSize cardSize, String title) {
         super(menuManager, title, cardSize.size);
         this.size = cardSize;
         setMaxStackSizeOverride(64);
@@ -50,18 +48,15 @@ public class CardMenu extends BasicMenu
         return super.onClick(event, player, clickedItem, clickType);
     }
 
-    public void show(Player player, List<BingoTask> tasks)
-    {
-        for (int i = 0; i < tasks.size(); i++)
-        {
+    public void show(Player player, List<BingoTask> tasks) {
+        for (int i = 0; i < tasks.size(); i++) {
             BingoTask task = tasks.get(i);
             addItem(task.asStack().copyToSlot(size.getCardInventorySlot(i)));
         }
         open(player);
     }
 
-    public void setInfo(String name, String... description)
-    {
+    public void setInfo(String name, String... description) {
         MenuItem info = new MenuItem(0, Material.MAP, name, description);
         addItem(info);
     }

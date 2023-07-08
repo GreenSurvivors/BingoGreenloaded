@@ -13,8 +13,7 @@ import org.bukkit.Bukkit;
 
 import java.util.EnumSet;
 
-public class BingoSettingsBuilder
-{
+public class BingoSettingsBuilder {
     private final BingoSession session;
     private String card;
     private BingoGamemode mode;
@@ -26,8 +25,7 @@ public class BingoSettingsBuilder
     private boolean enableCountdown;
     private int countdownGameDuration;
 
-    public BingoSettingsBuilder(BingoSession session)
-    {
+    public BingoSettingsBuilder(BingoSession session) {
         this.session = session;
 
         BingoSettings def = BingoSettings.getDefaultSettings();
@@ -42,8 +40,7 @@ public class BingoSettingsBuilder
         this.enableCountdown = def.enableCountdown();
     }
 
-    public void fromOther(BingoSettings settings)
-    {
+    public void fromOther(BingoSettings settings) {
         card = settings.card();
         mode = settings.mode();
         cardSize = settings.size();
@@ -55,13 +52,11 @@ public class BingoSettingsBuilder
         enableCountdown = settings.enableCountdown();
     }
 
-    public BingoSettingsBuilder getVoteResult(PregameLobby.VoteTicket voteResult)
-    {
+    public BingoSettingsBuilder getVoteResult(PregameLobby.VoteTicket voteResult) {
         BingoSettingsBuilder resultBuilder = new BingoSettingsBuilder(session);
         resultBuilder.fromOther(view());
 
-        switch (voteResult.gamemode)
-        {
+        switch (voteResult.gamemode) {
             case "regular_3" -> {
                 resultBuilder.cardSize = CardSize.X3;
                 resultBuilder.mode = BingoGamemode.REGULAR;
@@ -97,60 +92,52 @@ public class BingoSettingsBuilder
         return resultBuilder;
     }
 
-    public BingoSettingsBuilder card(String card)
-    {
+    public BingoSettingsBuilder card(String card) {
         this.card = card;
         settingsUpdated();
         return this;
     }
 
-    public BingoSettingsBuilder mode(BingoGamemode mode)
-    {
+    public BingoSettingsBuilder mode(BingoGamemode mode) {
         this.mode = mode;
         settingsUpdated();
         return this;
     }
 
-    public BingoSettingsBuilder cardSize(CardSize cardSize)
-    {
+    public BingoSettingsBuilder cardSize(CardSize cardSize) {
         this.cardSize = cardSize;
         settingsUpdated();
         return this;
     }
 
-    public BingoSettingsBuilder cardSeed(int cardSeed)
-    {
+    public BingoSettingsBuilder cardSeed(int cardSeed) {
         this.cardSeed = cardSeed;
         settingsUpdated();
         return this;
     }
 
-    public BingoSettingsBuilder kit(PlayerKit kit, BingoSession session)
-    {
+    public BingoSettingsBuilder kit(PlayerKit kit, BingoSession session) {
         this.kit = kit;
-        String kitName = switch (kit)
-                {
-                    case CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5 -> {
-                        CustomKit customKit = PlayerKit.getCustomKit(kit);
-                        yield customKit == null ? kit.displayName : customKit.getName();
-                    }
-                    default -> kit.displayName;
-                };
+        String kitName = switch (kit) {
+            case CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5 -> {
+                CustomKit customKit = PlayerKit.getCustomKit(kit);
+                yield customKit == null ? kit.displayName : customKit.getName();
+            }
+            default -> kit.displayName;
+        };
         new TranslatedMessage(BingoTranslation.KIT_SELECTED).color(ChatColor.GOLD).arg(ChatColor.RESET + kitName).sendAll(session);
         settingsUpdated();
         return this;
     }
 
-    public BingoSettingsBuilder effects(EnumSet<EffectOptionFlags> effects, BingoSession session)
-    {
+    public BingoSettingsBuilder effects(EnumSet<EffectOptionFlags> effects, BingoSession session) {
         this.effects = effects;
         new TranslatedMessage(BingoTranslation.EFFECTS_SELECTED).color(ChatColor.GOLD).sendAll(session);
         settingsUpdated();
         return this;
     }
 
-    public BingoSettingsBuilder toggleEffect(EffectOptionFlags effect, boolean enable)
-    {
+    public BingoSettingsBuilder toggleEffect(EffectOptionFlags effect, boolean enable) {
         if (enable)
             this.effects.add(effect);
         else
@@ -159,29 +146,25 @@ public class BingoSettingsBuilder
         return this;
     }
 
-    public BingoSettingsBuilder maxTeamSize(int maxTeamSize)
-    {
+    public BingoSettingsBuilder maxTeamSize(int maxTeamSize) {
         this.maxTeamSize = maxTeamSize;
         settingsUpdated();
         return this;
     }
 
-    public BingoSettingsBuilder enableCountdown(boolean enableCountdown)
-    {
+    public BingoSettingsBuilder enableCountdown(boolean enableCountdown) {
         this.enableCountdown = enableCountdown;
         settingsUpdated();
         return this;
     }
 
-    public BingoSettingsBuilder countdownGameDuration(int countdownGameDuration)
-    {
+    public BingoSettingsBuilder countdownGameDuration(int countdownGameDuration) {
         this.countdownGameDuration = countdownGameDuration;
         settingsUpdated();
         return this;
     }
 
-    public BingoSettings view()
-    {
+    public BingoSettings view() {
         return new BingoSettings(
                 card,
                 mode,
@@ -194,8 +177,7 @@ public class BingoSettingsBuilder
                 countdownGameDuration);
     }
 
-    public void settingsUpdated()
-    {
+    public void settingsUpdated() {
         var event = new BingoSettingsUpdatedEvent(view(), session);
         Bukkit.getPluginManager().callEvent(event);
     }

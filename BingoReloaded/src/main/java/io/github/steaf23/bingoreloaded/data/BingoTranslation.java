@@ -12,8 +12,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public enum BingoTranslation
-{
+public enum BingoTranslation {
     UNIMPLEMENTED("UNIMPLEMENTED MESSAGE"),
     LANGUAGE_NAME("name"),
     CHANGED_LANGUAGE("changed"),
@@ -133,52 +132,84 @@ public enum BingoTranslation
     LIST_COUNT("creator.card_item.desc"),
     ;
 
+    private static final Pattern HEX_PATTERN = Pattern.compile("\\{#[a-fA-F0-9]{6}\\}");
+    private static final Pattern SMALL_CAPS_PATTERN = Pattern.compile("\\{@.+\\}");
     private final String key;
     private String translation;
 
-    private static final Pattern HEX_PATTERN = Pattern.compile("\\{#[a-fA-F0-9]{6}\\}");
-    private static final Pattern SMALL_CAPS_PATTERN = Pattern.compile("\\{@.+\\}");
-
-    BingoTranslation(String key)
-    {
+    BingoTranslation(String key) {
         this.key = key;
         this.translation = ChatColor.GRAY + key;
     }
 
-    public static void setLanguage(FileConfiguration text, FileConfiguration fallbackText)
-    {
-        for (BingoTranslation value : BingoTranslation.values())
-        {
+    public static void setLanguage(FileConfiguration text, FileConfiguration fallbackText) {
+        for (BingoTranslation value : BingoTranslation.values()) {
             value.translation = text.getString(value.key, fallbackText.getString(value.key, value.translation));
         }
     }
 
-    public String translate(String... args)
-    {
+    /**
+     * @param input The input string, can look something like this: "{#00bb33}Hello, I like to &2&lDance && &rSing!"
+     * @return Legacy text string that can be used in TextComponent#fromLegacyText
+     */
+    public static String convertColors(String input) {
+        String part = input;
+        part = part.replaceAll("(?<!&)&(?!&)", "§");
+        part = part.replaceAll("&&", "&");
+
+        Matcher matcher = HEX_PATTERN.matcher(part);
+        while (matcher.find()) {
+            String match = matcher.group();
+            String color = match.replaceAll("[\\{\\}]", "");
+            part = part.replace(match, "" + net.md_5.bungee.api.ChatColor.of(color));
+        }
+
+        return part;
+    }
+
+    public static String convertSmallCaps(String input) {
+        String part = input;
+        Matcher matcher = SMALL_CAPS_PATTERN.matcher(part);
+        while (matcher.find()) {
+            String match = matcher.group();
+            String result = match.replace("{@", "").replace("}", "");
+            part = part.replace(match, SmallCaps.toSmallCaps(result));
+        }
+
+        return part;
+    }
+
+    public static BingoTranslation getByKey(String key) {
+        for (BingoTranslation value : values()) {
+            if (value.key.equals(key))
+                return value;
+        }
+        return null;
+    }
+
+    public String translate(String... args) {
         String rawTranslation = translation;
         rawTranslation = convertColors(rawTranslation);
         rawTranslation = convertSmallCaps(rawTranslation);
 
-        for (int i = 0; i < args.length; i++)
-        {
+        for (int i = 0; i < args.length; i++) {
             rawTranslation = rawTranslation.replace("{" + i + "}", args[i]);
         }
         return rawTranslation;
     }
 
-    public String rawTranslation()
-    {
+    public String rawTranslation() {
         return translation;
     }
 
     /**
      * convert translated string with arguments to ItemText and preserve argument order, like translate() does
+     *
      * @param args
      * @return An array of itemText where each element is a line,
-     *  where each line is split using '\n' in the translated string.
+     * where each line is split using '\n' in the translated string.
      */
-    public ItemText[] asItemText(Set<ChatColor> modifiers, boolean useSmallCaps, ItemText... args)
-    {
+    public ItemText[] asItemText(Set<ChatColor> modifiers, boolean useSmallCaps, ItemText... args) {
         //TODO: fix issue where raw translations cannot convert the colors defined in lang files properly on items
         String rawTranslation = translation;
         rawTranslation = convertColors(rawTranslation);
@@ -187,17 +218,13 @@ public enum BingoTranslation
         List<ItemText> result = new ArrayList<>();
         String[] lines = rawTranslation.split("\\n");
         String[] pieces;
-        for (int i = 0; i < lines.length; i++)
-        {
+        for (int i = 0; i < lines.length; i++) {
             ItemText line = new ItemText(modifiers.toArray(new ChatColor[]{}));
             pieces = lines[i].split("\\{");
-            for (String piece : pieces)
-            {
+            for (String piece : pieces) {
                 String pieceToAdd = piece;
-                for (int argIdx = 0; argIdx < args.length; argIdx++)
-                {
-                    if (pieceToAdd.contains(argIdx + "}"))
-                    {
+                for (int argIdx = 0; argIdx < args.length; argIdx++) {
+                    if (pieceToAdd.contains(argIdx + "}")) {
                         line.add(args[argIdx]);
                         pieceToAdd = pieceToAdd.replace(i + "}", "");
                         break;
@@ -213,53 +240,7 @@ public enum BingoTranslation
         return result.toArray(new ItemText[]{});
     }
 
-    public ItemText[] asItemText(Set<ChatColor> modifiers, ItemText... args)
-    {
+    public ItemText[] asItemText(Set<ChatColor> modifiers, ItemText... args) {
         return asItemText(modifiers, false, args);
-    }
-
-    /**
-     * @param input The input string, can look something like this: "{#00bb33}Hello, I like to &2&lDance && &rSing!"
-     * @return Legacy text string that can be used in TextComponent#fromLegacyText
-     */
-    public static String convertColors(String input)
-    {
-        String part = input;
-        part = part.replaceAll("(?<!&)&(?!&)", "§");
-        part = part.replaceAll("&&", "&");
-
-        Matcher matcher = HEX_PATTERN.matcher(part);
-        while (matcher.find())
-        {
-            String match = matcher.group();
-            String color = match.replaceAll("[\\{\\}]", "");
-            part = part.replace(match, "" + net.md_5.bungee.api.ChatColor.of(color));
-        }
-
-        return part;
-    }
-
-    public static String convertSmallCaps(String input)
-    {
-        String part = input;
-        Matcher matcher = SMALL_CAPS_PATTERN.matcher(part);
-        while (matcher.find())
-        {
-            String match = matcher.group();
-            String result = match.replace("{@", "").replace("}", "");
-            part = part.replace(match, SmallCaps.toSmallCaps(result));
-        }
-
-        return part;
-    }
-
-    public static BingoTranslation getByKey(String key)
-    {
-        for (BingoTranslation value : values())
-        {
-            if (value.key.equals(key))
-                return value;
-        }
-        return null;
     }
 }

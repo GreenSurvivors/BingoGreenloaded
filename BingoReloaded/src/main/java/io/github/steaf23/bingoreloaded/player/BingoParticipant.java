@@ -8,14 +8,19 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface BingoParticipant
-{
+public interface BingoParticipant {
     BingoSession getSession();
+
     @Nullable
     BingoTeam getTeam();
+
     UUID getId();
+
     Optional<Player> sessionPlayer();
+
     String getDisplayName();
+
     void showDeathMatchTask(BingoTask task);
+
     boolean alwaysActive();
 }

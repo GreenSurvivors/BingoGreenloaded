@@ -10,11 +10,9 @@ import io.github.steaf23.bingoreloaded.gui.base.BingoMenuManager;
 import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
-public class SingularGameManager implements BingoGameManager
-{
+public class SingularGameManager implements BingoGameManager {
     private final BingoEventListener eventListener;
     private final BingoSession session;
     private final BingoMenuManager menuManager;

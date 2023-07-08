@@ -13,30 +13,24 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class StatisticTracker
-{
+public class StatisticTracker {
     private final List<StatisticProgress> statistics;
     private final String worldName;
 
-    public StatisticTracker(String worldName)
-    {
+    public StatisticTracker(String worldName) {
         this.statistics = new ArrayList<>();
         this.worldName = worldName;
     }
 
-    public void start(Set<BingoTeam> teams)
-    {
-        for (BingoTeam team : teams)
-        {
-            for (BingoTask task : team.card.tasks)
-            {
+    public void start(Set<BingoTeam> teams) {
+        for (BingoTeam team : teams) {
+            for (BingoTask task : team.card.tasks) {
                 if (task.type != BingoTask.TaskType.STATISTIC)
                     continue;
 
-                StatisticTask statTask = (StatisticTask)task.data;
+                StatisticTask statTask = (StatisticTask) task.data;
 
-                for (BingoParticipant player : team.getMembers())
-                {
+                for (BingoParticipant player : team.getMembers()) {
                     if (statistics.stream().anyMatch(progress ->
                             progress.player.equals(player) && progress.statistic.equals(statTask.statistic())))
                         continue;
@@ -48,8 +42,7 @@ public class StatisticTracker
         }
     }
 
-    public double getProgressLeft(BingoPlayer player, BingoStatistic statistic)
-    {
+    public double getProgressLeft(BingoPlayer player, BingoStatistic statistic) {
         List<StatisticProgress> statProgress = statistics.stream().filter(progress ->
                 progress.player.equals(player) && progress.statistic.equals(statistic)).collect(Collectors.toList());
 
@@ -59,19 +52,16 @@ public class StatisticTracker
         return statProgress.get(0).progressLeft;
     }
 
-    public void updateProgress()
-    {
+    public void updateProgress() {
         statistics.forEach(StatisticProgress::updatePeriodicProgress);
         statistics.removeIf(progress -> progress.progressLeft <= 0);
     }
 
-    public void reset()
-    {
+    public void reset() {
         statistics.clear();
     }
 
-    public void handleStatisticIncrement(final PlayerStatisticIncrementEvent event, final BingoGame game)
-    {
+    public void handleStatisticIncrement(final PlayerStatisticIncrementEvent event, final BingoGame game) {
         if (game == null)
             return;
 
@@ -87,8 +77,7 @@ public class StatisticTracker
 
         List<StatisticProgress> matchingStatistic = statistics.stream().filter(progress ->
                 progress.player.equals(player) && progress.statistic.equals(stat)).collect(Collectors.toList());
-        if (matchingStatistic.size() == 1)
-        {
+        if (matchingStatistic.size() == 1) {
             matchingStatistic.get(0).setProgress(event.getNewValue());
         }
 

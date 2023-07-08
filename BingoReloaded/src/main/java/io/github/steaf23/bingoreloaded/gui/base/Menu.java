@@ -6,12 +6,12 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 
-public interface Menu
-{
+public interface Menu {
     void beforeOpening(HumanEntity player);
 
     /**
      * Implementations should return if the event should be cancelled.
+     *
      * @param event
      * @param player
      * @param clickedItem
@@ -22,6 +22,7 @@ public interface Menu
 
     /**
      * Implementations should return if the event should be cancelled.
+     *
      * @param event
      * @return
      */

@@ -5,21 +5,20 @@ import net.md_5.bungee.api.ChatColor;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.logging.*;
+import java.util.logging.FileHandler;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
-public class BingoLogger
-{
+public class BingoLogger {
     private static final Logger logger;
     private static final FileHandler fh;
 
-    static
-    {
+    static {
         logger = Logger.getLogger("BingoReloaded");
-        try
-        {
-            fh = new FileHandler(BingoReloaded.getPlugin(BingoReloaded.class).getDataFolder() + "\\bingo.log", 0,1, true);
-        } catch (IOException e)
-        {
+        try {
+            fh = new FileHandler(BingoReloaded.getPlugin(BingoReloaded.class).getDataFolder() + "\\bingo.log", 0, 1, true);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
         logger.setUseParentHandlers(false);
@@ -29,8 +28,7 @@ public class BingoLogger
             private static final String format = "[%1$tF %1$tT] [%2$-7s] %3$s %n";
 
             @Override
-            public synchronized String format(LogRecord record)
-            {
+            public synchronized String format(LogRecord record) {
                 return String.format(format,
                         new Date(record.getMillis()),
                         record.getLevel().getLocalizedName(),
@@ -43,8 +41,7 @@ public class BingoLogger
         logger.info("Started Bingo Logger");
     }
 
-    public static void log(String clazz, String message)
-    {
+    public static void log(String clazz, String message) {
         logger.info("{" + clazz + "} " + ChatColor.stripColor(message));
     }
 }

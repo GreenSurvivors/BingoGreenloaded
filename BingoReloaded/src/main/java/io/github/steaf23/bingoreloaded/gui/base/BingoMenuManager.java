@@ -8,19 +8,17 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.function.Function;
 
-public class BingoMenuManager extends MenuManager
-{
+public class BingoMenuManager extends MenuManager {
     private Function<HumanEntity, Boolean> playerPredicate;
 
-    public BingoMenuManager(Function<HumanEntity, Boolean> playerPredicate)
-    {
+    public BingoMenuManager(Function<HumanEntity, Boolean> playerPredicate) {
         this.playerPredicate = playerPredicate;
     }
 
     @Override
     @EventHandler
     public void handleInventoryClick(InventoryClickEvent event) {
-        if (!playerPredicate.apply((Player)event.getWhoClicked()))
+        if (!playerPredicate.apply((Player) event.getWhoClicked()))
             return;
 
         super.handleInventoryClick(event);

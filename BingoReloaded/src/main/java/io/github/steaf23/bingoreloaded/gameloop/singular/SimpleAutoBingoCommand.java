@@ -28,8 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SimpleAutoBingoCommand implements TabExecutor
-{
+public class SimpleAutoBingoCommand implements TabExecutor {
     private final SingularGameManager manager;
     private final SubCommand command;
 
@@ -58,20 +57,20 @@ public class SimpleAutoBingoCommand implements TabExecutor
             return setEffect(settings, args);
         }
         ).addTabCompletion(args -> {
-            if (args.length <= 1) {
-                List<String> effects = Arrays.stream(EffectOptionFlags.values())
-                        .map(v -> v.toString().toLowerCase())
-                        .collect(Collectors.toList());
-                effects.add("none");
-                effects.add("all");
-                return effects;
-            } else {
-                if (!args[0].equals("none") && !args[0].equals("all")) {
-                    return List.of("true", "false");
+                    if (args.length <= 1) {
+                        List<String> effects = Arrays.stream(EffectOptionFlags.values())
+                                .map(v -> v.toString().toLowerCase())
+                                .collect(Collectors.toList());
+                        effects.add("none");
+                        effects.add("all");
+                        return effects;
+                    } else {
+                        if (!args[0].equals("none") && !args[0].equals("all")) {
+                            return List.of("true", "false");
+                        }
+                    }
+                    return List.of();
                 }
-            }
-            return List.of();
-        }
         ).addUsage("autobingo effects effect_name [true | false]"));
 
         command.addSubCommand(new SubCommand("card", args -> {
@@ -79,8 +78,8 @@ public class SimpleAutoBingoCommand implements TabExecutor
             return setCard(settings, args);
         }
         ).addTabCompletion(args -> {
-            return new BingoCardData().getCardNames().stream().collect(Collectors.toList());
-        }
+                    return new BingoCardData().getCardNames().stream().collect(Collectors.toList());
+                }
         ).addUsage("autobingo card card_name"));
 
         command.addSubCommand(new SubCommand("countdown", args -> {
@@ -88,8 +87,8 @@ public class SimpleAutoBingoCommand implements TabExecutor
             return setCountdown(settings, args);
         }
         ).addTabCompletion(args -> {
-            return List.of("true", "false");
-        }
+                    return List.of("true", "false");
+                }
         ).addUsage("autobingo countdown <true | false>"));
 
         command.addSubCommand(new SubCommand("duration", args -> {
@@ -144,8 +143,8 @@ public class SimpleAutoBingoCommand implements TabExecutor
                     return true;
                 }
                 ).addTabCompletion(args -> {
-                    return settingsData.getPresetNames().stream().collect(Collectors.toList());
-                }
+                            return settingsData.getPresetNames().stream().collect(Collectors.toList());
+                        }
                 ).addUsage("autobingo preset load <preset_name>"))
                 .addSubCommand(new SubCommand("remove", args -> {
                     String path = String.join(" ", args);
@@ -165,8 +164,8 @@ public class SimpleAutoBingoCommand implements TabExecutor
             return playerData(manager.getSession().getPlayerData(), args);
         }
         ).addTabCompletion(args -> {
-            return List.of("load", "save", "remove");
-        }
+                    return List.of("load", "save", "remove");
+                }
         ).addUsage("autbingo playerdata <load|save|remove> player_name"));
     }
 
@@ -372,8 +371,7 @@ public class SimpleAutoBingoCommand implements TabExecutor
     }
 
     private boolean playerData(PlayerData playerData, String[] extraArguments) {
-        if (extraArguments.length != 2)
-        {
+        if (extraArguments.length != 2) {
             sendFailed("Expected 3 arguments!");
             return false;
         }
@@ -387,8 +385,7 @@ public class SimpleAutoBingoCommand implements TabExecutor
             return false;
         }
 
-        switch (subCommand)
-        {
+        switch (subCommand) {
             case "save" -> {
                 sendSuccess("Saved player data for " + playerName);
                 playerData.savePlayer(SerializablePlayer.fromPlayer(BingoReloaded.getInstance(), player), true);

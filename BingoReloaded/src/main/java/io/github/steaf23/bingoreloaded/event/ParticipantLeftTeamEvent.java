@@ -4,8 +4,7 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.player.BingoParticipant;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 
-public class ParticipantLeftTeamEvent extends BingoEvent
-{
+public class ParticipantLeftTeamEvent extends BingoEvent {
     private final BingoParticipant participant;
     private final BingoTeam team;
 

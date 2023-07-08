@@ -5,7 +5,6 @@ import io.github.steaf23.bingoreloaded.data.BingoStatData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.data.PlayerData;
-import io.github.steaf23.bingoreloaded.data.helper.SerializablePlayer;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGameManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
@@ -21,12 +20,9 @@ import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
@@ -36,8 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BingoCommand implements TabExecutor
-{
+public class BingoCommand implements TabExecutor {
     private final ConfigData config;
     private final BingoGameManager gameManager;
     private final PlayerData playerData;
@@ -46,6 +41,17 @@ public class BingoCommand implements TabExecutor
         this.config = config;
         this.gameManager = gameManager;
         this.playerData = new PlayerData();
+    }
+
+    /**
+     * @return Integer the string represents or defaultValue if a conversion failed.
+     */
+    public static int toInt(String in, int defaultValue) {
+        try {
+            return Integer.parseInt(in);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
     }
 
     @Override
@@ -246,17 +252,6 @@ public class BingoCommand implements TabExecutor
     public void givePlayerBingoItem(Player player, String itemName) {
         if (itemName.equals("wand")) {
             player.getInventory().addItem(PlayerKit.WAND_ITEM);
-        }
-    }
-
-    /**
-     * @return Integer the string represents or defaultValue if a conversion failed.
-     */
-    public static int toInt(String in, int defaultValue) {
-        try {
-            return Integer.parseInt(in);
-        } catch (NumberFormatException e) {
-            return defaultValue;
         }
     }
 

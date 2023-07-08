@@ -1,15 +1,11 @@
 package io.github.steaf23.bingoreloaded.gui;
 
-import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
-import io.github.steaf23.bingoreloaded.gui.base.PaginatedSelectionMenu;
-import io.github.steaf23.bingoreloaded.gui.base.UserInputMenu;
-import io.github.steaf23.bingoreloaded.settings.BingoSettings;
-import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import io.github.steaf23.bingoreloaded.data.BingoSettingsData;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gui.base.*;
+import io.github.steaf23.bingoreloaded.settings.BingoSettings;
+import io.github.steaf23.bingoreloaded.settings.BingoSettingsBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -19,17 +15,16 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExtraBingoMenu extends BasicMenu
-{
+public class ExtraBingoMenu extends BasicMenu {
     private static final int DURATION_MAX = 60;
     private static final int TEAMSIZE_MAX = 64;
-    private final BingoSettingsBuilder settings;
-    private final ConfigData config;
     private static final MenuItem EXIT = new MenuItem(0, 5,
             Material.BARRIER, TITLE_PREFIX + BingoTranslation.MENU_PREV.translate());
     private static final MenuItem PRESETS = new MenuItem(6, 2,
             Material.MINECART, TITLE_PREFIX + "Manage Presets",
             ChatColor.GRAY + "Click to apply settings from saved presets");
+    private final BingoSettingsBuilder settings;
+    private final ConfigData config;
     private final MenuItem teamSize = new MenuItem(2, 2,
             Material.ENDER_EYE, TITLE_PREFIX + "Maximum Team Size",
             ChatColor.GRAY + "(When changing this setting all currently",
@@ -39,8 +34,7 @@ public class ExtraBingoMenu extends BasicMenu
     private final MenuItem gameDuration = new MenuItem(4, 3,
             Material.RECOVERY_COMPASS, TITLE_PREFIX + "Countdown Duration");
 
-    public ExtraBingoMenu(MenuManager menuManager, BingoSettingsBuilder settings, ConfigData config)
-    {
+    public ExtraBingoMenu(MenuManager menuManager, BingoSettingsBuilder settings, ConfigData config) {
         super(menuManager, BingoTranslation.OPTIONS_TITLE.translate(), 6);
         this.settings = settings;
         this.config = config;
@@ -60,14 +54,10 @@ public class ExtraBingoMenu extends BasicMenu
 
         int slotClicked = event.getRawSlot();
 
-        if (slotClicked == teamSize.getSlot())
-        {
-            if (clickType == ClickType.LEFT)
-            {
+        if (slotClicked == teamSize.getSlot()) {
+            if (clickType == ClickType.LEFT) {
                 teamSize.setAmount(Math.min(TEAMSIZE_MAX, teamSize.getAmount() + 1));
-            }
-            else if (clickType == ClickType.RIGHT)
-            {
+            } else if (clickType == ClickType.RIGHT) {
                 teamSize.setAmount(Math.max(1, teamSize.getAmount() - 1));
             }
 
@@ -78,21 +68,14 @@ public class ExtraBingoMenu extends BasicMenu
                     "§rUse the mouse buttons to increase/ decrease",
                     "the amount of players a team can have.");
             addItem(teamSize);
-        }
-        else if (slotClicked == countdown.getSlot())
-        {
+        } else if (slotClicked == countdown.getSlot()) {
             settings.enableCountdown(!view.enableCountdown());
             countdown.setGlowing(!view.enableCountdown());
             addItem(countdown);
-        }
-        else if (slotClicked == gameDuration.getSlot())
-        {
-            if (clickType == ClickType.LEFT)
-            {
+        } else if (slotClicked == gameDuration.getSlot()) {
+            if (clickType == ClickType.LEFT) {
                 gameDuration.setAmount(Math.min(DURATION_MAX, gameDuration.getAmount() + 1));
-            }
-            else if (clickType == ClickType.RIGHT)
-            {
+            } else if (clickType == ClickType.RIGHT) {
                 gameDuration.setAmount(Math.max(1, gameDuration.getAmount() - 1));
             }
 
@@ -132,25 +115,19 @@ public class ExtraBingoMenu extends BasicMenu
         addItems(teamSize, gameDuration, countdown);
     }
 
-    public void showPresetMenu(HumanEntity player)
-    {
+    public void showPresetMenu(HumanEntity player) {
         BingoSettingsData settingsData = new BingoSettingsData();
 
-        new PaginatedSelectionMenu(getMenuManager(), "Setting Presets", new ArrayList<>(), FilterType.DISPLAY_NAME)
-        {
+        new PaginatedSelectionMenu(getMenuManager(), "Setting Presets", new ArrayList<>(), FilterType.DISPLAY_NAME) {
             private static final MenuItem SAVE_PRESET = new MenuItem(51, Material.EMERALD,
                     "" + ChatColor.GREEN + ChatColor.BOLD + "Add preset from current settings");
 
             @Override
-            public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, HumanEntity player)
-            {
-                if (event.isLeftClick())
-                {
+            public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, HumanEntity player) {
+                if (event.isLeftClick()) {
                     settings.fromOther(settingsData.getSettings(clickedOption.getCompareKey()));
                     close(player);
-                }
-                else if (event.isRightClick())
-                {
+                } else if (event.isRightClick()) {
                     BasicMenu context = new BasicMenu(getMenuManager(), clickedOption.getItemMeta().getDisplayName(), 1);
                     context.addAction(new MenuItem(Material.BARRIER, TITLE_PREFIX + "Remove"), clickType -> {
                                 settingsData.removeSettings(clickedOption.getCompareKey());
@@ -190,8 +167,7 @@ public class ExtraBingoMenu extends BasicMenu
                 clearItems();
 
                 List<MenuItem> items = new ArrayList<>();
-                for (String preset : settingsData.getPresetNames())
-                {
+                for (String preset : settingsData.getPresetNames()) {
                     boolean def = preset.equals(config.defaultSettingsPreset);
                     MenuItem item = new MenuItem(Material.GLOBE_BANNER_PATTERN,
                             preset + (def ? ChatColor.LIGHT_PURPLE + " (default)" : ""),

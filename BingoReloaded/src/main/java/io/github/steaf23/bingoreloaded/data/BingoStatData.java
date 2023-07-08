@@ -13,16 +13,13 @@ import java.util.Map;
 import java.util.UUID;
 
 
-public class BingoStatData
-{
+public class BingoStatData {
     private final YmlDataManager data = BingoReloaded.createYmlDataManager("data/player_stats.yml");
 
-    public BingoStatData()
-    {
+    public BingoStatData() {
     }
 
-    public int getPlayerStat(UUID playerId, BingoStatType statType)
-    {
+    public int getPlayerStat(UUID playerId, BingoStatType statType) {
         if (statType == BingoStatType.PLAYED)
             return getPlayerStat(playerId, BingoStatType.WINS) + getPlayerStat(playerId, BingoStatType.LOSSES);
 
@@ -34,13 +31,11 @@ public class BingoStatData
         return Integer.parseInt(stats[statType.idx]);
     }
 
-    public void incrementPlayerStat(Player player, BingoStatType statType)
-    {
+    public void incrementPlayerStat(Player player, BingoStatType statType) {
         incrementPlayerStat(player.getUniqueId(), statType, 1);
     }
 
-    public void incrementPlayerStat(UUID playerId, BingoStatType statType, int by)
-    {
+    public void incrementPlayerStat(UUID playerId, BingoStatType statType, int by) {
         if (statType.idx < 0)
             return;
 
@@ -54,19 +49,17 @@ public class BingoStatData
     }
 
     /**
-     * @param firstEntry index of first entry to show on the scoreboard
+     * @param firstEntry     index of first entry to show on the scoreboard
      * @param entriesPerPage how many entries to show including the first entry
-     * @param sortedBy stat to sort the entries by
+     * @param sortedBy       stat to sort the entries by
      * @return
      */
-    public HologramBuilder asHologram(int firstEntry, int entriesPerPage, @Nullable BingoStatType sortedBy)
-    {
+    public HologramBuilder asHologram(int firstEntry, int entriesPerPage, @Nullable BingoStatType sortedBy) {
         //TODO: implement
         return new HologramBuilder(BingoReloaded.getPlugin(BingoReloaded.class).holograms());
     }
 
-    public Message getPlayerStatsFormatted(UUID playerId)
-    {
+    public Message getPlayerStatsFormatted(UUID playerId) {
         String stats = getPlayerData(playerId);
         String[] statList = stats.split(";");
         return new Message().untranslated("{0}'s statistics: Wins: {1}, Losses: {2}, Games finished: {3}, Tasks completed: {4}, Wand uses: {5}")
@@ -82,44 +75,36 @@ public class BingoStatData
     /**
      * While it's possible to get the player's statistics from the name,
      * using the UUID directly is less expensive and should be preferred
+     *
      * @param playerName
      * @return
      */
-    public Message getPlayerStatsFormatted(String playerName)
-    {
+    public Message getPlayerStatsFormatted(String playerName) {
         UUID playerId = getPlayerUUID(playerName);
-        if (playerId != null)
-        {
+        if (playerId != null) {
             return getPlayerStatsFormatted(playerId);
-        }
-        else
-        {
+        } else {
             return new Message().untranslated("Could not find statistics for player {0}!").color(ChatColor.RED)
                     .arg(playerName).color(ChatColor.WHITE);
         }
     }
 
-    private String getPlayerData(UUID playerId)
-    {
+    private String getPlayerData(UUID playerId) {
         return data.getConfig().getString(playerId.toString(), "0;0;0;0;0");
     }
 
-    private UUID getPlayerUUID(String playerName)
-    {
+    private UUID getPlayerUUID(String playerName) {
         Map<String, Object> playerData = data.getConfig().getValues(false);
-        for (String recordName : playerData.keySet())
-        {
+        for (String recordName : playerData.keySet()) {
             UUID playerId = UUID.fromString(recordName);
-            if (Bukkit.getPlayer(playerId).getName().equals(playerName))
-            {
+            if (Bukkit.getPlayer(playerId).getName().equals(playerName)) {
                 return playerId;
             }
         }
         return null;
     }
 
-    private void setPlayerData(UUID playerId, String statData)
-    {
+    private void setPlayerData(UUID playerId, String statData) {
         data.getConfig().set(playerId.toString(), statData);
         data.saveConfig();
     }

@@ -5,10 +5,8 @@ import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 /**
  * Event that will be fired right before the game starts.
  */
-public class BingoStartedEvent extends BingoEvent
-{
-    public BingoStartedEvent(BingoSession session)
-    {
+public class BingoStartedEvent extends BingoEvent {
+    public BingoStartedEvent(BingoSession session) {
         super(session);
     }
 }

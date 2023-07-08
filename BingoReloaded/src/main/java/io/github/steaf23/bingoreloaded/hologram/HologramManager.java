@@ -8,21 +8,17 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HologramManager
-{
+public class HologramManager {
     private Map<String, Hologram> holograms;
 
 //    private YmlDataManager data = new YmlDataManager(BingoReloaded.get(), "holograms.yml");
 
-    public HologramManager()
-    {
+    public HologramManager() {
         this.holograms = new HashMap<>();
     }
 
-    public Hologram create(String id, Location location, String... lines)
-    {
-        if (holograms.containsKey(id))
-        {
+    public Hologram create(String id, Location location, String... lines) {
+        if (holograms.containsKey(id)) {
             Message.warn("Hologram with id " + id + " already exists");
             return holograms.get(id);
         }
@@ -32,10 +28,8 @@ public class HologramManager
         return holo;
     }
 
-    public Hologram createImage(String id, Location location, String imagePath, ChatColor backgroundColor) throws IOException
-    {
-        if (holograms.containsKey(id))
-        {
+    public Hologram createImage(String id, Location location, String imagePath, ChatColor backgroundColor) throws IOException {
+        if (holograms.containsKey(id)) {
             Message.warn("Hologram with id " + id + " already exists");
             return holograms.get(id);
         }
@@ -45,15 +39,11 @@ public class HologramManager
         return holo;
     }
 
-    public void destroy(String id)
-    {
-        if (holograms.containsKey(id))
-        {
+    public void destroy(String id) {
+        if (holograms.containsKey(id)) {
             holograms.get(id).destroy();
             holograms.remove(id);
-        }
-        else
-        {
+        } else {
             Message.warn("Hologram with id " + id + " does not exist");
         }
     }

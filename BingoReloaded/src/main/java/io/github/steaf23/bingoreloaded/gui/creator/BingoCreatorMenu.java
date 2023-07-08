@@ -3,11 +3,6 @@ package io.github.steaf23.bingoreloaded.gui.creator;
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
 import io.github.steaf23.bingoreloaded.data.TaskListData;
 import io.github.steaf23.bingoreloaded.gui.base.*;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
-import io.github.steaf23.bingoreloaded.gui.base.PaginatedSelectionMenu;
-import io.github.steaf23.bingoreloaded.gui.base.UserInputMenu;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -19,11 +14,10 @@ import java.util.List;
 
 // This class is used to navigate through the cards and lists.
 // Uses a double ListPicker, one for cards and one for lists.
-public class BingoCreatorMenu extends BasicMenu
-{
-    private final BingoCardData cardsData;
+public class BingoCreatorMenu extends BasicMenu {
     public static final MenuItem CARD = new MenuItem(11, Material.FILLED_MAP, TITLE_PREFIX + "Edit Cards", "Click to view and edit bingo cards!");
     public static final MenuItem LIST = new MenuItem(15, Material.PAPER, TITLE_PREFIX + "Edit Lists", "Click to view and edit bingo lists!");
+    private final BingoCardData cardsData;
 
     public BingoCreatorMenu(MenuManager manager) {
         super(manager, "Card Creator", 3);
@@ -33,8 +27,7 @@ public class BingoCreatorMenu extends BasicMenu
     }
 
     private BasicMenu createCardPicker() {
-        return new PaginatedSelectionMenu(getMenuManager(), "Choose A Card", new ArrayList<>(), FilterType.DISPLAY_NAME)
-        {
+        return new PaginatedSelectionMenu(getMenuManager(), "Choose A Card", new ArrayList<>(), FilterType.DISPLAY_NAME) {
             private static final MenuItem CREATE_CARD = new MenuItem(51, Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + "New Card");
 
             @Override
@@ -64,8 +57,7 @@ public class BingoCreatorMenu extends BasicMenu
     }
 
     private BasicMenu createListPicker() {
-        return new PaginatedSelectionMenu(getMenuManager(), "Choose A List", new ArrayList<>(), FilterType.DISPLAY_NAME)
-        {
+        return new PaginatedSelectionMenu(getMenuManager(), "Choose A List", new ArrayList<>(), FilterType.DISPLAY_NAME) {
             private static final MenuItem CREATE_LIST = new MenuItem(51, Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + "New List");
 
             @Override

@@ -3,7 +3,6 @@ package io.github.steaf23.bingoreloaded.gui;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.TeamData;
 import io.github.steaf23.bingoreloaded.gui.base.*;
-import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -14,18 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class TeamEditorMenu extends PaginatedSelectionMenu
-{
-    private final TeamData teamData;
-
+public class TeamEditorMenu extends PaginatedSelectionMenu {
     private static final TeamData.TeamTemplate DEFAULT_NEW_TEAM = new TeamData.TeamTemplate("MyTeam", ChatColor.of("#808080"));
-
     private static final MenuItem RESTORE_DEFAULT = new MenuItem(2, 5, Material.TNT,
             "" + ChatColor.RED + ChatColor.BOLD + "Restore Default Teams",
             "This option will remove all created teams!");
-
     private static final MenuItem CREATE_TEAM = new MenuItem(6, 5, Material.EMERALD,
             "" + ChatColor.GREEN + ChatColor.BOLD + "Create New Team");
+    private final TeamData teamData;
 
     public TeamEditorMenu(MenuManager manager) {
         super(manager, "Edit Teams", new ArrayList<>(), FilterType.DISPLAY_NAME);
@@ -57,8 +52,7 @@ public class TeamEditorMenu extends PaginatedSelectionMenu
     }
 
     public BasicMenu createTeamEditor(String teamKey) {
-        return new BasicMenu(TeamEditorMenu.this.getMenuManager(), "Edit Team", 3)
-        {
+        return new BasicMenu(TeamEditorMenu.this.getMenuManager(), "Edit Team", 3) {
             private TeamData.TeamTemplate templateToEdit = null;
 
             @Override

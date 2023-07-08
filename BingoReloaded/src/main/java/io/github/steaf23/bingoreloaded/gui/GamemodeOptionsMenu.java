@@ -1,13 +1,13 @@
 package io.github.steaf23.bingoreloaded.gui;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
-import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
-import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
+import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
+import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
+import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
@@ -15,13 +15,11 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-public class GamemodeOptionsMenu extends BasicMenu
-{
+public class GamemodeOptionsMenu extends BasicMenu {
     private final MenuItem[] options;
     private final BingoSession session;
 
-    public GamemodeOptionsMenu(MenuManager menuManager, BingoSession session)
-    {
+    public GamemodeOptionsMenu(MenuManager menuManager, BingoSession session) {
         super(menuManager, BingoTranslation.OPTIONS_GAMEMODE.translate(), 5);
         this.session = session;
 
@@ -51,28 +49,20 @@ public class GamemodeOptionsMenu extends BasicMenu
         String worldName = BingoReloaded.getWorldNameOfDimension(player.getWorld());
 
         int slotClicked = event.getRawSlot();
-        if (slotClicked == options[0].getSlot() || slotClicked == options[3].getSlot())
-        {
+        if (slotClicked == options[0].getSlot() || slotClicked == options[3].getSlot()) {
             new TranslatedMessage(BingoTranslation.REGULAR_SELECTED).color(ChatColor.GOLD).sendAll(session);
-        }
-        else if (slotClicked == options[1].getSlot() || slotClicked == options[4].getSlot())
-        {
+        } else if (slotClicked == options[1].getSlot() || slotClicked == options[4].getSlot()) {
             new TranslatedMessage(BingoTranslation.LOCKOUT_SELECTED).color(ChatColor.GOLD).sendAll(session);
 
             chosenMode = BingoGamemode.LOCKOUT;
-        }
-        else if (slotClicked == options[2].getSlot() || slotClicked == options[5].getSlot())
-        {
+        } else if (slotClicked == options[2].getSlot() || slotClicked == options[5].getSlot()) {
             new TranslatedMessage(BingoTranslation.COMPLETE_SELECTED).color(ChatColor.GOLD).sendAll(session);
             chosenMode = BingoGamemode.COMPLETE;
         }
 
-        if (slotClicked == options[0].getSlot() || slotClicked == options[1].getSlot() || slotClicked == options[2].getSlot())
-        {
+        if (slotClicked == options[0].getSlot() || slotClicked == options[1].getSlot() || slotClicked == options[2].getSlot()) {
             new TranslatedMessage(BingoTranslation.CARDSIZE_SELECTED).color(ChatColor.GOLD).arg("5x5").sendAll(session);
-        }
-        else if (slotClicked == options[3].getSlot() || slotClicked == options[4].getSlot() || slotClicked == options[5].getSlot())
-        {
+        } else if (slotClicked == options[3].getSlot() || slotClicked == options[4].getSlot() || slotClicked == options[5].getSlot()) {
             new TranslatedMessage(BingoTranslation.CARDSIZE_SELECTED).color(ChatColor.GOLD).arg("3x3").sendAll(session);
             chosenSize = CardSize.X3;
         }

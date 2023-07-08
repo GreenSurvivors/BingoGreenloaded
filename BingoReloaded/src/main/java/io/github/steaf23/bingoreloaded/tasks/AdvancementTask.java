@@ -16,24 +16,31 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 @SerializableAs("Bingo.AdvancementTask")
-public record AdvancementTask(Advancement advancement) implements TaskData
-{
-    public AdvancementTask(Advancement advancement)
-    {
+public record AdvancementTask(Advancement advancement) implements TaskData {
+    public AdvancementTask(Advancement advancement) {
         this.advancement = advancement;
     }
 
+    public static AdvancementTask fromPdc(PersistentDataContainer pdc) {
+        Advancement a = Bukkit.getAdvancement(NamespacedKey.fromString(
+                pdc.getOrDefault(BingoTask.getTaskDataKey("advancement"), PersistentDataType.STRING, "minecraft:story/mine_stone")));
+        AdvancementTask task = new AdvancementTask(a);
+        return task;
+    }
+
+    public static AdvancementTask deserialize(Map<String, Object> data) {
+        return new AdvancementTask(
+                Bukkit.getAdvancement(NamespacedKey.fromString((String) data.get("advancement")))
+        );
+    }
+
     @Override
-    public ItemText getItemDisplayName()
-    {
+    public ItemText getItemDisplayName() {
         ItemText text = new ItemText("[", ChatColor.ITALIC);
-        if (advancement == null)
-        {
+        if (advancement == null) {
             Message.log("Could not get advancement, returning null!");
             text.addText("no advancement?");
-        }
-        else
-        {
+        } else {
             text.addAdvancementTitle(advancement);
         }
         text.addText("]");
@@ -41,9 +48,8 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     }
 
     @Override
-    public ItemText[] getItemDescription()
-    {
-        Set<ChatColor> modifiers = new HashSet<>(){{
+    public ItemText[] getItemDescription() {
+        Set<ChatColor> modifiers = new HashSet<>() {{
             add(ChatColor.DARK_AQUA);
         }};
         return BingoTranslation.LORE_ADVANCEMENT.asItemText(modifiers);
@@ -52,16 +58,14 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     // This method exists because advancement descriptions can contain newlines,
     // which makes it impossible to use as item names or descriptions without getting a missing character.
     @Override
-    public BaseComponent getDescription()
-    {
+    public BaseComponent getDescription() {
         BaseComponent comp = new ItemText().addAdvancementDescription(advancement).asComponent();
         comp.setColor(ChatColor.DARK_AQUA);
         return comp;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AdvancementTask that = (AdvancementTask) o;
@@ -69,45 +73,26 @@ public record AdvancementTask(Advancement advancement) implements TaskData
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hash(advancement);
     }
 
     @Override
-    public boolean isTaskEqual(TaskData other)
-    {
+    public boolean isTaskEqual(TaskData other) {
         return this.equals(other);
     }
 
     @Override
-    public PersistentDataContainer pdcSerialize(PersistentDataContainer stream)
-    {
+    public PersistentDataContainer pdcSerialize(PersistentDataContainer stream) {
         stream.set(BingoTask.getTaskDataKey("advancement"), PersistentDataType.STRING, advancement.getKey().toString());
         return stream;
     }
 
-    public static AdvancementTask fromPdc(PersistentDataContainer pdc)
-    {
-        Advancement a = Bukkit.getAdvancement(NamespacedKey.fromString(
-                        pdc.getOrDefault(BingoTask.getTaskDataKey("advancement"), PersistentDataType.STRING, "minecraft:story/mine_stone")));
-        AdvancementTask task = new AdvancementTask(a);
-        return task;
-    }
-
     @NotNull
     @Override
-    public Map<String, Object> serialize()
-    {
-        return new HashMap<>(){{
+    public Map<String, Object> serialize() {
+        return new HashMap<>() {{
             put("advancement", advancement.getKey().toString());
         }};
-    }
-
-    public static AdvancementTask deserialize(Map<String, Object> data)
-    {
-        return new AdvancementTask(
-                Bukkit.getAdvancement(NamespacedKey.fromString((String)data.get("advancement")))
-        );
     }
 }

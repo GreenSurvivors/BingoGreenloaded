@@ -1,10 +1,10 @@
 package io.github.steaf23.bingoreloaded.player;
 
-import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.data.BingoStatType;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
+import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
+import io.github.steaf23.bingoreloaded.gameloop.BingoSession;
 import io.github.steaf23.bingoreloaded.gui.EffectOptionFlags;
 import io.github.steaf23.bingoreloaded.item.ItemCooldownManager;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
@@ -14,7 +14,10 @@ import io.github.steaf23.bingoreloaded.util.PDCHelper;
 import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TranslatableComponent;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.Inventory;
@@ -33,8 +36,7 @@ import java.util.UUID;
  * This class will still exist if the player leaves the game/world.
  * This instance will be removed when the session gets destroyed.
  */
-public class BingoPlayer implements BingoParticipant
-{
+public class BingoPlayer implements BingoParticipant {
     public final String playerName;
     private final BingoSession session;
     private final BingoTeam team;
@@ -44,8 +46,7 @@ public class BingoPlayer implements BingoParticipant
 
     private final int POTION_DURATION = 1728000; // 24 Hours
 
-    public BingoPlayer(Player player, BingoTeam team, BingoSession session)
-    {
+    public BingoPlayer(Player player, BingoTeam team, BingoSession session) {
         this.playerId = player.getUniqueId();
         this.team = team;
         this.session = session;
@@ -57,44 +58,37 @@ public class BingoPlayer implements BingoParticipant
     /**
      * @return the player that belongs to this BingoPlayer, if this player is in a session world, otherwise returns null
      */
-    public Optional<Player> sessionPlayer()
-    {
+    public Optional<Player> sessionPlayer() {
         if (!offline().isOnline())
             return Optional.empty();
 
         Player player = Bukkit.getPlayer(playerId);
-        if (!BingoReloaded.getWorldNameOfDimension(player.getWorld()).equals(session.worldName))
-        {
+        if (!BingoReloaded.getWorldNameOfDimension(player.getWorld()).equals(session.worldName)) {
             return Optional.empty();
         }
         return Optional.ofNullable(player);
     }
 
     @Override
-    public UUID getId()
-    {
+    public UUID getId() {
         return playerId;
     }
 
     @Override
-    public String getDisplayName()
-    {
+    public String getDisplayName() {
         return displayName;
     }
 
     @Nullable
-    public Optional<Player> asOnlinePlayer()
-    {
+    public Optional<Player> asOnlinePlayer() {
         return Optional.ofNullable(Bukkit.getPlayer(playerId));
     }
 
-    public OfflinePlayer offline()
-    {
+    public OfflinePlayer offline() {
         return Bukkit.getOfflinePlayer(playerId);
     }
 
-    public void giveKit(PlayerKit kit)
-    {
+    public void giveKit(PlayerKit kit) {
         if (sessionPlayer().isEmpty())
             return;
 
@@ -111,8 +105,7 @@ public class BingoPlayer implements BingoParticipant
             var meta = i.getItemMeta();
 
             // Show enchantments except on the wand
-            if (!PlayerKit.WAND_ITEM.isCompareKeyEqual(i))
-            {
+            if (!PlayerKit.WAND_ITEM.isCompareKeyEqual(i)) {
                 meta.removeItemFlags(ItemFlag.values());
             }
             var pdc = meta.getPersistentDataContainer();
@@ -123,8 +116,7 @@ public class BingoPlayer implements BingoParticipant
         });
     }
 
-    public void giveBingoCard()
-    {
+    public void giveBingoCard() {
         if (sessionPlayer().isEmpty())
             return;
 
@@ -133,10 +125,8 @@ public class BingoPlayer implements BingoParticipant
         Message.log("Giving card to " + player.getDisplayName(), session.worldName);
 
         BingoReloaded.scheduleTask(task -> {
-            for (ItemStack itemStack : player.getInventory())
-            {
-                if (PlayerKit.CARD_ITEM.isCompareKeyEqual(itemStack))
-                {
+            for (ItemStack itemStack : player.getInventory()) {
+                if (PlayerKit.CARD_ITEM.isCompareKeyEqual(itemStack)) {
                     player.getInventory().remove(itemStack);
                     break;
                 }
@@ -146,8 +136,7 @@ public class BingoPlayer implements BingoParticipant
         });
     }
 
-    public void giveEffects(EnumSet<EffectOptionFlags> effects, int gracePeriod)
-    {
+    public void giveEffects(EnumSet<EffectOptionFlags> effects, int gracePeriod) {
         if (sessionPlayer().isEmpty())
             return;
 
@@ -172,39 +161,30 @@ public class BingoPlayer implements BingoParticipant
     }
 
     /**
-     *
      * @param force ignore if the player is actually in the world playing the game at this moment.
      */
-    public void takeEffects(boolean force)
-    {
-        if (force)
-        {
-            if (offline().isOnline())
-            {
+    public void takeEffects(boolean force) {
+        if (force) {
+            if (offline().isOnline()) {
                 Message.log("Taking effects from " + asOnlinePlayer().get().getDisplayName(), session.worldName);
 
-                for (PotionEffectType effect : PotionEffectType.values())
-                {
+                for (PotionEffectType effect : PotionEffectType.values()) {
                     Bukkit.getPlayer(playerId).removePotionEffect(effect);
                 }
             }
-        }
-        else
-        {
+        } else {
             if (sessionPlayer().isEmpty())
                 return;
 
             Message.log("Taking effects from " + asOnlinePlayer().get().getDisplayName(), session.worldName);
 
-            for (PotionEffectType effect : PotionEffectType.values())
-            {
+            for (PotionEffectType effect : PotionEffectType.values()) {
                 sessionPlayer().get().removePotionEffect(effect);
             }
         }
     }
 
-    public void showDeathMatchTask(BingoTask task)
-    {
+    public void showDeathMatchTask(BingoTask task) {
         if (sessionPlayer().isEmpty())
             return;
 
@@ -217,40 +197,34 @@ public class BingoPlayer implements BingoParticipant
     }
 
     @Override
-    public boolean alwaysActive()
-    {
+    public boolean alwaysActive() {
         return false;
     }
 
-    public boolean useGoUpWand(ItemStack wand, double wandCooldownSeconds, int downDistance, int upDistance, int platformLifetimeSeconds)
-    {
+    public boolean useGoUpWand(ItemStack wand, double wandCooldownSeconds, int downDistance, int upDistance, int platformLifetimeSeconds) {
         if (sessionPlayer().isEmpty())
-             return false;
+            return false;
 
         Player player = sessionPlayer().get();
         if (!PlayerKit.WAND_ITEM.isCompareKeyEqual(wand))
             return false;
 
-        if (!itemCooldowns.isCooldownOver(wand))
-        {
+        if (!itemCooldowns.isCooldownOver(wand)) {
             double timeLeft = itemCooldowns.getTimeLeft(wand) / 1000.0;
             new TranslatedMessage(BingoTranslation.COOLDOWN).color(ChatColor.RED).arg(String.format("%.2f", timeLeft)).send(player);
             return false;
         }
 
         BingoReloaded.scheduleTask(task -> {
-            itemCooldowns.addCooldown(wand, (int)(wandCooldownSeconds * 1000));
+            itemCooldowns.addCooldown(wand, (int) (wandCooldownSeconds * 1000));
 
             double distance = 0.0;
             double fallDistance = 5.0;
             // Use the wand
-            if (sessionPlayer().get().isSneaking())
-            {
+            if (sessionPlayer().get().isSneaking()) {
                 distance = -downDistance;
                 fallDistance = 0.0;
-            }
-            else
-            {
+            } else {
                 distance = upDistance + 5;
                 fallDistance = 5.0;
             }
@@ -275,15 +249,13 @@ public class BingoPlayer implements BingoParticipant
     }
 
     @Override
-    public BingoSession getSession()
-    {
+    public BingoSession getSession() {
         return session;
     }
 
     @Nullable
     @Override
-    public BingoTeam getTeam()
-    {
+    public BingoTeam getTeam() {
         return team;
     }
 }

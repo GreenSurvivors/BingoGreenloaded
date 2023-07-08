@@ -21,10 +21,8 @@ public record BingoSettings(String card,
                             EnumSet<EffectOptionFlags> effects,
                             int maxTeamSize,
                             boolean enableCountdown,
-                            int countdownDuration) implements ConfigurationSerializable
-{
-    public static BingoSettings getDefaultSettings()
-    {
+                            int countdownDuration) implements ConfigurationSerializable {
+    public static BingoSettings getDefaultSettings() {
         return new BingoSettings(
                 "default_card",
                 BingoGamemode.REGULAR,
@@ -37,25 +35,7 @@ public record BingoSettings(String card,
                 20);
     }
 
-    @NotNull
-    @Override
-    public Map<String, Object> serialize()
-    {
-        return new HashMap<>(){{
-            put("card", card);
-            put("mode", mode.getDataName());
-            put("size", size.size);
-            put("seed", seed);
-            put("kit", kit.configName);
-            put("effects", YmlDataManager.enumSetToList(effects));
-            put("team_size", maxTeamSize);
-            put("duration", countdownDuration);
-            put("countdown", enableCountdown);
-        }};
-    }
-
-    public static BingoSettings deserialize(Map<String, Object> data)
-    {
+    public static BingoSettings deserialize(Map<String, Object> data) {
         return new BingoSettings(
                 (String) data.get("card"),
                 BingoGamemode.fromDataString((String) data.get("mode")),
@@ -67,5 +47,21 @@ public record BingoSettings(String card,
                 (boolean) data.get("countdown"),
                 (int) data.get("duration")
         );
+    }
+
+    @NotNull
+    @Override
+    public Map<String, Object> serialize() {
+        return new HashMap<>() {{
+            put("card", card);
+            put("mode", mode.getDataName());
+            put("size", size.size);
+            put("seed", seed);
+            put("kit", kit.configName);
+            put("effects", YmlDataManager.enumSetToList(effects));
+            put("team_size", maxTeamSize);
+            put("duration", countdownDuration);
+            put("countdown", enableCountdown);
+        }};
     }
 };

@@ -1,41 +1,36 @@
 package io.github.steaf23.bingoreloaded.gui;
 
-import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
-import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
 import io.github.steaf23.bingoreloaded.gameloop.PregameLobby;
+import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
+import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
+import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.settings.PlayerKit;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 
 import java.util.function.BiConsumer;
 
-public class VoteMenu extends BasicMenu
-{
+public class VoteMenu extends BasicMenu {
+    private static final MenuItem EXIT = new MenuItem(8, Material.BARRIER,
+            "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_EXIT.translate());
+    private final PregameLobby lobby;
     private BasicMenu gamemodeOptions;
     private BasicMenu kitOptions;
     private BasicMenu cardOptions;
-    private final PregameLobby lobby;
 
-    private static final MenuItem EXIT = new MenuItem(8, Material.BARRIER,
-                    "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_EXIT.translate());
-
-    public VoteMenu(MenuManager menuManager, ConfigData.VoteList voteList, PregameLobby lobbyPhase)
-    {
+    public VoteMenu(MenuManager menuManager, ConfigData.VoteList voteList, PregameLobby lobbyPhase) {
         super(menuManager, "Vote", 3);
 
         this.lobby = lobbyPhase;
 
-        if (voteList.gamemodes.size() != 0)
-        {
+        if (voteList.gamemodes.size() != 0) {
             gamemodeOptions = new BasicMenu(menuManager, "Vote for Gamemode", 1);
 
             int itemIndex = 0;
-            if (voteList.gamemodes.contains("regular_5"))
-            {
+            if (voteList.gamemodes.contains("regular_5")) {
                 gamemodeOptions.addAction(new MenuItem(itemIndex, Material.LIME_CONCRETE,
                         ChatColor.BOLD + BingoGamemode.REGULAR.name + " - 5x5",
                         BingoTranslation.INFO_REGULAR_DESC.translate().split("\\n")), (player) -> {
@@ -43,8 +38,7 @@ public class VoteMenu extends BasicMenu
                 });
                 itemIndex++;
             }
-            if (voteList.gamemodes.contains("regular_3"))
-            {
+            if (voteList.gamemodes.contains("regular_3")) {
                 gamemodeOptions.addAction(new MenuItem(itemIndex, Material.GREEN_CONCRETE,
                         ChatColor.BOLD + BingoGamemode.REGULAR.name + " - 3x3",
                         BingoTranslation.INFO_REGULAR_DESC.translate().split("\\n")), (player) -> {
@@ -52,8 +46,7 @@ public class VoteMenu extends BasicMenu
                 });
                 itemIndex++;
             }
-            if (voteList.gamemodes.contains("lockout_5"))
-            {
+            if (voteList.gamemodes.contains("lockout_5")) {
                 gamemodeOptions.addAction(new MenuItem(itemIndex, Material.PINK_CONCRETE,
                         ChatColor.BOLD + BingoGamemode.LOCKOUT.name + " - 5x5",
                         BingoTranslation.INFO_LOCKOUT_DESC.translate().split("\\n")), (player) -> {
@@ -61,8 +54,7 @@ public class VoteMenu extends BasicMenu
                 });
                 itemIndex++;
             }
-            if (voteList.gamemodes.contains("lockout_3"))
-            {
+            if (voteList.gamemodes.contains("lockout_3")) {
                 gamemodeOptions.addAction(new MenuItem(itemIndex, Material.PURPLE_CONCRETE,
                         ChatColor.BOLD + BingoGamemode.LOCKOUT.name + " - 3x3",
                         BingoTranslation.INFO_LOCKOUT_DESC.translate().split("\\n")), (player) -> {
@@ -70,8 +62,7 @@ public class VoteMenu extends BasicMenu
                 });
                 itemIndex++;
             }
-            if (voteList.gamemodes.contains("complete_5"))
-            {
+            if (voteList.gamemodes.contains("complete_5")) {
                 gamemodeOptions.addAction(new MenuItem(itemIndex, Material.LIGHT_BLUE_CONCRETE,
                         ChatColor.BOLD + BingoGamemode.COMPLETE.name + " - 5x5",
                         BingoTranslation.INFO_COMPLETE_DESC.translate().split("\\n")), (player) -> {
@@ -79,8 +70,7 @@ public class VoteMenu extends BasicMenu
                 });
                 itemIndex++;
             }
-            if (voteList.gamemodes.contains("complete_3"))
-            {
+            if (voteList.gamemodes.contains("complete_3")) {
                 gamemodeOptions.addAction(new MenuItem(itemIndex, Material.BLUE_CONCRETE,
                         ChatColor.BOLD + BingoGamemode.COMPLETE.name + " - 3x3",
                         BingoTranslation.INFO_COMPLETE_DESC.translate().split("\\n")), (player) -> {
@@ -95,13 +85,11 @@ public class VoteMenu extends BasicMenu
             });
         }
 
-        if (voteList.kits.size() != 0)
-        {
+        if (voteList.kits.size() != 0) {
             kitOptions = new BasicMenu(menuManager, "Vote for Kit", 1);
 
             int itemIndex = 0;
-            if (voteList.kits.contains("hardcore"))
-            {
+            if (voteList.kits.contains("hardcore")) {
                 kitOptions.addAction(new MenuItem(itemIndex, Material.RED_DYE,
                         PlayerKit.HARDCORE.displayName,
                         BingoTranslation.KIT_HARDCORE_DESC.translate().split("\\n")).setGlowing(true), (player) -> {
@@ -109,8 +97,7 @@ public class VoteMenu extends BasicMenu
                 });
                 itemIndex++;
             }
-            if (voteList.kits.contains("normal"))
-            {
+            if (voteList.kits.contains("normal")) {
                 kitOptions.addAction(new MenuItem(itemIndex, Material.YELLOW_DYE,
                         PlayerKit.NORMAL.displayName,
                         BingoTranslation.KIT_NORMAL_DESC.translate().split("\\n")).setGlowing(true), (player) -> {
@@ -118,8 +105,7 @@ public class VoteMenu extends BasicMenu
                 });
                 itemIndex++;
             }
-            if (voteList.kits.contains("overpowered"))
-            {
+            if (voteList.kits.contains("overpowered")) {
                 kitOptions.addAction(new MenuItem(itemIndex, Material.PURPLE_DYE,
                         PlayerKit.OVERPOWERED.displayName,
                         BingoTranslation.KIT_OVERPOWERED_DESC.translate().split("\\n")).setGlowing(true), (player) -> {
@@ -127,8 +113,7 @@ public class VoteMenu extends BasicMenu
                 });
                 itemIndex++;
             }
-            if (voteList.kits.contains("reloaded"))
-            {
+            if (voteList.kits.contains("reloaded")) {
                 kitOptions.addAction(new MenuItem(itemIndex, Material.CYAN_DYE,
                         PlayerKit.RELOADED.displayName,
                         BingoTranslation.KIT_RELOADED_DESC.translate().split("\\n")).setGlowing(true), (player) -> {
@@ -144,28 +129,23 @@ public class VoteMenu extends BasicMenu
                 });
             };
 
-            if (voteList.kits.contains("custom_1") && PlayerKit.getCustomKit(PlayerKit.CUSTOM_1) != null)
-            {
+            if (voteList.kits.contains("custom_1") && PlayerKit.getCustomKit(PlayerKit.CUSTOM_1) != null) {
                 addCustomKit.accept(PlayerKit.CUSTOM_1, itemIndex);
                 itemIndex++;
             }
-            if (voteList.kits.contains("custom_2") && PlayerKit.getCustomKit(PlayerKit.CUSTOM_2) != null)
-            {
+            if (voteList.kits.contains("custom_2") && PlayerKit.getCustomKit(PlayerKit.CUSTOM_2) != null) {
                 addCustomKit.accept(PlayerKit.CUSTOM_2, itemIndex);
                 itemIndex++;
             }
-            if (voteList.kits.contains("custom_3") && PlayerKit.getCustomKit(PlayerKit.CUSTOM_3) != null)
-            {
+            if (voteList.kits.contains("custom_3") && PlayerKit.getCustomKit(PlayerKit.CUSTOM_3) != null) {
                 addCustomKit.accept(PlayerKit.CUSTOM_3, itemIndex);
                 itemIndex++;
             }
-            if (voteList.kits.contains("custom_4") && PlayerKit.getCustomKit(PlayerKit.CUSTOM_4) != null)
-            {
+            if (voteList.kits.contains("custom_4") && PlayerKit.getCustomKit(PlayerKit.CUSTOM_4) != null) {
                 addCustomKit.accept(PlayerKit.CUSTOM_4, itemIndex);
                 itemIndex++;
             }
-            if (voteList.kits.contains("custom_5") && PlayerKit.getCustomKit(PlayerKit.CUSTOM_5) != null)
-            {
+            if (voteList.kits.contains("custom_5") && PlayerKit.getCustomKit(PlayerKit.CUSTOM_5) != null) {
                 addCustomKit.accept(PlayerKit.CUSTOM_5, itemIndex);
                 itemIndex++;
             }
@@ -178,8 +158,7 @@ public class VoteMenu extends BasicMenu
             });
         }
 
-        if (voteList.cards.size() != 0)
-        {
+        if (voteList.cards.size() != 0) {
             cardOptions = new BasicMenu(menuManager, "Vote for Card", 1);
 
             int itemIndex = 0;

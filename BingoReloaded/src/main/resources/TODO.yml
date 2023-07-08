@@ -23,7 +23,7 @@ check in lockout if all spaces are completed, if there is no winner, there must 
 
 add automatic start game to lobby phase
 
-add autobingo vote command 
+add autobingo vote command
 
 Test lockout using new VirtualPlayer BEFORE RELEASE
 

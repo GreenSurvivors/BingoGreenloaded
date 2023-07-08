@@ -1,25 +1,21 @@
 package io.github.steaf23.bingoreloaded.data;
 
 import io.github.steaf23.bingoreloaded.BingoReloaded;
-import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
-import io.github.steaf23.bingoreloaded.util.Message;
 import io.github.steaf23.bingoreloaded.cards.BingoCard;
-import io.github.steaf23.bingoreloaded.cards.CardBuilder;
 import io.github.steaf23.bingoreloaded.cards.CardSize;
+import io.github.steaf23.bingoreloaded.data.helper.YmlDataManager;
 import io.github.steaf23.bingoreloaded.gameloop.BingoGame;
-import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
 import io.github.steaf23.bingoreloaded.player.BingoTeam;
 import io.github.steaf23.bingoreloaded.player.TeamManager;
+import io.github.steaf23.bingoreloaded.settings.BingoGamemode;
+import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.ConfigurationSection;
 
 @Deprecated
-public class RecoveryCardData
-{
+public class RecoveryCardData {
     private final YmlDataManager data = BingoReloaded.createYmlDataManager("data/recovered.yml");
 
-    public boolean loadCards(BingoGame game)
-    {
+    public boolean loadCards(BingoGame game) {
         boolean success = false;
         if (data.getConfig().getBoolean("ended")) return false;
 
@@ -27,8 +23,7 @@ public class RecoveryCardData
         BingoGamemode mode = BingoGamemode.fromDataString(data.getConfig().getString("gamemode"));
         CardSize size = CardSize.fromWidth(data.getConfig().getInt("size"));
 
-        if (game.getTeamManager().getActiveTeams().size() == 0)
-        {
+        if (game.getTeamManager().getActiveTeams().size() == 0) {
             Message.log(ChatColor.RED + "Could not resume game, no teams have joined the last game?!");
             return false;
         }
@@ -48,14 +43,12 @@ public class RecoveryCardData
         return success;
     }
 
-    public void writeDebug(String text)
-    {
+    public void writeDebug(String text) {
         data.getConfig().set("testString", text);
         data.saveConfig();
     }
 
-    public boolean fillCard(TeamManager manager, BingoTeam team, BingoCard card)
-    {
+    public boolean fillCard(TeamManager manager, BingoTeam team, BingoCard card) {
 //        List<?> itemNames = data.getConfig().getList("cards." + team.getName());
 //        if (itemNames == null) return false;
 //        if (itemNames.size() != card.size.fullCardSize) return false;
@@ -85,8 +78,7 @@ public class RecoveryCardData
         return true;
     }
 
-    public void saveCards(TeamManager manager, BingoGamemode mode, CardSize size)
-    {
+    public void saveCards(TeamManager manager, BingoGamemode mode, CardSize size) {
 //        data.getConfig().set("gamemode", mode.getDataName());
 //        data.getConfig().set("size", size.cardSize);
 //
@@ -120,8 +112,7 @@ public class RecoveryCardData
 //        data.saveConfig();
     }
 
-    public void markCardEnded(boolean value)
-    {
+    public void markCardEnded(boolean value) {
         data.getConfig().set("ended", value);
         data.saveConfig();
     }

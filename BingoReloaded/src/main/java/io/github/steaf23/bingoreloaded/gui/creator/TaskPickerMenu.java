@@ -20,17 +20,70 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class TaskPickerMenu extends PaginatedSelectionMenu
-{
-    private final String listName;
-
+public class TaskPickerMenu extends PaginatedSelectionMenu {
     protected static final ItemText[] SELECTED_LORE = createSelectedLore();
     protected static final ItemText[] UNSELECTED_LORE = createUnselectedLore();
+    private final String listName;
 
     public TaskPickerMenu(MenuManager manager, String title, List<BingoTask> options, String listName) {
         super(manager, title, asPickerItems(options), FilterType.DISPLAY_NAME);
         this.listName = listName;
         this.setMaxStackSizeOverride(64);
+    }
+
+    public static List<MenuItem> asPickerItems(List<BingoTask> tasks) {
+        List<MenuItem> result = new ArrayList<>();
+        tasks.forEach(task -> {
+            MenuItem item = new MenuItem(getUpdatedTaskItem(task.data, false, 1));
+            item.setGlowing(false);
+            result.add(item);
+        });
+        return result;
+    }
+
+    private static ItemStack getUpdatedTaskItem(TaskData old, boolean selected, int newCount) {
+        TaskData newData = old;
+        if (selected) {
+            if (newData instanceof CountableTask countable) {
+                newData = countable.updateTask(newCount);
+            }
+        }
+
+        BingoTask newTask = new BingoTask(newData);
+        var item = newTask.asStack();
+
+        var meta = item.getItemMeta();
+        if (meta != null) {
+            List<String> addedLore;
+            if (selected)
+                addedLore = Arrays.stream(SELECTED_LORE)
+                        .map(ItemText::asLegacyString)
+                        .collect(Collectors.toList());
+            else
+                addedLore = Arrays.stream(UNSELECTED_LORE)
+                        .map(ItemText::asLegacyString)
+                        .collect(Collectors.toList());
+            List<String> newLore = new ArrayList<>();
+            newLore.add(newTask.data.getItemDescription()[0].asLegacyString());
+            newLore.addAll(addedLore);
+
+            meta.setLore(newLore);
+            item.setItemMeta(meta);
+        }
+        return item;
+    }
+
+    private static ItemText[] createSelectedLore() {
+        var text = new ItemText(" - ", ChatColor.WHITE, ChatColor.ITALIC);
+        text.addText("This task has been added to the list", ChatColor.DARK_PURPLE);
+        return new ItemText[]{text};
+    }
+
+    private static ItemText[] createUnselectedLore() {
+        var text = new ItemText(" - ", ChatColor.WHITE, ChatColor.ITALIC);
+        text.addText("Click to make this task", ChatColor.GRAY);
+        var text2 = new ItemText("   appear on bingo cards", ChatColor.GRAY, ChatColor.ITALIC);
+        return new ItemText[]{text, text2};
     }
 
     @Override
@@ -127,61 +180,5 @@ public class TaskPickerMenu extends PaginatedSelectionMenu
         cardsData.lists().saveTasksFromGroup(listName,
                 getItems().stream().map(item -> BingoTask.fromStack(item).data).collect(Collectors.toList()),
                 getSelectedItems().stream().map(item -> BingoTask.fromStack(item).data).collect(Collectors.toList()));
-    }
-
-    public static List<MenuItem> asPickerItems(List<BingoTask> tasks) {
-        List<MenuItem> result = new ArrayList<>();
-        tasks.forEach(task -> {
-            MenuItem item = new MenuItem(getUpdatedTaskItem(task.data, false, 1));
-            item.setGlowing(false);
-            result.add(item);
-        });
-        return result;
-    }
-
-    private static ItemStack getUpdatedTaskItem(TaskData old, boolean selected, int newCount) {
-        TaskData newData = old;
-        if (selected) {
-            if (newData instanceof CountableTask countable) {
-                newData = countable.updateTask(newCount);
-            }
-        }
-
-        BingoTask newTask = new BingoTask(newData);
-        var item = newTask.asStack();
-
-        var meta = item.getItemMeta();
-        if (meta != null)
-        {
-            List<String> addedLore;
-            if (selected)
-                addedLore = Arrays.stream(SELECTED_LORE)
-                        .map(ItemText::asLegacyString)
-                        .collect(Collectors.toList());
-            else
-                addedLore = Arrays.stream(UNSELECTED_LORE)
-                        .map(ItemText::asLegacyString)
-                        .collect(Collectors.toList());
-            List<String> newLore = new ArrayList<>();
-            newLore.add(newTask.data.getItemDescription()[0].asLegacyString());
-            newLore.addAll(addedLore);
-
-            meta.setLore(newLore);
-            item.setItemMeta(meta);
-        }
-        return item;
-    }
-
-    private static ItemText[] createSelectedLore() {
-        var text = new ItemText(" - ", ChatColor.WHITE, ChatColor.ITALIC);
-        text.addText("This task has been added to the list", ChatColor.DARK_PURPLE);
-        return new ItemText[]{text};
-    }
-
-    private static ItemText[] createUnselectedLore() {
-        var text = new ItemText(" - ", ChatColor.WHITE, ChatColor.ITALIC);
-        text.addText("Click to make this task", ChatColor.GRAY);
-        var text2 = new ItemText("   appear on bingo cards", ChatColor.GRAY, ChatColor.ITALIC);
-        return new ItemText[]{text, text2};
     }
 }

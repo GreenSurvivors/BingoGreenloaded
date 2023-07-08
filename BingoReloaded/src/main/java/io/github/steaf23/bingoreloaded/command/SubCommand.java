@@ -1,18 +1,12 @@
 package io.github.steaf23.bingoreloaded.command;
 
-import io.github.steaf23.bingoreloaded.util.Message;
-import org.bukkit.command.CommandSender;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class SubCommand
-{
+public class SubCommand {
     private final String name;
     private final Function<String[], Boolean> action;
     private final List<SubCommand> subCommands;

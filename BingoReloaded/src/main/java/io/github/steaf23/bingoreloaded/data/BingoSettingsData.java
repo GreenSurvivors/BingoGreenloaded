@@ -7,28 +7,22 @@ import io.github.steaf23.bingoreloaded.util.Message;
 
 import java.util.Set;
 
-public class BingoSettingsData
-{
+public class BingoSettingsData {
     private final YmlDataManager data;
 
-    public BingoSettingsData()
-    {
+    public BingoSettingsData() {
         this.data = BingoReloaded.createYmlDataManager("data/presets.yml");
     }
 
-    public BingoSettings getSettings(String name)
-    {
-        if (data.getConfig().contains(name))
-        {
+    public BingoSettings getSettings(String name) {
+        if (data.getConfig().contains(name)) {
             return data.getConfig().getSerializable(name, BingoSettings.class);
         }
         return BingoSettings.getDefaultSettings();
     }
 
-    public void saveSettings(String name, BingoSettings settings)
-    {
-        if (data.getConfig().contains(name))
-        {
+    public void saveSettings(String name, BingoSettings settings) {
+        if (data.getConfig().contains(name)) {
             Message.log("Overwritten saved preset '" + name + "'");
             data.getConfig().set(name, null);
         }
@@ -36,15 +30,13 @@ public class BingoSettingsData
         data.saveConfig();
     }
 
-    public void removeSettings(String name)
-    {
+    public void removeSettings(String name) {
         Message.log("Removed preset '" + name + "'");
         data.getConfig().set(name, null);
         data.saveConfig();
     }
 
-    public Set<String> getPresetNames()
-    {
+    public Set<String> getPresetNames() {
         return data.getConfig().getKeys(false);
     }
 }

@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
+import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -13,8 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
-public class ListValueEditorMenu extends BasicMenu
-{
+public class ListValueEditorMenu extends BasicMenu {
     private static final MenuItem CANCEL = new MenuItem(39, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + "Cancel");
     private static final MenuItem SAVE = new MenuItem(41, Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + "Save");
     private static final MenuItem INFO = new MenuItem(0, Material.MAP,
@@ -28,10 +27,9 @@ public class ListValueEditorMenu extends BasicMenu
     private final MenuItem maxCounter = new MenuItem(24, Material.TARGET, " ");
 
     private final CardEditorMenu cardEditor;
-
+    private final String listName;
     public int minCount = BingoCardData.MIN_ITEMS;
     public int maxCount = BingoCardData.MAX_ITEMS;
-    private final String listName;
 
     public ListValueEditorMenu(MenuManager menuManager, CardEditorMenu parent, String listName, int maxStart, int minStart) {
         super(menuManager, "Updating Values", 6);

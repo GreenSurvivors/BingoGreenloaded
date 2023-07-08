@@ -15,29 +15,22 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AutoBingoTabCompleter implements TabCompleter
-{
-    public AutoBingoTabCompleter()
-    {
+public class AutoBingoTabCompleter implements TabCompleter {
+    public AutoBingoTabCompleter() {
     }
 
     @Nullable
     @Override
-    public List<String> onTabComplete(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String alias, @NonNull String[] args)
-    {
-        if (commandSender instanceof Player p && !p.hasPermission("bingo.admin"))
-        {
+    public List<String> onTabComplete(@NonNull CommandSender commandSender, @NonNull Command command, @NonNull String alias, @NonNull String[] args) {
+        if (commandSender instanceof Player p && !p.hasPermission("bingo.admin")) {
             return new ArrayList<>();
         }
 
-        switch (args.length)
-        {
+        switch (args.length) {
             case 1:
                 List<String> allWorlds = new ArrayList<>();
-                for (var world : Bukkit.getWorlds())
-                {
-                    if (!world.getName().contains("_nether") && !world.getName().contains("_the_end"))
-                    {
+                for (var world : Bukkit.getWorlds()) {
+                    if (!world.getName().contains("_nether") && !world.getName().contains("_the_end")) {
                         allWorlds.add(world.getName());
                     }
                 }
@@ -45,8 +38,7 @@ public class AutoBingoTabCompleter implements TabCompleter
             case 2:
                 return List.of("create", "destroy", "start", "end", "kit", "effects", "card", "countdown", "team");
             case 3:
-                switch (args[1])
-                {
+                switch (args[1]) {
                     case "kit":
                         return List.of("normal", "overpowered", "reloaded", "hardcore", "custom1", "custom2", "custom3", "custom4", "custom5");
                     case "effects":
@@ -60,11 +52,9 @@ public class AutoBingoTabCompleter implements TabCompleter
                         return null;
                 }
             case 4:
-                switch (args[1])
-                {
+                switch (args[1]) {
                     case "effects":
-                        if (args[3].equals("all") || args[3].equals("none"))
-                        {
+                        if (args[3].equals("all") || args[3].equals("none")) {
                             return null;
                         }
                         return List.of("true", "false");

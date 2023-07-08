@@ -17,19 +17,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class BasicMenu implements Menu
-{
-    private static int ID_COUNTER = 0;
-
+public class BasicMenu implements Menu {
     protected static final String TITLE_PREFIX = "" + ChatColor.GOLD + ChatColor.BOLD;
-
     protected static MenuItem BLANK = new MenuItem(Material.BLACK_STAINED_GLASS_PANE, " ");
-
+    private static int ID_COUNTER = 0;
     private final Inventory inventory;
     private final MenuManager manager;
-    private int maxStackSizeOverride = -1; // -1 means no override (i.e. default stack sizes for all items)
-
     private final Map<String, Consumer<HumanEntity>> actions;
+    private int maxStackSizeOverride = -1; // -1 means no override (i.e. default stack sizes for all items)
 
     public BasicMenu(MenuManager manager, String initialTitle, int rows) {
         this(manager, Bukkit.createInventory(null, rows * 9, initialTitle));

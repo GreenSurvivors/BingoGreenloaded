@@ -1,7 +1,6 @@
 package io.github.steaf23.bingoreloaded.gui.base;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.util.Message;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -14,40 +13,24 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-public abstract class PaginatedSelectionMenu extends BasicMenu
-{
-    /**
-     * Called by this Inventory's ClickEvents.
-     *
-     * @param event
-     * @param clickedOption item that was clicked on, it's slot being the same slot that was clicked on.
-     * @param player
-     */
-    public abstract void onOptionClickedDelegate(final InventoryClickEvent event, MenuItem clickedOption, HumanEntity player);
-
+public abstract class PaginatedSelectionMenu extends BasicMenu {
     // There are 5 rows of items per page
     public static final int ITEMS_PER_PAGE = 9 * 5;
-
-    // All the items that exist in this picker
-    private final List<MenuItem> items;
-
-    // All selected items in this picker
-    private final List<MenuItem> selectedItems;
-
-    private Function<MenuItem, Boolean> customFilter;
-
-    // All items that pass the filter, these are always the items shown to the player
-    private final List<MenuItem> filteredItems;
-    private int pageAmount;
-    private int currentPage;
-    private String keywordFilter;
-    public FilterType filterType;
-
     protected static final MenuItem NEXT = new MenuItem(8, 5, Material.STRUCTURE_VOID, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + BingoTranslation.MENU_NEXT.translate(), "");
     protected static final MenuItem PREVIOUS = new MenuItem(0, 5, Material.BARRIER, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + BingoTranslation.MENU_PREV.translate(), "");
     protected static final MenuItem CLOSE = new MenuItem(4, 5, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate(), "");
     protected static final MenuItem FILTER = new MenuItem(1, 5, Material.SPYGLASS, TITLE_PREFIX + BingoTranslation.MENU_FILTER.translate(), "");
-
+    // All the items that exist in this picker
+    private final List<MenuItem> items;
+    // All selected items in this picker
+    private final List<MenuItem> selectedItems;
+    // All items that pass the filter, these are always the items shown to the player
+    private final List<MenuItem> filteredItems;
+    public FilterType filterType;
+    private Function<MenuItem, Boolean> customFilter;
+    private int pageAmount;
+    private int currentPage;
+    private String keywordFilter;
     public PaginatedSelectionMenu(MenuManager manager, String initialTitle, List<MenuItem> options, Function<MenuItem, Boolean> customFilter) {
         this(manager, initialTitle, options, FilterType.CUSTOM);
         this.customFilter = customFilter;
@@ -80,13 +63,21 @@ public abstract class PaginatedSelectionMenu extends BasicMenu
         clearFilter();
     }
 
+    /**
+     * Called by this Inventory's ClickEvents.
+     *
+     * @param event
+     * @param clickedOption item that was clicked on, it's slot being the same slot that was clicked on.
+     * @param player
+     */
+    public abstract void onOptionClickedDelegate(final InventoryClickEvent event, MenuItem clickedOption, HumanEntity player);
+
     @Override
     public boolean onClick(InventoryClickEvent event, HumanEntity player, MenuItem clickedItem, ClickType clickType) {
         boolean cancel = super.onClick(event, player, clickedItem, clickType);
 
         boolean isValidSlot = ITEMS_PER_PAGE * currentPage + event.getRawSlot() < filteredItems.size() && event.getRawSlot() < ITEMS_PER_PAGE;
-        if (isValidSlot)
-        {
+        if (isValidSlot) {
             onOptionClickedDelegate(event, clickedItem.copyToSlot(event.getRawSlot()), player);
         }
         return cancel;

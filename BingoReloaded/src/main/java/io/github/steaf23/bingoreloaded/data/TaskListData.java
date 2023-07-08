@@ -15,45 +15,38 @@ import java.util.stream.Collectors;
 /**
  * This class is used to interface with the lists.yml file.
  */
-public class TaskListData
-{
+public class TaskListData {
     private final YmlDataManager data = BingoReloaded.createYmlDataManager("data/lists.yml");
 
-    public Set<TaskData> getTasks(String listName, boolean withStatistics, boolean withAdvancements)
-    {
+    public Set<TaskData> getTasks(String listName, boolean withStatistics, boolean withAdvancements) {
         if (!data.getConfig().contains(listName + ".tasks"))
             return new HashSet<>();
 
-        Set<TaskData> taskList = (Set<TaskData>)data.getConfig().getList(listName + ".tasks").stream().filter((i ->
+        Set<TaskData> taskList = (Set<TaskData>) data.getConfig().getList(listName + ".tasks").stream().filter((i ->
                 !(i instanceof StatisticTask && !withStatistics) &&
-                !(i instanceof AdvancementTask && !withAdvancements))).collect(Collectors.toSet());
+                        !(i instanceof AdvancementTask && !withAdvancements))).collect(Collectors.toSet());
         return taskList;
     }
 
-    public int getTaskCount(String listName)
-    {
+    public int getTaskCount(String listName) {
         return data.getConfig().getInt(listName + ".size", 0);
     }
 
-    public void saveTasksFromGroup(String listName, List<TaskData> group, List<TaskData> tasksToSave)
-    {
+    public void saveTasksFromGroup(String listName, List<TaskData> group, List<TaskData> tasksToSave) {
         Set<TaskData> savedTasks = getTasks(listName, true, true);
         Set<TaskData> tasksToRemove = group.stream().filter(t ->
         {
             return tasksToSave.stream().noneMatch(i -> i.equals(t));
         }).collect(Collectors.toSet());
 
-        for (TaskData t : tasksToRemove)
-        {
+        for (TaskData t : tasksToRemove) {
             savedTasks.remove(t);
         }
 
-        for (TaskData task : tasksToSave)
-        {
+        for (TaskData task : tasksToSave) {
             // If the task cant be added to this, update the existing entry instead,
             //      used for CountableTasks since their count doesn't get used in hash comparisons
-            if (!savedTasks.add(task))
-            {
+            if (!savedTasks.add(task)) {
                 savedTasks.remove(task);
                 savedTasks.add(task);
             }
@@ -64,8 +57,7 @@ public class TaskListData
         data.saveConfig();
     }
 
-    public boolean removeList(String listName)
-    {
+    public boolean removeList(String listName) {
         if (!data.getConfig().contains(listName))
             return false;
 
@@ -74,8 +66,7 @@ public class TaskListData
         return true;
     }
 
-    public boolean duplicateList(String listName)
-    {
+    public boolean duplicateList(String listName) {
         if (!data.getConfig().contains(listName))
             return false;
 
@@ -85,8 +76,7 @@ public class TaskListData
         return true;
     }
 
-    public boolean renameList(String oldName, String newName)
-    {
+    public boolean renameList(String oldName, String newName) {
         var defaultLists = List.of("default_items", "default_advancements", "default_statistics");
         if (defaultLists.contains(oldName) || defaultLists.contains(newName))
             return false;
@@ -105,8 +95,7 @@ public class TaskListData
     /**
      * @return All the list names present in the lists.yml file.
      */
-    public Set<String> getListNames()
-    {
+    public Set<String> getListNames() {
         return data.getConfig().getKeys(false);
     }
 }

@@ -1,11 +1,7 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoCardData;
-import io.github.steaf23.bingoreloaded.gui.base.FilterType;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
-import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
-import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
-import io.github.steaf23.bingoreloaded.gui.base.PaginatedSelectionMenu;
+import io.github.steaf23.bingoreloaded.gui.base.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -16,14 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class CardEditorMenu extends PaginatedSelectionMenu
-{
+public class CardEditorMenu extends PaginatedSelectionMenu {
+    private static final MenuItem ADD_LIST = new MenuItem(51, Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + "Add Item List", "");
     public final String cardName;
     public final BingoCardData cardsData;
-    private static final MenuItem ADD_LIST = new MenuItem(51, Material.EMERALD, "" + ChatColor.GREEN + ChatColor.BOLD + "Add Item List", "");
 
-    public CardEditorMenu(MenuManager menuManager, String cardName, BingoCardData cardsData)
-    {
+    public CardEditorMenu(MenuManager menuManager, String cardName, BingoCardData cardsData) {
         super(menuManager, "Editing '" + cardName + "'", new ArrayList<>(), FilterType.DISPLAY_NAME);
         this.cardName = cardName;
         this.cardsData = cardsData;
@@ -33,20 +27,16 @@ public class CardEditorMenu extends PaginatedSelectionMenu
     }
 
     @Override
-    public void onOptionClickedDelegate(final InventoryClickEvent event, MenuItem clickedOption, HumanEntity player)
-    {
+    public void onOptionClickedDelegate(final InventoryClickEvent event, MenuItem clickedOption, HumanEntity player) {
         //if an ItemList attached to a card was clicked on exists
         if (clickedOption.getItemMeta() == null) return;
 
         String listName = clickedOption.getItemMeta().getDisplayName();
-        if (event.getClick() == ClickType.LEFT)
-        {
+        if (event.getClick() == ClickType.LEFT) {
             new ListValueEditorMenu(getMenuManager(), this, listName,
                     cardsData.getListMax(cardName, listName),
                     cardsData.getListMin(cardName, listName)).open(player);
-        }
-        else if (event.getClick() == ClickType.RIGHT)
-        {
+        } else if (event.getClick() == ClickType.RIGHT) {
             cardsData.removeList(cardName, listName);
             updateCardDisplay();
         }
@@ -58,13 +48,11 @@ public class CardEditorMenu extends PaginatedSelectionMenu
         updateCardDisplay();
     }
 
-    public void updateCardDisplay()
-    {
+    public void updateCardDisplay() {
         clearItems();
 
         List<MenuItem> newItems = new ArrayList<>();
-        for (String listName : cardsData.getListNames(cardName))
-        {
+        for (String listName : cardsData.getListNames(cardName)) {
             MenuItem item = new MenuItem(Material.MAP, listName,
                     "This list contains " + cardsData.lists().getTaskCount(listName) + " task(s)",
                     ChatColor.GRAY + "Left-click to edit distribution",
@@ -80,18 +68,15 @@ public class CardEditorMenu extends PaginatedSelectionMenu
 
     private BasicMenu createListPicker(Consumer<String> result) {
         List<MenuItem> items = new ArrayList<>();
-        for (String listName : cardsData.lists().getListNames())
-        {
+        for (String listName : cardsData.lists().getListNames()) {
             items.add(new MenuItem(Material.PAPER, listName,
                     "This list contains " + cardsData.lists().getTaskCount(listName) + " task(s)",
                     ChatColor.GRAY + "Click to select").setCompareKey(listName));
         }
 
-        return new PaginatedSelectionMenu(CardEditorMenu.this.getMenuManager(), "Pick A List", items, FilterType.DISPLAY_NAME)
-        {
+        return new PaginatedSelectionMenu(CardEditorMenu.this.getMenuManager(), "Pick A List", items, FilterType.DISPLAY_NAME) {
             @Override
-            public void onOptionClickedDelegate(final InventoryClickEvent event, MenuItem clickedOption, HumanEntity player)
-            {
+            public void onOptionClickedDelegate(final InventoryClickEvent event, MenuItem clickedOption, HumanEntity player) {
                 result.accept(clickedOption.getCompareKey());
                 close(player);
             }

@@ -14,24 +14,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TeamData {
-    @SerializableAs("TeamTemplate")
-    public record TeamTemplate(String name, ChatColor color) implements ConfigurationSerializable {
-        @NotNull
-        @Override
-        public Map<String, Object> serialize() {
-            Map<String, Object> data = new HashMap<>();
-            data.put("name", name);
-            data.put("color", FlexColor.asHex(color));
-            return data;
-        }
-
-        public static TeamTemplate deserialize(Map<String, Object> data) {
-            String name = (String) data.getOrDefault("name", "");
-            ChatColor color = ChatColor.of((String) data.getOrDefault("color", "#808080"));
-            return new TeamTemplate(name, color);
-        }
-    }
-
     private final YmlDataManager data = BingoReloaded.createYmlDataManager("data/teams.yml");
 
     public Map<String, TeamTemplate> getTeams() {
@@ -80,5 +62,23 @@ public class TeamData {
         }
 
         return String.valueOf(id);
+    }
+
+    @SerializableAs("TeamTemplate")
+    public record TeamTemplate(String name, ChatColor color) implements ConfigurationSerializable {
+        public static TeamTemplate deserialize(Map<String, Object> data) {
+            String name = (String) data.getOrDefault("name", "");
+            ChatColor color = ChatColor.of((String) data.getOrDefault("color", "#808080"));
+            return new TeamTemplate(name, color);
+        }
+
+        @NotNull
+        @Override
+        public Map<String, Object> serialize() {
+            Map<String, Object> data = new HashMap<>();
+            data.put("name", name);
+            data.put("color", FlexColor.asHex(color));
+            return data;
+        }
     }
 }

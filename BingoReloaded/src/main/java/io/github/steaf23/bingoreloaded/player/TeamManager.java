@@ -28,8 +28,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class TeamManager
-{
+public class TeamManager {
     private final BingoSession session;
     private final Set<BingoTeam> activeTeams;
     private final Scoreboard teams;
@@ -97,8 +96,7 @@ public class TeamManager
 
                 for (BingoParticipant participant : team.getMembers()) {
                     description.add("" + ChatColor.GRAY + ChatColor.BOLD + " ┗ " + ChatColor.RESET + ChatColor.WHITE + participant.getDisplayName());
-                    if (participant.getId().equals(player.getUniqueId()))
-                    {
+                    if (participant.getId().equals(player.getUniqueId())) {
                         playersTeam = true;
                     }
                 }
@@ -121,8 +119,7 @@ public class TeamManager
                     .setGlowing(playersTeam));
         }
 
-        PaginatedSelectionMenu teamPicker = new PaginatedSelectionMenu(menuManager, BingoTranslation.OPTIONS_TEAM.translate(), optionItems, FilterType.DISPLAY_NAME)
-        {
+        PaginatedSelectionMenu teamPicker = new PaginatedSelectionMenu(menuManager, BingoTranslation.OPTIONS_TEAM.translate(), optionItems, FilterType.DISPLAY_NAME) {
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, HumanEntity player) {
                 if (clickedOption.getCompareKey().equals("auto")) {
@@ -190,7 +187,8 @@ public class TeamManager
     }
 
     public void addAutoPlayersToTeams() {
-        record TeamCount(BingoTeam team, int count) {}
+        record TeamCount(BingoTeam team, int count) {
+        }
 
         // 1. create list sorted by how many players are missing from each team using a bit of insertion sorting...
         List<TeamCount> counts = new ArrayList<>();

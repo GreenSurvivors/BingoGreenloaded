@@ -3,9 +3,8 @@ package io.github.steaf23.bingoreloaded.util;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SmallCaps
-{
-    private static final Map<Character, Character> charTable = new HashMap<>(){{
+public class SmallCaps {
+    private static final Map<Character, Character> charTable = new HashMap<>() {{
         put('a', 'ᴀ');
         put('b', 'ʙ');
         put('c', 'ᴄ');
@@ -34,11 +33,9 @@ public class SmallCaps
         put('z', 'ᴢ');
     }};
 
-    public static String toSmallCaps(String input)
-    {
+    public static String toSmallCaps(String input) {
         StringBuilder result = new StringBuilder();
-        for (char c : input.toCharArray())
-        {
+        for (char c : input.toCharArray()) {
             result.append(charTable.getOrDefault(c, c));
         }
         return result.toString();

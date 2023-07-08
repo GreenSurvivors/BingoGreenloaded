@@ -10,20 +10,16 @@ import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.bukkit.generator.WorldInfo;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class MultiGameManager implements BingoGameManager
-{
+public class MultiGameManager implements BingoGameManager {
     private final BingoEventListener eventListener;
-    private Map<String, BingoSession> sessions;
     private final ConfigData config;
     private final PlayerData playerData;
+    private Map<String, BingoSession> sessions;
 
     public MultiGameManager(BingoReloaded plugin) {
         this.config = plugin.config();

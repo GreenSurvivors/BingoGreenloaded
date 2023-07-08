@@ -1,8 +1,8 @@
 package io.github.steaf23.bingoreloaded.gui.creator;
 
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
-import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.BasicMenu;
+import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
 import io.github.steaf23.bingoreloaded.gui.base.MenuManager;
 import io.github.steaf23.bingoreloaded.tasks.AdvancementTask;
 import io.github.steaf23.bingoreloaded.tasks.BingoTask;
@@ -15,15 +15,13 @@ import org.bukkit.advancement.Advancement;
 
 import java.util.*;
 
-public class ListEditorMenu extends BasicMenu
-{
-    private final String listName;
-
+public class ListEditorMenu extends BasicMenu {
     private static final MenuItem ITEMS = new MenuItem(2, 2, Material.APPLE, TITLE_PREFIX + "Items", "Click to add or remove items");
     private static final MenuItem ADVANCEMENTS = new MenuItem(4, 2, Material.ENDER_EYE, TITLE_PREFIX + "Advancements", "Click to add or remove advancements");
     private static final MenuItem STATISTICS = new MenuItem(6, 2, Material.GLOBE_BANNER_PATTERN, TITLE_PREFIX + "Statistics", "Click to add or remove statistics");
     private static final MenuItem SAVE = new MenuItem(4, 5, Material.REDSTONE, "" + ChatColor.RED + ChatColor.BOLD + BingoTranslation.MENU_SAVE_EXIT.translate());
     private static final MenuItem BLANK = new MenuItem(Material.BLACK_STAINED_GLASS_PANE, " ", "");
+    private final String listName;
 
     public ListEditorMenu(MenuManager manager, String listName) {
         super(manager, "Editing '" + listName + "'", 6);

@@ -18,8 +18,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-public enum PlayerKit
-{
+public enum PlayerKit {
     HARDCORE("hardcore", ChatColor.BOLD + BingoTranslation.KIT_HARDCORE_NAME.translate(), EnumSet.noneOf(EffectOptionFlags.class)),
     NORMAL("normal", ChatColor.BOLD + BingoTranslation.KIT_NORMAL_NAME.translate(), EnumSet.of(EffectOptionFlags.SPEED, EffectOptionFlags.NO_FALL_DAMAGE)),
     OVERPOWERED("overpowered", ChatColor.BOLD + BingoTranslation.KIT_OVERPOWERED_NAME.translate(), EnumSet.allOf(EffectOptionFlags.class)),
@@ -53,41 +52,95 @@ public enum PlayerKit
             "" + ChatColor.AQUA + ChatColor.BOLD + BingoTranslation.TEAM_ITEM_NAME.translate(),
             BingoTranslation.TEAM_ITEM_DESC.translate().split("\\n")
     ).setCompareKey("team");
-
+    private static final YmlDataManager customKitData = BingoReloaded.createYmlDataManager("data/kits.yml");
     public final String configName;
     public final String displayName;
     public final EnumSet<EffectOptionFlags> defaultEffects;
 
-    private static final YmlDataManager customKitData = BingoReloaded.createYmlDataManager("data/kits.yml");
-
-    PlayerKit(String configName, String displayName, EnumSet<EffectOptionFlags> defaultEffects)
-    {
+    PlayerKit(String configName, String displayName, EnumSet<EffectOptionFlags> defaultEffects) {
         this.configName = configName;
         this.displayName = displayName;
         this.defaultEffects = defaultEffects;
     }
 
-    public List<MenuItem> getItems(ChatColor teamColor)
-    {
+    public static PlayerKit fromConfig(String name) {
+        if (name == null)
+            return HARDCORE;
+        return switch (name.toLowerCase()) {
+            case "normal" -> NORMAL;
+            case "overpowered" -> OVERPOWERED;
+            case "reloaded" -> RELOADED;
+            case "custom", "custom1" -> CUSTOM_1;
+            case "custom2" -> CUSTOM_2;
+            case "custom3" -> CUSTOM_3;
+            case "custom4" -> CUSTOM_4;
+            case "custom5" -> CUSTOM_5;
+            default -> HARDCORE;
+        };
+    }
+
+    public static boolean assignCustomKit(String kitName, PlayerKit slot, Player commandSender) {
+        if (customKitData.getConfig().contains(slot.configName))
+            return false;
+
+        customKitData.getConfig().set(slot.configName, CustomKit.fromPlayerInventory(commandSender, kitName, slot));
+        customKitData.saveConfig();
+        return true;
+    }
+
+    public static boolean removeCustomKit(PlayerKit slot) {
+        if (!customKitData.getConfig().contains(slot.configName))
+            return false;
+
+        customKitData.getConfig().set(slot.configName, null);
+        customKitData.saveConfig();
+
+        return true;
+    }
+
+    public static CustomKit getCustomKit(PlayerKit slot) {
+        return customKitData.getConfig().getSerializable(slot.configName, CustomKit.class);
+    }
+
+    public static Set<PlayerKit> customKits() {
+        return ImmutableSet.of(CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5);
+    }
+
+    private static MenuItem createGoUpWand() {
+        MenuItem wand = new MenuItem(
+                Material.WARPED_FUNGUS_ON_A_STICK,
+                "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + BingoTranslation.WAND_ITEM_NAME.translate(),
+                BingoTranslation.WAND_ITEM_DESC.translate().split("\\n")).withEnchantment(Enchantment.DURABILITY, 3);
+        wand.setCompareKey("wand");
+        return wand;
+    }
+
+    private static MenuItem createCardItem() {
+        MenuItem card = new MenuItem(
+                Material.MAP,
+                "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + BingoTranslation.CARD_ITEM_NAME.translate(),
+                BingoTranslation.CARD_ITEM_DESC.translate());
+        card.setCompareKey("card");
+        return card;
+    }
+
+    public List<MenuItem> getItems(ChatColor teamColor) {
         MenuItem helmet = new MenuItem(39, Material.LEATHER_HELMET, "");
         LeatherArmorMeta helmetMeta = (LeatherArmorMeta) helmet.getItemMeta();
-        if (helmetMeta != null)
-        {
+        if (helmetMeta != null) {
             helmetMeta.setColor(FlexColor.toBukkitColor(teamColor.getColor()));
         }
         helmet.setItemMeta(helmetMeta);
 
         MenuItem boots = new MenuItem(36, Material.LEATHER_BOOTS, "");
         LeatherArmorMeta bootMeta = (LeatherArmorMeta) boots.getItemMeta();
-        if (bootMeta != null)
-        {
+        if (bootMeta != null) {
             bootMeta.setColor(FlexColor.toBukkitColor(teamColor.getColor()));
         }
         boots.setItemMeta(bootMeta);
 
         List<MenuItem> items;
-        switch (this)
-        {
+        switch (this) {
             case NORMAL -> {
                 items = new ArrayList<>();
                 items.add(helmet
@@ -156,12 +209,9 @@ public enum PlayerKit
             }
             case CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5 -> {
                 CustomKit kit = customKitData.getConfig().getSerializable(configName, CustomKit.class);
-                if (kit != null)
-                {
+                if (kit != null) {
                     items = kit.items();
-                }
-                else
-                {
+                } else {
                     items = new ArrayList<>();
                 }
                 return items;
@@ -171,73 +221,5 @@ public enum PlayerKit
                 return items;
             }
         }
-    }
-
-    public static PlayerKit fromConfig(String name)
-    {
-        if (name == null)
-            return HARDCORE;
-        return switch (name.toLowerCase())
-        {
-            case "normal" -> NORMAL;
-            case "overpowered" -> OVERPOWERED;
-            case "reloaded" -> RELOADED;
-            case "custom", "custom1" -> CUSTOM_1;
-            case "custom2" -> CUSTOM_2;
-            case "custom3" -> CUSTOM_3;
-            case "custom4" -> CUSTOM_4;
-            case "custom5" -> CUSTOM_5;
-            default -> HARDCORE;
-        };
-    }
-
-    public static boolean assignCustomKit(String kitName, PlayerKit slot, Player commandSender)
-    {
-        if (customKitData.getConfig().contains(slot.configName))
-            return false;
-
-        customKitData.getConfig().set(slot.configName, CustomKit.fromPlayerInventory(commandSender, kitName, slot));
-        customKitData.saveConfig();
-        return true;
-    }
-
-    public static boolean removeCustomKit(PlayerKit slot)
-    {
-        if (!customKitData.getConfig().contains(slot.configName))
-            return false;
-
-        customKitData.getConfig().set(slot.configName, null);
-        customKitData.saveConfig();
-
-        return true;
-    }
-
-    public static CustomKit getCustomKit(PlayerKit slot)
-    {
-        return customKitData.getConfig().getSerializable(slot.configName, CustomKit.class);
-    }
-
-    public static Set<PlayerKit> customKits() {
-        return ImmutableSet.of(CUSTOM_1, CUSTOM_2, CUSTOM_3, CUSTOM_4, CUSTOM_5);
-    }
-
-    private static MenuItem createGoUpWand()
-    {
-        MenuItem wand = new MenuItem(
-                Material.WARPED_FUNGUS_ON_A_STICK,
-                "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + BingoTranslation.WAND_ITEM_NAME.translate(),
-                BingoTranslation.WAND_ITEM_DESC.translate().split("\\n")).withEnchantment(Enchantment.DURABILITY, 3);
-        wand.setCompareKey("wand");
-        return wand;
-    }
-
-    private static MenuItem createCardItem()
-    {
-        MenuItem card = new MenuItem(
-                Material.MAP,
-                "" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + ChatColor.BOLD + BingoTranslation.CARD_ITEM_NAME.translate(),
-                BingoTranslation.CARD_ITEM_DESC.translate());
-        card.setCompareKey("card");
-        return card;
     }
 }

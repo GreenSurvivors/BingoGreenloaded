@@ -10,8 +10,7 @@ import io.github.steaf23.bingoreloaded.util.timer.CountdownTimer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class PostGamePhase implements GamePhase
-{
+public class PostGamePhase implements GamePhase {
     private final CountdownTimer timer;
     private final BingoSession session;
 
@@ -52,8 +51,7 @@ public class PostGamePhase implements GamePhase
         if (timeLeft == 0) {
             session.prepareNextGame();
             timer.stop();
-        }
-        else if (timeLeft == 5) {
+        } else if (timeLeft == 5) {
             restartMessage(timeLeft).sendAll(session);
         }
     }

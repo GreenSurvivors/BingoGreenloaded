@@ -12,51 +12,34 @@ import java.util.*;
 import java.util.stream.Stream;
 
 @SerializableAs("Bingo.Statistic")
-public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entityType, @Nullable Material materialType) implements ConfigurationSerializable
-{
-    public enum StatisticCategory
-    {
-        TRAVEL,
-        BLOCK_INTERACT,
-        CONTAINER_INTERACT,
-        DAMAGE,
-        ROOT_STATISTIC,
-        OTHER,
-    }
-
+public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entityType,
+                             @Nullable Material materialType) implements ConfigurationSerializable {
     private static Set<EntityType> validEntityTypes = getValidEntityTypes();
 
-    public BingoStatistic(Statistic stat)
-    {
+    public BingoStatistic(Statistic stat) {
         this(stat, null, null);
     }
 
-    public BingoStatistic(Statistic stat, @Nullable EntityType entityType)
-    {
+    public BingoStatistic(Statistic stat, @Nullable EntityType entityType) {
         this(stat, entityType, null);
     }
 
-    public BingoStatistic(Statistic stat, @Nullable Material materialType)
-    {
+    public BingoStatistic(Statistic stat, @Nullable Material materialType) {
         this(stat, null, materialType);
     }
 
     //TODO: less static?
-    public static List<Statistic> getStatisticsOfCategory(StatisticCategory category)
-    {
+    public static List<Statistic> getStatisticsOfCategory(StatisticCategory category) {
         List<Statistic> result = new ArrayList<>();
-        for (var stat : Statistic.values())
-        {
-            if (determineStatCategory(stat) == category)
-            {
+        for (var stat : Statistic.values()) {
+            if (determineStatCategory(stat) == category) {
                 result.add(stat);
             }
         }
         return result;
     }
 
-    private static Set<EntityType> getValidEntityTypes()
-    {
+    private static Set<EntityType> getValidEntityTypes() {
         Set<EntityType> types = new HashSet<>();
         // Filter out mobs that did not have spawn eggs prior to 1.19.3
         Stream<Material> mats = Arrays.stream(Material.values())
@@ -68,12 +51,9 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
                                 !mat.name().equals("WITHER_SPAWN_EGG")
                 );
         mats.forEach(mat -> {
-            if (mat.name() == "MOOSHROOM_SPAWN_EGG")
-            {
+            if (mat.name() == "MOOSHROOM_SPAWN_EGG") {
                 types.add(EntityType.MUSHROOM_COW);
-            }
-            else
-            {
+            } else {
                 types.add(EntityType.valueOf(mat.name().replace("_SPAWN_EGG", "")));
             }
         });
@@ -84,34 +64,12 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
         return types;
     }
 
-    public static boolean isEntityValidForStatistic(EntityType type)
-    {
+    public static boolean isEntityValidForStatistic(EntityType type) {
         return validEntityTypes.contains(type);
     }
 
-    /**
-     * @return True if this statistic is processed by the PlayerStatisticIncrementEvent
-     */
-    public boolean isStatisticProcessed()
-    {
-        if (getCategory() == StatisticCategory.TRAVEL)
-            return false;
-
-        return switch (stat)
-        {
-            case PLAY_ONE_MINUTE,
-                    SNEAK_TIME,
-                    TOTAL_WORLD_TIME,
-                    TIME_SINCE_REST,
-                    TIME_SINCE_DEATH -> false;
-            default -> true;
-        };
-    }
-
-    public static StatisticCategory determineStatCategory(Statistic stat)
-    {
-        return switch (stat)
-        {
+    public static StatisticCategory determineStatCategory(Statistic stat) {
+        return switch (stat) {
             case DROP,
                     PICKUP,
                     USE_ITEM,
@@ -203,18 +161,14 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
         };
     }
 
-    public static String createDescription(Statistic stat)
-    {
-        return switch (stat)
-        {
+    public static String createDescription(Statistic stat) {
+        return switch (stat) {
             default -> "";
         };
     }
 
-    public static Material getMaterial(BingoStatistic statistic)
-    {
-        return switch (statistic.stat)
-        {
+    public static Material getMaterial(BingoStatistic statistic) {
+        return switch (statistic.stat) {
             case DAMAGE_DEALT -> Material.DIAMOND_SWORD;
             case DAMAGE_TAKEN -> Material.IRON_CHESTPLATE;
             case DEATHS -> Material.SKELETON_SKULL;
@@ -299,41 +253,22 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
         };
     }
 
-    public StatisticCategory getCategory()
-    {
-        return determineStatCategory(stat);
-    }
-
-    private static Material rootStatMaterial(BingoStatistic statistic)
-    {
+    private static Material rootStatMaterial(BingoStatistic statistic) {
         if (statistic.materialType != null &&
-                (statistic.stat.getType() == Statistic.Type.ITEM || statistic.stat.getType() == Statistic.Type.BLOCK))
-        {
+                (statistic.stat.getType() == Statistic.Type.ITEM || statistic.stat.getType() == Statistic.Type.BLOCK)) {
             return statistic.materialType;
-        }
-        else if (statistic.entityType != null &&
-                statistic.stat.getType() == Statistic.Type.ENTITY)
-        {
-            for (Material mat : Material.values())
-            {
-                if (statistic.entityType == EntityType.MUSHROOM_COW)
-                {
+        } else if (statistic.entityType != null &&
+                statistic.stat.getType() == Statistic.Type.ENTITY) {
+            for (Material mat : Material.values()) {
+                if (statistic.entityType == EntityType.MUSHROOM_COW) {
                     return Material.MOOSHROOM_SPAWN_EGG;
-                }
-                else if (statistic.entityType == EntityType.IRON_GOLEM)
-                {
+                } else if (statistic.entityType == EntityType.IRON_GOLEM) {
                     return Material.POPPY;
-                }
-                else if (statistic.entityType == EntityType.SNOWMAN)
-                {
+                } else if (statistic.entityType == EntityType.SNOWMAN) {
                     return Material.CARVED_PUMPKIN;
-                }
-                else if (statistic.entityType == EntityType.ENDER_DRAGON)
-                {
+                } else if (statistic.entityType == EntityType.ENDER_DRAGON) {
                     return Material.DRAGON_EGG;
-                }
-                else if (statistic.entityType == EntityType.WITHER)
-                {
+                } else if (statistic.entityType == EntityType.WITHER) {
                     return Material.NETHER_STAR;
                 }
 
@@ -345,10 +280,46 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
         return Material.GLOBE_BANNER_PATTERN;
     }
 
+    public static BingoStatistic deserialize(Map<String, Object> data) {
+        Statistic stat = Statistic.valueOf((String) data.get("statistic"));
+
+        String entityStr = (String) data.getOrDefault("entity", null);
+        EntityType entity = null;
+        if (entityStr != null && !entityStr.isEmpty())
+            entity = EntityType.valueOf((String) data.get("entity"));
+
+        String materialStr = (String) data.getOrDefault("item", null);
+        Material material = null;
+        if (materialStr != null && !materialStr.isEmpty())
+            material = Material.valueOf((String) data.get("item"));
+
+        return new BingoStatistic(stat, entity, material);
+    }
+
+    /**
+     * @return True if this statistic is processed by the PlayerStatisticIncrementEvent
+     */
+    public boolean isStatisticProcessed() {
+        if (getCategory() == StatisticCategory.TRAVEL)
+            return false;
+
+        return switch (stat) {
+            case PLAY_ONE_MINUTE,
+                    SNEAK_TIME,
+                    TOTAL_WORLD_TIME,
+                    TIME_SINCE_REST,
+                    TIME_SINCE_DEATH -> false;
+            default -> true;
+        };
+    }
+
+    public StatisticCategory getCategory() {
+        return determineStatCategory(stat);
+    }
+
     @NotNull
     @Override
-    public Map<String, Object> serialize()
-    {
+    public Map<String, Object> serialize() {
         Map<String, Object> result = new HashMap<>();
         result.put("statistic", stat.name());
         result.put("entity", entityType == null ? "" : entityType.name());
@@ -356,30 +327,20 @@ public record BingoStatistic(@NotNull Statistic stat, @Nullable EntityType entit
         return result;
     }
 
-    public static BingoStatistic deserialize(Map<String, Object> data)
-    {
-        Statistic stat = Statistic.valueOf((String)data.get("statistic"));
-
-        String entityStr = (String) data.getOrDefault("entity", null);
-        EntityType entity = null;
-        if (entityStr != null && !entityStr.isEmpty())
-            entity = EntityType.valueOf((String)data.get("entity"));
-
-        String materialStr = (String) data.getOrDefault("item", null);
-        Material material = null;
-        if (materialStr != null && !materialStr.isEmpty())
-            material = Material.valueOf((String)data.get("item"));
-
-        return new BingoStatistic(stat, entity, material);
-    }
-
-    public boolean hasMaterialComponent()
-    {
+    public boolean hasMaterialComponent() {
         return materialType != null;
     }
 
-    public boolean hasEntityComponent()
-    {
+    public boolean hasEntityComponent() {
         return entityType != null;
+    }
+
+    public enum StatisticCategory {
+        TRAVEL,
+        BLOCK_INTERACT,
+        CONTAINER_INTERACT,
+        DAMAGE,
+        ROOT_STATISTIC,
+        OTHER,
     }
 }

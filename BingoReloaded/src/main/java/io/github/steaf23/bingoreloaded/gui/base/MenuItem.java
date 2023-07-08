@@ -20,8 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @SerializableAs("Bingo.MenuItem")
-public class MenuItem extends ItemStack
-{
+public class MenuItem extends ItemStack {
     /**
      * Describes the slot the item should be in when put in any inventory.
      */
@@ -58,146 +57,6 @@ public class MenuItem extends ItemStack
         super(item);
     }
 
-
-    public MenuItem withEnchantment(Enchantment enchantment, int level) {
-        addEnchantment(enchantment, level);
-        return this;
-    }
-
-    public MenuItem withIllegalEnchantment(Enchantment enchantment, int level) {
-        addUnsafeEnchantment(enchantment, level);
-        return this;
-    }
-
-    public MenuItem withAmount(int amount) {
-        setAmount(amount);
-        return this;
-    }
-
-    public ItemStack getAsStack() {
-        return new ItemStack(this);
-    }
-
-    public MenuItem copy() {
-        return new MenuItem(slot,
-                getType(),
-                getItemMeta().getDisplayName(),
-                getItemMeta().getLore() == null ? new String[]{""} : getItemMeta().getLore().toArray(new String[0]))
-                .setGlowing(isGlowing())
-                .setCompareKey(getCompareKey());
-    }
-
-    public MenuItem setSlot(int newSlot) {
-        this.slot = newSlot;
-        return this;
-    }
-
-    public MenuItem copyToSlot(int slot) {
-        MenuItem item = new MenuItem(slot, this);
-        item.slot = slot;
-        return item;
-    }
-
-    public MenuItem copyToSlot(int slotX, int slotY) {
-        return copyToSlot(slotFromXY(slotX, slotY));
-    }
-
-    public int getSlot() {
-        return slot;
-    }
-
-    public MenuItem setDescription(String... description) {
-        ItemMeta meta = getItemMeta();
-        if (meta != null) {
-            if (description.length >= 1 && !description[0].isEmpty())
-                meta.setLore(List.of(description));
-            meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-            setItemMeta(meta);
-        }
-        return this;
-    }
-
-    public MenuItem setName(String name) {
-        ItemMeta meta = getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(name);
-            setItemMeta(meta);
-        }
-        return this;
-    }
-
-    public MenuItem setGlowing(boolean value) {
-        if (value) {
-            addUnsafeEnchantment(Enchantment.DURABILITY, 1);
-        } else {
-            removeEnchantment(Enchantment.DURABILITY);
-        }
-        return this;
-    }
-
-    public boolean isGlowing() {
-        return getItemMeta().hasEnchant(Enchantment.DURABILITY);
-    }
-
-    public MenuItem addStringToPdc(String key, @Nullable String value) {
-        if (key == null) {
-            return this;
-        }
-
-        var meta = this.getItemMeta();
-        var pdc = meta.getPersistentDataContainer();
-        if (value == null)
-            pdc.remove(PDCHelper.createKey("item." + key));
-        else
-            pdc.set(PDCHelper.createKey("item." + key), PersistentDataType.STRING, value);
-        this.setItemMeta(meta);
-        return this;
-    }
-
-    public boolean isStringPdcEqual(String key, ItemStack other)
-    {
-        if (other == null || other.getItemMeta() == null)
-            return false;
-
-        String stringPdc = getStringFromPdc(key);
-        if (stringPdc == null)
-            return false;
-
-        return getCompareKey().equals(other.getItemMeta().getPersistentDataContainer()
-                .getOrDefault(PDCHelper.createKey("item." + key), PersistentDataType.STRING, ""));
-    }
-
-    public String getStringFromPdc(String key) {
-        return this.getItemMeta().getPersistentDataContainer()
-                .getOrDefault(PDCHelper.createKey("item." + key), PersistentDataType.STRING, "");
-    }
-
-    /**
-     * Additional key that can be used for item comparison, saved in pdc
-     * @param key
-     */
-    public MenuItem setCompareKey(@Nullable String key) {
-        return addStringToPdc("compare_key", key);
-    }
-
-    public boolean isCompareKeyEqual(ItemStack other) {
-        return isStringPdcEqual("compare_key", other);
-    }
-
-    public String getCompareKey() {
-        return getStringFromPdc("compare_key");
-    }
-
-    @NotNull
-    @Override
-    public Map<String, Object> serialize() {
-        return new HashMap<>()
-        {{
-            put("slot", slot);
-            put("stack", getAsStack());
-        }};
-    }
-
     public static MenuItem deserialize(Map<String, Object> data) {
         ItemStack stack = (ItemStack) data.get("stack");
         int slot = (int) data.get("slot");
@@ -226,5 +85,143 @@ public class MenuItem extends ItemStack
             item.setItemMeta(armorMeta);
         }
         return item;
+    }
+
+    public MenuItem withEnchantment(Enchantment enchantment, int level) {
+        addEnchantment(enchantment, level);
+        return this;
+    }
+
+    public MenuItem withIllegalEnchantment(Enchantment enchantment, int level) {
+        addUnsafeEnchantment(enchantment, level);
+        return this;
+    }
+
+    public MenuItem withAmount(int amount) {
+        setAmount(amount);
+        return this;
+    }
+
+    public ItemStack getAsStack() {
+        return new ItemStack(this);
+    }
+
+    public MenuItem copy() {
+        return new MenuItem(slot,
+                getType(),
+                getItemMeta().getDisplayName(),
+                getItemMeta().getLore() == null ? new String[]{"" } : getItemMeta().getLore().toArray(new String[0]))
+                .setGlowing(isGlowing())
+                .setCompareKey(getCompareKey());
+    }
+
+    public MenuItem copyToSlot(int slot) {
+        MenuItem item = new MenuItem(slot, this);
+        item.slot = slot;
+        return item;
+    }
+
+    public MenuItem copyToSlot(int slotX, int slotY) {
+        return copyToSlot(slotFromXY(slotX, slotY));
+    }
+
+    public int getSlot() {
+        return slot;
+    }
+
+    public MenuItem setSlot(int newSlot) {
+        this.slot = newSlot;
+        return this;
+    }
+
+    public MenuItem setDescription(String... description) {
+        ItemMeta meta = getItemMeta();
+        if (meta != null) {
+            if (description.length >= 1 && !description[0].isEmpty())
+                meta.setLore(List.of(description));
+            meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+            setItemMeta(meta);
+        }
+        return this;
+    }
+
+    public MenuItem setName(String name) {
+        ItemMeta meta = getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(name);
+            setItemMeta(meta);
+        }
+        return this;
+    }
+
+    public boolean isGlowing() {
+        return getItemMeta().hasEnchant(Enchantment.DURABILITY);
+    }
+
+    public MenuItem setGlowing(boolean value) {
+        if (value) {
+            addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+        } else {
+            removeEnchantment(Enchantment.DURABILITY);
+        }
+        return this;
+    }
+
+    public MenuItem addStringToPdc(String key, @Nullable String value) {
+        if (key == null) {
+            return this;
+        }
+
+        var meta = this.getItemMeta();
+        var pdc = meta.getPersistentDataContainer();
+        if (value == null)
+            pdc.remove(PDCHelper.createKey("item." + key));
+        else
+            pdc.set(PDCHelper.createKey("item." + key), PersistentDataType.STRING, value);
+        this.setItemMeta(meta);
+        return this;
+    }
+
+    public boolean isStringPdcEqual(String key, ItemStack other) {
+        if (other == null || other.getItemMeta() == null)
+            return false;
+
+        String stringPdc = getStringFromPdc(key);
+        if (stringPdc == null)
+            return false;
+
+        return getCompareKey().equals(other.getItemMeta().getPersistentDataContainer()
+                .getOrDefault(PDCHelper.createKey("item." + key), PersistentDataType.STRING, ""));
+    }
+
+    public String getStringFromPdc(String key) {
+        return this.getItemMeta().getPersistentDataContainer()
+                .getOrDefault(PDCHelper.createKey("item." + key), PersistentDataType.STRING, "");
+    }
+
+    public boolean isCompareKeyEqual(ItemStack other) {
+        return isStringPdcEqual("compare_key", other);
+    }
+
+    public String getCompareKey() {
+        return getStringFromPdc("compare_key");
+    }
+
+    /**
+     * Additional key that can be used for item comparison, saved in pdc
+     *
+     * @param key
+     */
+    public MenuItem setCompareKey(@Nullable String key) {
+        return addStringToPdc("compare_key", key);
+    }
+
+    @NotNull
+    @Override
+    public Map<String, Object> serialize() {
+        return new HashMap<>() {{
+            put("slot", slot);
+            put("stack", getAsStack());
+        }};
     }
 }

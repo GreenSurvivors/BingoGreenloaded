@@ -17,23 +17,19 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
-public class UserInputMenu implements Menu
-{
-    record MenuTemplate(String title, Consumer<String> result, String startingText, HumanEntity player) {}
-
-    private final MenuTemplate template;
-    private AnvilGUI gui;
-    private final MenuManager manager;
+public class UserInputMenu implements Menu {
     private static final MenuItem EMPTY = new MenuItem(Material.ELYTRA, "" + ChatColor.GRAY + ChatColor.BOLD + BingoTranslation.MENU_CLEAR_FILTER.translate(), "");
     private static final MenuItem ACCEPT = new MenuItem(Material.DIAMOND, "" + ChatColor.AQUA + ChatColor.BOLD + BingoTranslation.MENU_ACCEPT.translate(), "");
-
+    private final MenuTemplate template;
+    private final MenuManager manager;
+    private AnvilGUI gui;
     public UserInputMenu(MenuManager manager, String title, Consumer<String> result, HumanEntity player, String startingText) {
         this.manager = manager;
         this.template = new MenuTemplate(title, result, startingText, player);
         this.manager.open(this, player);
     }
 
-    private AnvilGUI openAnvilUI(String title,  Consumer<String> result, String startingText, HumanEntity player) {
+    private AnvilGUI openAnvilUI(String title, Consumer<String> result, String startingText, HumanEntity player) {
         return new AnvilGUI.Builder()
                 .onComplete(completion -> {
                     manager.close(this, completion.getPlayer());
@@ -88,5 +84,8 @@ public class UserInputMenu implements Menu
     @Override
     public boolean openOnce() {
         return true;
+    }
+
+    record MenuTemplate(String title, Consumer<String> result, String startingText, HumanEntity player) {
     }
 }

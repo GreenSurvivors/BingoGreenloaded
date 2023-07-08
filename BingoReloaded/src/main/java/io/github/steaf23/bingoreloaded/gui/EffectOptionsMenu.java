@@ -13,8 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.EnumSet;
 import java.util.List;
 
-public class EffectOptionsMenu extends BasicMenu
-{
+public class EffectOptionsMenu extends BasicMenu {
     private final EnumSet<EffectOptionFlags> flags;
 
     public EffectOptionsMenu(MenuManager menuManager, BingoSettingsBuilder settings, BingoSession session) {

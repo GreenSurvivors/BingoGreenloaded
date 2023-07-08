@@ -5,21 +5,18 @@ import io.github.steaf23.bingoreloaded.player.BingoPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public class StatisticProgress
-{
+public class StatisticProgress {
     final BingoStatistic statistic;
     final BingoPlayer player;
     int progressLeft;
 
     int previousGlobalProgress;
 
-    public StatisticProgress(BingoStatistic statistic, BingoPlayer player, int targetScore)
-    {
+    public StatisticProgress(BingoStatistic statistic, BingoPlayer player, int targetScore) {
         this.statistic = statistic;
         this.player = player;
         this.progressLeft = targetScore;
-        if (statistic.getCategory() == BingoStatistic.StatisticCategory.TRAVEL)
-        {
+        if (statistic.getCategory() == BingoStatistic.StatisticCategory.TRAVEL) {
             progressLeft *= 1000;
         }
 
@@ -28,16 +25,14 @@ public class StatisticProgress
         setPlayerTotalScore(0);
     }
 
-    public boolean done()
-    {
+    public boolean done() {
         return progressLeft <= 0;
     }
 
     /**
      * Updates the progress for statistics that don't get updated with the default Increment event
      */
-    public void updatePeriodicProgress()
-    {
+    public void updatePeriodicProgress() {
         if (statistic.isStatisticProcessed())
             return;
 
@@ -49,61 +44,47 @@ public class StatisticProgress
         setProgress(newProgress);
     }
 
-    public void setProgress(int newProgress)
-    {
+    public void setProgress(int newProgress) {
         int progressDelta = newProgress - previousGlobalProgress;
 
         progressLeft -= Math.max(0, progressDelta);
 
         previousGlobalProgress = newProgress;
 
-        if (done())
-        {
+        if (done()) {
             var event = new BingoStatisticCompletedEvent(statistic, player);
             Bukkit.getPluginManager().callEvent(event);
         }
     }
 
-    public int getPlayerTotalScore()
-    {
+    public int getPlayerTotalScore() {
         if (player.sessionPlayer().isEmpty())
             return 0;
 
         Player gamePlayer = player.sessionPlayer().get();
 
         int value = 0;
-        if (statistic.hasMaterialComponent())
-        {
+        if (statistic.hasMaterialComponent()) {
             value = gamePlayer.getStatistic(statistic.stat(), statistic.materialType());
-        }
-        else if (statistic.hasEntityComponent())
-        {
+        } else if (statistic.hasEntityComponent()) {
             value = gamePlayer.getStatistic(statistic.stat(), statistic.entityType());
-        }
-        else
-        {
+        } else {
             value = gamePlayer.getStatistic(statistic.stat());
         }
         return value;
     }
 
-    public void setPlayerTotalScore(int value)
-    {
+    public void setPlayerTotalScore(int value) {
         if (player.sessionPlayer().isEmpty())
             return;
 
         Player gamePlayer = player.sessionPlayer().get();
 
-        if (statistic.hasMaterialComponent())
-        {
+        if (statistic.hasMaterialComponent()) {
             gamePlayer.setStatistic(statistic.stat(), statistic.materialType(), value);
-        }
-        else if (statistic.hasEntityComponent())
-        {
+        } else if (statistic.hasEntityComponent()) {
             gamePlayer.setStatistic(statistic.stat(), statistic.entityType(), value);
-        }
-        else
-        {
+        } else {
             gamePlayer.setStatistic(statistic.stat(), value);
         }
     }

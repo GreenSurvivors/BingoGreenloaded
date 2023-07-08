@@ -3,7 +3,6 @@ package io.github.steaf23.bingoreloaded.gameloop;
 import io.github.steaf23.bingoreloaded.BingoReloaded;
 import io.github.steaf23.bingoreloaded.data.BingoTranslation;
 import io.github.steaf23.bingoreloaded.data.ConfigData;
-import io.github.steaf23.bingoreloaded.data.PlayerData;
 import io.github.steaf23.bingoreloaded.event.*;
 import io.github.steaf23.bingoreloaded.gui.VoteMenu;
 import io.github.steaf23.bingoreloaded.gui.base.MenuItem;
@@ -21,22 +20,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class PregameLobby implements GamePhase
-{
-    // Each player can cast a single vote for all categories, To keep track of this a VoteTicket will be made for every player that votes on something
-    public static class VoteTicket
-    {
-        public String gamemode = "";
-        public String kit = "";
-        public String card = "";
-    }
-
+public class PregameLobby implements GamePhase {
     private final BingoSession session;
     private final SettingsPreviewBoard settingsBoard;
     private final Map<UUID, VoteTicket> votes;
     private final ConfigData config;
     private final MenuManager menuManager;
-
     public PregameLobby(MenuManager menuManager, BingoSession session, ConfigData config) {
         this.menuManager = menuManager;
         this.session = session;
@@ -188,5 +177,12 @@ public class PregameLobby implements GamePhase
             event.setCancelled(true);
             session.teamManager.openTeamSelector(menuManager, event.getPlayer());
         }
+    }
+
+    // Each player can cast a single vote for all categories, To keep track of this a VoteTicket will be made for every player that votes on something
+    public static class VoteTicket {
+        public String gamemode = "";
+        public String kit = "";
+        public String card = "";
     }
 }

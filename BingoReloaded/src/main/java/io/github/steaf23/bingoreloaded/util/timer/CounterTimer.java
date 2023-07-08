@@ -7,13 +7,11 @@ import io.github.steaf23.bingoreloaded.util.TranslatedMessage;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.scheduler.BukkitTask;
 
-public class CounterTimer extends GameTimer
-{
+public class CounterTimer extends GameTimer {
     private BukkitTask task;
 
     @Override
-    public Message getTimeDisplayMessage(boolean asSeconds)
-    {
+    public Message getTimeDisplayMessage(boolean asSeconds) {
         String timeString = asSeconds ? GameTimer.getSecondsString(getTime()) : GameTimer.getTimeAsString(getTime());
         return new TranslatedMessage(BingoTranslation.DURATION)
                 .color(ChatColor.AQUA).bold()
@@ -21,20 +19,17 @@ public class CounterTimer extends GameTimer
     }
 
     @Override
-    public int getStartDelay()
-    {
+    public int getStartDelay() {
         return 0;
     }
 
     @Override
-    public int getUpdateInterval()
-    {
+    public int getUpdateInterval() {
         return BingoReloaded.ONE_SECOND;
     }
 
     @Override
-    public int getStep()
-    {
+    public int getStep() {
         return 1;
     }
 }

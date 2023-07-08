@@ -18,12 +18,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdminBingoMenu extends BasicMenu
-{
-    private final BingoSession session;
-
-    private final MenuItem start = new MenuItem(4, 2,
-            Material.LIME_CONCRETE, TITLE_PREFIX + BingoTranslation.OPTIONS_START.translate());
+public class AdminBingoMenu extends BasicMenu {
     private static final MenuItem JOIN = new MenuItem(4, 0,
             Material.WHITE_GLAZED_TERRACOTTA, TITLE_PREFIX + BingoTranslation.OPTIONS_TEAM.translate());
     private static final MenuItem LEAVE = new MenuItem(2, 1,
@@ -38,6 +33,9 @@ public class AdminBingoMenu extends BasicMenu
             Material.POTION, TITLE_PREFIX + BingoTranslation.OPTIONS_EFFECTS.translate());
     private static final MenuItem EXTRA = new MenuItem(8, 5,
             Material.STRUCTURE_VOID, TITLE_PREFIX + BingoTranslation.MENU_NEXT.translate());
+    private final BingoSession session;
+    private final MenuItem start = new MenuItem(4, 2,
+            Material.LIME_CONCRETE, TITLE_PREFIX + BingoTranslation.OPTIONS_START.translate());
 
     public AdminBingoMenu(MenuManager menuManager, BingoSession session, ConfigData config) {
         super(menuManager, BingoTranslation.OPTIONS_TITLE.translate(), 6);
@@ -72,8 +70,7 @@ public class AdminBingoMenu extends BasicMenu
                             "" + cardsData.getListNames(cardName).size())));
         }
 
-        BasicMenu cardPicker = new PaginatedSelectionMenu(getMenuManager(), "Choose A Card", cards, FilterType.DISPLAY_NAME)
-        {
+        BasicMenu cardPicker = new PaginatedSelectionMenu(getMenuManager(), "Choose A Card", cards, FilterType.DISPLAY_NAME) {
             @Override
             public void onOptionClickedDelegate(InventoryClickEvent event, MenuItem clickedOption, HumanEntity player) {
                 ItemMeta meta = clickedOption.getItemMeta();
